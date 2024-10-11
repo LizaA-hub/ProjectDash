@@ -39,10 +39,16 @@ public class PlayerMovement : MonoBehaviour
         else{
             if ((transform.position-targetPos).sqrMagnitude > 0f )
             {
+                count = frequence/2;
                 var step = speed * Time.deltaTime;
                 transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
                return;
             }
+            else if (count > 0f){ 
+                count -= Time.deltaTime;
+                return;
+            }
+
             nextMove = GetNextDirection();
             switch (nextMove)
             {

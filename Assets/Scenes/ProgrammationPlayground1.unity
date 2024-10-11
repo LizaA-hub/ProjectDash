@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distance: 2
-  speed: 8
+  speed: 10
   frequence: 0.8
   useMouse: 0
 --- !u!212 &677403898
