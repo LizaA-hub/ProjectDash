@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    float moveSpeed = 1.0f;
+    float moveSpeed = 10.0f;
     private Camera cam;
     private Vector3 mousePos;
     private bool mouseDown = false;
@@ -19,7 +19,8 @@ public class PlayerController : MonoBehaviour
         if(Input.GetMouseButtonDown(0) && !mouseDown){
             mouseDown = true;
             mousePos = cam.ScreenToWorldPoint(Input.mousePosition) ;
-            mousePos.z = 0f;
+            mousePos.z = transform.position.z;
+            
         }
         var step = moveSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, mousePos, step);
