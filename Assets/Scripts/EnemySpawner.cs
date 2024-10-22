@@ -49,7 +49,22 @@ public class EnemySpawner : MonoBehaviour
     }
 
     #endregion
+    #region Public Functions
 
+    public void RemoveEnemy(Transform enemy){
+        int toRemove = -1;
+        for (int i = 0; i < instantiatedEnemies.Count; i++)
+        {
+            if(instantiatedEnemies[i] == enemy){
+                toRemove = i;
+            }
+        }
+        if (toRemove == -1){
+            return;
+        }
+        instantiatedEnemies.RemoveAt(toRemove);
+    }
+    #endregion
     #region Private Functions
 
     private void SpawnEnemy(EnemyDataManager.EnemyType type,Vector3 position){

@@ -135,10 +135,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  maxHealth: 5
-  initialStrength: 0
+  orbPrefab: {fileID: 4358556899166370311, guid: e6bd7e6ff999f704998db2f65e8fd99b, type: 3}
+  health: 0
+  strength: 0
   speed: 2
   experience: 5
+  timer: 5
 --- !u!50 &-1425452382470553541
 Rigidbody2D:
   serializedVersion: 4
