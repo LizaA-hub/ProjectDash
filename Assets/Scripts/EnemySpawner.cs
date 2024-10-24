@@ -19,7 +19,8 @@ public class EnemySpawner : MonoBehaviour
     Vector3[] spawningPoints = new Vector3[4];
     List<Transform> instantiatedEnemies = new List<Transform>();
     float[] timers;
-    float difficultyTimer = 0f, constantTimer = 0f;
+    float difficultyTimer = 0f;
+    Vector3 velocity = Vector3.zero;
 
     #region Unity Functions
     private void Start() {
@@ -91,12 +92,12 @@ public class EnemySpawner : MonoBehaviour
         {
             var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
             var step = controller.speed * t;
+            
             instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
         }
     }
 
     private void UpdateTimers(float t){
-        constantTimer += t;
 
         for (int i = 0; i < datas.Length; i++)
         {
@@ -124,13 +125,18 @@ public class EnemySpawner : MonoBehaviour
         {
             if (function == functionType.Linear){
                 var _delay = datas[i].spawnDelay;
-                _delay -= constantTimer*functionParameter;
-                datas[i].spawnDelay = _delay>= 0f ? _delay : 0f;
+                if (_delay > 1f){
+                    _delay -= functionParameter;
+                    datas[i].spawnDelay = _delay;
+                }
+                
             }
             else{
                 var _delay = datas[i].spawnDelay;
-                _delay *= Mathf.Exp(-constantTimer*functionParameter);
-                datas[i].spawnDelay = _delay>= 0f ? _delay : 0f;
+                if (_delay > 1f){
+                    _delay *= Mathf.Exp(-functionParameter);
+                    datas[i].spawnDelay = _delay;
+                }
             }
             datas[i].maxHealth += datas[i].maxHealth*difficultyIncreasePercentage;
             datas[i].strength += datas[i].strength*difficultyIncreasePercentage;

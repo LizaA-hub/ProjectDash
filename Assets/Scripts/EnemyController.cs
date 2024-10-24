@@ -5,20 +5,30 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     Transform orbPrefab;
     [HideInInspector]
-    public float health, strength, speed, experience, timer = 5f;
+    public float health, strength, speed, experience, cooldown = 1f;
+    bool invincible = false;
 
-    //WILL BE REMOVED - DEBUG SYSTEM//
     private void Update() {
-        timer -= Time.deltaTime;
-        if (timer <= 0f){
-            Die();
+        if (invincible){
+            cooldown -= Time.deltaTime;
+            if(cooldown <= 0f){
+                invincible = false;
+                cooldown = 1f;
+            }
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.CompareTag("PlayerTrail")){
+            TakeDamage(GameManager.playerStrength);
         }
     }
 
     #region Private Functions
 
     private void TakeDamage(float amount){
-        health =- amount;
+        if(invincible) return;
+
+        health -= amount;
         if (health <= 0f){
             Die();
         }
