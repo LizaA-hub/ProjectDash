@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 public class EnemyController : MonoBehaviour
 {
     public EnemyDataManager.EnemyType type;
@@ -7,6 +8,20 @@ public class EnemyController : MonoBehaviour
     [HideInInspector]
     public float health, strength, speed, experience, cooldown = 1f;
     bool invincible = false;
+
+    //added for damage animation
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
+    private void Awake()
+    {
+        // Get the SpriteRenderer component and store the original color
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+    }
 
     private void Update() {
         if (invincible){
@@ -25,13 +40,31 @@ public class EnemyController : MonoBehaviour
 
     #region Private Functions
 
-    private void TakeDamage(float amount){
-        if(invincible) return;
+    private void TakeDamage(float amount)
+    {
+        if (invincible) return;
 
         health -= amount;
-        if (health <= 0f){
+        if (spriteRenderer != null)
+        {
+            StartCoroutine(DamageFlash()); // Start the flash coroutine
+        }
+
+        if (health <= 0f)
+        {
             Die();
         }
+    }
+    
+    //Flash animation when the enemy takes damage
+    private IEnumerator DamageFlash()
+    {
+        // Flash white
+        spriteRenderer.color = Color.white;
+        yield return new WaitForSeconds(0.1f); // Adjust the flash duration as needed
+
+        // Return to the original color
+        spriteRenderer.color = originalColor;
     }
 
     private void Die(){
