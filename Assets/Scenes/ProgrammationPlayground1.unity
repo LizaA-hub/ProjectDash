@@ -859,6 +859,13 @@ MonoBehaviour:
     speed: 2
     experience: 5
     spawnDelay: 10
+  - type: 3
+    prefab: {fileID: 1974389323076921744, guid: 0dfccdde2737d0b48a0918e17f27a603, type: 3}
+    maxHealth: 50
+    strength: 10
+    speed: 5
+    experience: 5
+    spawnDelay: 50
 --- !u!4 &954499559
 Transform:
   m_ObjectHideFlags: 0
