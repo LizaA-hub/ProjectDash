@@ -13,7 +13,7 @@ public class HUDManager : MonoBehaviour
 
     private void Start() {
         GameManager.XPChange.AddListener(ModifyXPSlider);
-        ModifyXPSlider(0f);
+        ModifyXPSlider(GameManager.GetExperience());
         GameManager.levelChange.AddListener(ModifyLevel);
         ModifyLevel(1);
 

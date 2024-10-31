@@ -13,8 +13,8 @@ public class EnemySpawner : MonoBehaviour
     private enum functionType{Linear, Exponential};
     [SerializeField]
     functionType function;
-    
-    public EnemyDataManager.EnemyData[] datas;
+    [SerializeField]
+    EnemyDataManager.EnemyData[] datas;
 
     Vector3[] spawningPoints = new Vector3[4];
     List<Transform> instantiatedEnemies = new List<Transform>();
