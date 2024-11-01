@@ -13,8 +13,8 @@ public class EnemySpawner : MonoBehaviour
     private enum functionType{Linear, Exponential};
     [SerializeField]
     functionType function;
-    
-    public EnemyDataManager.EnemyData[] datas;
+    [SerializeField]
+    EnemyDataManager.EnemyData[] datas;
 
     Vector3[] spawningPoints = new Vector3[4];
     List<Transform> instantiatedEnemies = new List<Transform>();
@@ -43,8 +43,8 @@ public class EnemySpawner : MonoBehaviour
     }
 
     private void Update() {
-        //make the instantiated enemies folow the player
-        FollowPlayer(Time.deltaTime);
+        
+        UpdateEnemies(Time.deltaTime);
 
         UpdateTimers(Time.deltaTime);
     }
@@ -76,7 +76,7 @@ public class EnemySpawner : MonoBehaviour
                 enemy.position = position;
                 instantiatedEnemies.Add(enemy);
                 enemy.SetParent(transform,false); 
-                var controller = enemy.GetComponent<EnemyController>();
+                var controller = enemy.GetComponent<EnemyController>() ;                
                 controller.health = data.maxHealth;
                 controller.strength = data.strength;
                 controller.speed = data.speed;
@@ -87,7 +87,56 @@ public class EnemySpawner : MonoBehaviour
         
     }
 
-    private void FollowPlayer(float t){
+    private void UpdateEnemies(float t){
+        for (int i = 0; i < instantiatedEnemies.Count; i++)
+        {
+            var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
+            var step = controller.speed * t;
+            switch (controller.type)
+            {
+                //Basic enemy movement//
+                case EnemyDataManager.EnemyType.Basic:
+                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                    break;
+                //Dashing enemy movement//
+                case EnemyDataManager.EnemyType.Charging:
+                    var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
+                    if (chargingController.isCharging)
+                        {
+                            LookAtPlayer(instantiatedEnemies[i]);
+                            chargingController.chargeTimer -= t;
+                            if (chargingController.chargeTimer <= 0f)
+                            {
+                                chargingController.chargeTimer = 1f;
+                                chargingController.isCharging = false;
+                                chargingController.isDashing = true;
+                                chargingController.dashTarget = instantiatedEnemies[i].position + (player.position - instantiatedEnemies[i].position).normalized * chargingController.dashDistance;
+                            }
+                        }
+                    else if (chargingController.isDashing)
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, chargingController.dashTarget, step);
+                            // Stop dashing once the enemy has moved the full dash distance
+                            if (Vector3.Distance(instantiatedEnemies[i].position, chargingController.dashTarget) < 0.1f)
+                            {
+                                chargingController.isDashing = false;
+                            }
+                        }
+                    else
+                        {
+                            LookAtPlayer(instantiatedEnemies[i]);
+                            chargingController.isCharging = true;
+                        }
+                    break;
+
+                default:
+                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                    break;
+            }
+        }
+    }
+
+    /*private void FollowPlayer(float t){
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
             var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
@@ -95,7 +144,7 @@ public class EnemySpawner : MonoBehaviour
             
             instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
         }
-    }
+    }*/
 
     private void UpdateTimers(float t){
 
@@ -141,6 +190,15 @@ public class EnemySpawner : MonoBehaviour
             datas[i].maxHealth += datas[i].maxHealth*difficultyIncreasePercentage;
             datas[i].strength += datas[i].strength*difficultyIncreasePercentage;
         }
+    }
+
+    private void LookAtPlayer(Transform enemy){
+        Vector3 direction = player.position - enemy.position;
+        direction = direction.normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        enemy.rotation = Quaternion.Euler(0, 0, angle);
+
     }
     #endregion
 
