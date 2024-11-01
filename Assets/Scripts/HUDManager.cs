@@ -7,9 +7,10 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     Slider XPSlider,healthSlider;
     [SerializeField]
-    TMP_Text levelIndicator;
+    TMP_Text levelIndicator, timerText;
     [SerializeField]
     Image healthSliderFill;
+    float timer = 0f;
 
     private void Start() {
         GameManager.XPChange.AddListener(ModifyXPSlider);
@@ -19,6 +20,12 @@ public class HUDManager : MonoBehaviour
 
         GameManager.healthChange.AddListener(ModifyHealth);
         ModifyHealth(GameManager.maxHealth);
+
+    }
+
+    private void Update() {
+        timer += Time.deltaTime;
+        UpdateTime(timer);
     }
 
     private void ModifyXPSlider(float value){
@@ -40,5 +47,13 @@ public class HUDManager : MonoBehaviour
         healthSliderFill.color = Vector4.Lerp(Color.red,Color.green,newValue);
         
         
+    }
+
+    private void UpdateTime(float t){
+        GameManager.gameDuration = t;
+        int min = (int)(t/60f);
+        int sec = (int)(t % 60f);
+        string text =min.ToString("00") + ":" + sec.ToString("00");
+        timerText.text = text;
     }
 }

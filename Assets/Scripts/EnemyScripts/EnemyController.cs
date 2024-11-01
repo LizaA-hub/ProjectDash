@@ -50,6 +50,8 @@ public class EnemyController : MonoBehaviour
             StartCoroutine(DamageFlash()); // Start the flash coroutine
         }
 
+        GameManager.totalDamages += amount;
+        
         if (health <= 0f)
         {
             Die();

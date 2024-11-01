@@ -29,13 +29,15 @@ public class TrailCollisionTemp : MonoBehaviour
             validCollider = unusedColliders[0];
             validCollider.enabled = true;
             unusedColliders.RemoveAt(0);
+            if (validCollider != null){
+                return validCollider;
+            }
         }
-        else
-        {
-            validCollider = new GameObject("TrailCollider",typeof(EdgeCollider2D)).GetComponent<EdgeCollider2D>();
-            validCollider.isTrigger = true;
-            validCollider.gameObject.tag = "PlayerTrail";
-        }
+        
+        validCollider = new GameObject("TrailCollider",typeof(EdgeCollider2D)).GetComponent<EdgeCollider2D>();
+        validCollider.isTrigger = true;
+        validCollider.gameObject.tag = "PlayerTrail";
+        
         return validCollider;
     }
  

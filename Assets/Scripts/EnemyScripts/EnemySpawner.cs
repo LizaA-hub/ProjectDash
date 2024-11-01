@@ -64,6 +64,7 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
         instantiatedEnemies.RemoveAt(toRemove);
+        GameManager.enemyKilled += 1;
     }
     #endregion
     #region Private Functions
