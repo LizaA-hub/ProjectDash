@@ -10,6 +10,7 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
+        availablePoints = (int)GameManager.GetSkillPoint();
         UpdateSkillPointsUI();  // Initial display of skill points
     }
 
@@ -44,6 +45,8 @@ public class SkillTreeManager : MonoBehaviour
         skill.isUnlocked = true;
         availablePoints -= skill.cost;
         Debug.Log($"{skill.skillName} unlocked!");
+        //update static variables//
+        GameManager.ModifySkillPoint(-skill.cost);
 
         UpdateSkillPointsUI();  // Update the UI with the new skill points total
         return true;

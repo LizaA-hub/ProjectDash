@@ -11,14 +11,23 @@ public static class GameManager
     public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f;
     private static int level= 1;
     public static int enemyKilled = 0;
+    private static bool inPlayGround = false;
 
     public struct persistantStats{//a separate struct for the stats that can be upgraded by the player between run
         public float defaultHealth;
         public float defaultStrength;
+        public float skillPoint;
 
         public persistantStats(float h, float s){
             defaultHealth = h;
             defaultStrength = s;
+            //check if there's saved data for skill points//
+            if(PlayerPrefs.HasKey("skillPoint")){
+                skillPoint = PlayerPrefs.GetFloat("skillPoint");
+            }
+            else{
+                skillPoint = 0f;
+            }
         }
     }
 
@@ -63,6 +72,7 @@ public static class GameManager
         
         if (health == 0f){
             gameOver.Invoke();
+            OnGameOver();
         }
         
     }
@@ -72,14 +82,35 @@ public static class GameManager
         //set health to max health?
     }
 
-    public static void RestartGame(){
+    public static void StartGame(){
         //Reset stats//
         InitializeVariables();
 
-        //reload scene//
-        var scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
+        //load scene//
+        if(inPlayGround){
+            SceneManager.LoadScene("ProgrammationPlayground1");
+        }
+        else{
+            SceneManager.LoadScene("MainLevel");}
     }
+
+    public static void LoadMenu(){
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public static void ModifySkillPoint(float amount){
+        currentStats.skillPoint += amount;
+        PlayerPrefs.SetFloat("skillPoint",currentStats.skillPoint);
+    }
+
+    public static float GetSkillPoint(){
+        return currentStats.skillPoint;
+    }
+
+    public static void ResetSkillPoints(){
+        ModifySkillPoint(-currentStats.skillPoint);
+    }
+
     #endregion
 
     #region Private Functions
@@ -95,6 +126,17 @@ public static class GameManager
         level = 1;
         enemyKilled = 0;
         Time.timeScale = 1f;
+        //check if playing in playground//
+        var scene = SceneManager.GetActiveScene();
+        if(scene.name == "ProgrammationPlayground1"){
+            inPlayGround = true;
+        }
+        
+    }
+
+    private static void OnGameOver(){
+        float newSkillPoint = (float)enemyKilled + totalDamages*gameDuration;
+        ModifySkillPoint(newSkillPoint);
     }
 
     #endregion

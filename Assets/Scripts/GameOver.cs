@@ -15,7 +15,10 @@ public class GameOver : MonoBehaviour
     }
 
     public void Restart(){
-        GameManager.RestartGame();
+        GameManager.StartGame();
+    }
+    public void Menu(){
+        GameManager.LoadMenu();
     }
     private void OnGameOver(){
         //stop time//
