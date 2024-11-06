@@ -10,19 +10,37 @@ public class GameOver : MonoBehaviour
     [SerializeField]
     TMP_Text time,damage,kill;
 
+    float cooldown = 1f;
+    bool countdown = false;
+
     private void Start() {
         GameManager.gameOver.AddListener(OnGameOver);
     }
 
+    private void Update() {
+        if(countdown){
+            cooldown-=Time.unscaledDeltaTime;
+            if (cooldown <=0f){
+                cooldown = 1f;
+                countdown = false;
+            }
+        }
+    }
+
     public void Restart(){
-        GameManager.StartGame();
+        if(!countdown){
+            GameManager.StartGame();
+        }
     }
     public void Menu(){
-        GameManager.LoadMenu();
+        if(!countdown){
+            GameManager.LoadMenu();
+        }
     }
     private void OnGameOver(){
         //stop time//
         Time.timeScale = 0f;
+        countdown = true;
 
         //show panel//
         panel.SetActive(true);

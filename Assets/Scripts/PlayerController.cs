@@ -1,13 +1,19 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    float moveSpeed = 10.0f, cooldown = 2f;
+    float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 20f;
+    [SerializeField]
+    Transform projectilePrefab, map;
     private Camera cam;
     private Vector3 mousePos;
     private bool mouseDown = false, invincible = false;
-    private float cooldownTimer;
+    private float cooldownTimer, projectileTimer;
+
+    private List<Transform> projectiles = new List<Transform>();
+    private Transform newProjectile;
     
     #region Unity Functions
     // Start is called before the first frame update
@@ -15,6 +21,7 @@ public class PlayerController : MonoBehaviour
     {
         cam = Camera.main;
         cooldownTimer = cooldown;
+        projectileTimer = GameManager.projectileCooldown;
     }
 
 
@@ -25,6 +32,11 @@ public class PlayerController : MonoBehaviour
             mouseDown = true;
             mousePos = cam.ScreenToWorldPoint(Input.mousePosition) ;
             mousePos.z = transform.position.z;
+
+            if(projectileTimer <= 0){
+                FireProjectile(mousePos);
+                projectileTimer = GameManager.projectileCooldown;
+            }
             
         }
         var step = moveSpeed * Time.deltaTime;
@@ -41,6 +53,12 @@ public class PlayerController : MonoBehaviour
                 invincible = false;
             }
         }
+
+        if((projectileTimer > 0 ) && GameManager.haveProjectile){
+            projectileTimer -= Time.deltaTime;
+        }
+        
+        UpdateProjectile(Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -53,6 +71,12 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion
+    #region Public Functions
+        public void DisableProjectile(Transform projectile){
+            projectile.gameObject.SetActive(false);
+        }
+
+    #endregion
     #region Private Functions
         private void TakeDamage(float amount){
             GameManager.ModifyHealth(-amount);
@@ -61,5 +85,64 @@ public class PlayerController : MonoBehaviour
         private void Heal(float amount){
             GameManager.ModifyHealth(amount);
         }
+
+        private void FireProjectile(Vector3 target){
+            
+            if(projectiles.Count > 0){
+                bool reuseProjectile = false;
+                foreach (Transform projectile in projectiles)
+                {
+                    if(!projectile.gameObject.activeSelf){
+                        projectile.gameObject.SetActive(true);
+                        newProjectile = projectile;
+                        reuseProjectile = true;
+                        break;
+                    }
+                }
+                if(!reuseProjectile){
+                    //create new projectile//
+                    newProjectile = Instantiate(projectilePrefab);
+                    projectiles.Add(newProjectile);
+                    newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;      
+                }
+
+            }
+            else{
+                //create new projectile//
+                newProjectile = Instantiate(projectilePrefab);
+                projectiles.Add(newProjectile);
+                newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;            
+            }
+
+            //rotate projectile in target direction//
+            newProjectile.position = transform.position;
+            Vector3 direction = target - transform.position;
+            direction = direction.normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            newProjectile.rotation = Quaternion.Euler(0, 0, angle-90f);
+
+            //set variables//
+            var controller = newProjectile.gameObject.GetComponent<DashProjectile>();
+            controller.direction = direction;
+        }
+
+        private void UpdateProjectile(float t){
+            if(projectiles.Count > 0) foreach (Transform projectile in projectiles)
+            {
+                if(projectile.gameObject.activeSelf){
+                    //move projectile//
+                    var step = projectileSpeed * Time.deltaTime;
+                    var target = projectile.gameObject.GetComponent<DashProjectile>().direction;
+                    projectile.position = Vector3.MoveTowards(projectile.position, projectile.position+target, step);
+                    //check if projectile is outside the map//
+                    
+                    if((Mathf.Abs(projectile.position.x) > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) > map.lossyScale.y/2) ){
+                        DisableProjectile(projectile);
+                    }
+                }
+            }
+        }
+
+        
     #endregion
 }

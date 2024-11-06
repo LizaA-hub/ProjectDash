@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour
     [HideInInspector]
     public float health, strength, speed, experience, cooldown = 1f;
     bool invincible = false;
+    Transform orb;
 
     //added for damage animation
     private SpriteRenderer spriteRenderer;
@@ -35,6 +36,15 @@ public class EnemyController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("PlayerTrail")){
             TakeDamage(GameManager.playerStrength);
+            //Debug.Log("enemy touched trail");
+        }
+        else if(other.gameObject.CompareTag("ClosedShape")){
+            //Debug.Log("enemy in a shape");
+            TakeDamage(GameManager.playerStrength*5f); //will have its own variable
+        }
+        else if(other.gameObject.CompareTag("Projectile")){
+            //Debug.Log("enemy in a shape");
+            TakeDamage(GameManager.projectileDamage);
         }
     }
 
@@ -45,16 +55,16 @@ public class EnemyController : MonoBehaviour
         if (invincible) return;
 
         health -= amount;
-        if (spriteRenderer != null)
-        {
-            StartCoroutine(DamageFlash()); // Start the flash coroutine
-        }
 
         GameManager.totalDamages += amount;
         
         if (health <= 0f)
         {
             Die();
+        }
+        else if(spriteRenderer != null)
+        {
+            StartCoroutine(DamageFlash()); // Start the flash coroutine
         }
     }
     
@@ -71,15 +81,37 @@ public class EnemyController : MonoBehaviour
 
     private void Die(){
         //drop orb//
-        var orb = Instantiate(orbPrefab);
+
+        //check if an orb object is available//
+        bool instantiateNewOrb = true;
+        var orbParent = GameObject.Find("OrbParent");
+        for (int i = 0; i < orbParent.transform.childCount; i++)
+        {
+            Transform child = orbParent.transform.GetChild(i);
+            if(!child.gameObject.activeSelf){
+                orb = child;
+                orb.gameObject.SetActive(true);
+                instantiateNewOrb = false;
+                break;
+            }
+        }
+        //if no orb available instantiate a new one//
+        if(instantiateNewOrb){
+            orb = Instantiate(orbPrefab);
+            orb.SetParent(orbParent.transform, false);
+        }
+        //set variables
         orb.gameObject.GetComponent<XPOrb>().XPAmount = experience;
         orb.position = transform.position;
 
-        //remove self form enemySpawner//
+        /*//remove self form enemySpawner//
         var spawner = transform.parent.gameObject.GetComponent<EnemySpawner>();
         spawner.RemoveEnemy(transform);
 
-        Destroy(gameObject);
+        Destroy(gameObject);*/
+        GameManager.enemyKilled += 1;
+        spriteRenderer.color = originalColor;
+        gameObject.SetActive(false);
     }
 
     #endregion

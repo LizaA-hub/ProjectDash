@@ -5,12 +5,13 @@ using UnityEngine.SceneManagement;
 public static class GameManager
 {
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
-    public static UnityEvent<int> levelChange = new UnityEvent<int>();
+    public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
     public static UnityEvent gameOver = new UnityEvent();
-    private static float experience = 0f, growFactor = 1.3f, health = 10f;
-    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f;
-    private static int level= 1;
+    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f;
     public static int enemyKilled = 0;
+    public static bool haveProjectile = false;
+    private static float experience = 0f, growFactor = 1.3f, health = 10f;
+    private static int level= 1;
     private static bool inPlayGround = false;
 
     public struct persistantStats{//a separate struct for the stats that can be upgraded by the player between run
@@ -41,7 +42,8 @@ public static class GameManager
     #region Public Functions
 
     public static void ModifyExperience(float amount){
-        experience += amount; 
+        float m = amount*xpMultiplier;
+        experience += amount + m; 
         if (experience >= xpToNextLevel){
             experience -= xpToNextLevel;
             ModifyLevel();
@@ -109,6 +111,39 @@ public static class GameManager
 
     public static void ResetSkillPoints(){
         ModifySkillPoint(-currentStats.skillPoint);
+    }
+
+    public static void Upgrade(PowerUpDataManager.PowerUpType type, int level){
+        switch (type)
+        {
+            case PowerUpDataManager.PowerUpType.Trail :
+                trailIncrease.Invoke(level);
+                break;
+            case PowerUpDataManager.PowerUpType.Strength :
+                float s = playerStrength*0.1f;
+                playerStrength += s;
+                break;
+            case PowerUpDataManager.PowerUpType.XP :
+                xpMultiplier = 0.1f*level;
+                break;
+            case PowerUpDataManager.PowerUpType.UnlockProjectile :
+                haveProjectile = true;
+                break;
+            case PowerUpDataManager.PowerUpType.ProjectileCooldown :
+                if(haveProjectile){
+                    float c = projectileCooldown*0.1f;
+                    projectileCooldown -= c;
+                }
+                break;
+            case PowerUpDataManager.PowerUpType.ProjectileDamage :
+                if(haveProjectile){
+                    float d = projectileDamage*0.1f;
+                    projectileDamage += d;
+                }
+                break;
+            default:
+            break;
+        }
     }
 
     #endregion

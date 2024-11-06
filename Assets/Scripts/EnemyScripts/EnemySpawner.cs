@@ -22,6 +22,11 @@ public class EnemySpawner : MonoBehaviour
     float difficultyTimer = 0f;
     Vector3 velocity = Vector3.zero;
 
+    //spawninf function variables//
+    EnemyController controller;
+    Transform newEnemy;
+    EnemyDataManager.EnemyData data;
+
     #region Unity Functions
     private void Start() {
         Vector3 mapSize = map.localScale;
@@ -52,7 +57,7 @@ public class EnemySpawner : MonoBehaviour
     #endregion
     #region Public Functions
 
-    public void RemoveEnemy(Transform enemy){
+    /*public void RemoveEnemy(Transform enemy){
         int toRemove = -1;
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
@@ -65,87 +70,107 @@ public class EnemySpawner : MonoBehaviour
         }
         instantiatedEnemies.RemoveAt(toRemove);
         GameManager.enemyKilled += 1;
-    }
+    }*/
     #endregion
     #region Private Functions
 
     private void SpawnEnemy(EnemyDataManager.EnemyType type,Vector3 position){
-        foreach (var data in datas)
+        
+        bool instantiateNewEnemy = true;
+
+        //find the data corresponding to the type//
+        foreach (var correspondingData in datas)
         {
-            if(data.type == type){
-                Transform enemy = Instantiate(data.prefab);
-                enemy.position = position;
-                instantiatedEnemies.Add(enemy);
-                enemy.SetParent(transform,false); 
-                var controller = enemy.GetComponent<EnemyController>() ;                
-                controller.health = data.maxHealth;
-                controller.strength = data.strength;
-                controller.speed = data.speed;
-                controller.experience = data.experience;
-                return;
+            if(type == correspondingData.type){
+                data = correspondingData;
+                break;
             }
         }
+
+        //check if an already instantiated child is available//
+        foreach (var enemy in instantiatedEnemies)
+        {
+            if(!enemy.gameObject.activeSelf){
+                controller = enemy.GetComponent<EnemyController>() ; 
+                if(controller.type == type){
+                    newEnemy = enemy;
+                    newEnemy.gameObject.SetActive(true);
+                    instantiateNewEnemy = false;
+                    break;
+                }
+            }
+        }
+
+        //if no child available, instantiate a new one//
+        if(instantiateNewEnemy){
+            newEnemy = Instantiate(data.prefab);
+            instantiatedEnemies.Add(newEnemy);
+            newEnemy.SetParent(transform,false); 
+            controller = newEnemy.GetComponent<EnemyController>() ; 
+        }
+
+        //set variables//
+        newEnemy.position = position;
+        controller.health = data.maxHealth;
+        controller.strength = data.strength;
+        controller.speed = data.speed;
+        controller.experience = data.experience;
+        
         
     }
 
     private void UpdateEnemies(float t){
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
-            var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
-            var step = controller.speed * t;
-            switch (controller.type)
+            if (instantiatedEnemies[i].gameObject.activeSelf)
             {
-                //Basic enemy movement//
-                case EnemyDataManager.EnemyType.Basic:
-                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
-                    break;
-                //Dashing enemy movement//
-                case EnemyDataManager.EnemyType.Charging:
-                    var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
-                    if (chargingController.isCharging)
-                        {
-                            LookAtPlayer(instantiatedEnemies[i]);
-                            chargingController.chargeTimer -= t;
-                            if (chargingController.chargeTimer <= 0f)
+                var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
+                var step = controller.speed * t;
+                switch (controller.type)
+                {
+                    //Basic enemy movement//
+                    case EnemyDataManager.EnemyType.Basic:
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
+                    //Dashing enemy movement//
+                    case EnemyDataManager.EnemyType.Charging:
+                        var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
+                        if (chargingController.isCharging)
                             {
-                                chargingController.chargeTimer = 1f;
-                                chargingController.isCharging = false;
-                                chargingController.isDashing = true;
-                                chargingController.dashTarget = instantiatedEnemies[i].position + (player.position - instantiatedEnemies[i].position).normalized * chargingController.dashDistance;
+                                LookAtPlayer(instantiatedEnemies[i]);
+                                chargingController.chargeTimer -= t;
+                                if (chargingController.chargeTimer <= 0f)
+                                {
+                                    chargingController.chargeTimer = 1f;
+                                    chargingController.isCharging = false;
+                                    chargingController.isDashing = true;
+                                    chargingController.dashTarget = instantiatedEnemies[i].position + (player.position - instantiatedEnemies[i].position).normalized * chargingController.dashDistance;
+                                }
                             }
-                        }
-                    else if (chargingController.isDashing)
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, chargingController.dashTarget, step);
-                            // Stop dashing once the enemy has moved the full dash distance
-                            if (Vector3.Distance(instantiatedEnemies[i].position, chargingController.dashTarget) < 0.1f)
+                        else if (chargingController.isDashing)
                             {
-                                chargingController.isDashing = false;
+                                instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, chargingController.dashTarget, step);
+                                // Stop dashing once the enemy has moved the full dash distance
+                                if (Vector3.Distance(instantiatedEnemies[i].position, chargingController.dashTarget) < 0.1f)
+                                {
+                                    chargingController.isDashing = false;
+                                }
                             }
-                        }
-                    else
-                        {
-                            LookAtPlayer(instantiatedEnemies[i]);
-                            chargingController.isCharging = true;
-                        }
-                    break;
-
-                default:
-                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
-                    break;
+                        else
+                            {
+                                LookAtPlayer(instantiatedEnemies[i]);
+                                chargingController.isCharging = true;
+                            }
+                        break;
+    
+                    default:
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
+            }
             }
         }
     }
 
-    /*private void FollowPlayer(float t){
-        for (int i = 0; i < instantiatedEnemies.Count; i++)
-        {
-            var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
-            var step = controller.speed * t;
-            
-            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
-        }
-    }*/
 
     private void UpdateTimers(float t){
 

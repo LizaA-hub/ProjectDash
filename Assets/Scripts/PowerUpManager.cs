@@ -11,23 +11,45 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField]
     Transform[] buttons;
     int[] correspondingPower = {-1,-1,-1};
+    float cooldown = 1f;
+    bool countdown = false;
 
-
+    #region Unity Functions
     private void Start() {
         GameManager.levelChange.AddListener(NewLevel);
     }
+    
+    private void Update() {
+        if(countdown){
+            cooldown-=Time.unscaledDeltaTime;
+            if (cooldown <=0f){
+                cooldown = 1f;
+                countdown = false;
+            }
+        }
+    }
+    #endregion
+    #region Public Functions
     public void OnFirstButtonClick(){
-        SelectOption(0);  
+        if(!countdown){
+            SelectOption(0); 
+        }  
     }
     public void OnSecondButtonClick(){
-        SelectOption(1);  
+        if(!countdown){
+            SelectOption(1); 
+        }  
     }
     public void OnThirdButtonClick(){
-        SelectOption(2);  
+        if(!countdown){
+            SelectOption(2); 
+        }  
     }
-
+    #endregion
+    #region Private Functions
     private void NewLevel(int level){
         Time.timeScale = 0f;
+        countdown = true;
         ShowPanel();
     }
 
@@ -50,7 +72,11 @@ public class PowerUpManager : MonoBehaviour
                             }
                         }
                 }
-            
+            if(!GameManager.haveProjectile){
+                if(powerId == 3 ||powerId == 4){
+                    powerId = 5;
+                }
+            }
             correspondingPower[i] = powerId;
             name.text = datas[powerId].name;
             description.text = datas[powerId].description;
@@ -76,12 +102,16 @@ public class PowerUpManager : MonoBehaviour
     }
 
     private void SelectOption(int option){
+        PowerUpDataManager.PowerUpType type = datas[correspondingPower[option]].type;
+        int level = datas[correspondingPower[option]].level; 
+        GameManager.Upgrade(type,level);
         datas[correspondingPower[option]].level += 1;
-        // TO DO : function to trigger change in the gamemanager sending type and level
+        
         panel.SetActive(false);
         Time.timeScale = 1f;
         for(int i = 0; i < correspondingPower.Length ; i++){
             correspondingPower[i] = -1;
         }
     }
+    #endregion
 }

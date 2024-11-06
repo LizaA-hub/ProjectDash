@@ -23,9 +23,10 @@ public class XPOrb : MonoBehaviour
             move = true;
         }
         if(other.gameObject.CompareTag("Player")){
-            //Debug.Log("Player get "+ XPAmount + "XP");
             GameManager.ModifyExperience(XPAmount);
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            move = false;
+            gameObject.SetActive(false);
         }
     }
 
