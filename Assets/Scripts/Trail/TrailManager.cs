@@ -8,6 +8,8 @@ public class TrailManager : MonoBehaviour
     Material shapeMaterial;
     [SerializeField]
     float trailDuration = 1f, step = 1f;
+    [SerializeField]
+    bool DebugShape = true;
     TrailRenderer myTrail;
     EdgeCollider2D myCollider;
  
@@ -40,14 +42,14 @@ public class TrailManager : MonoBehaviour
     EdgeCollider2D GetValidCollider()
     {
         EdgeCollider2D validCollider;
-        if(unusedColliders.Count>0)
+        if((unusedColliders.Count>0) && (unusedColliders[0] != null))
         {
             validCollider = unusedColliders[0];
             validCollider.enabled = true;
             unusedColliders.RemoveAt(0);
-            if (validCollider != null){
-                return validCollider;
-            }
+            
+            return validCollider;
+            
         }
         
         validCollider = new GameObject("TrailCollider",typeof(EdgeCollider2D)).GetComponent<EdgeCollider2D>();
@@ -106,8 +108,12 @@ public class TrailManager : MonoBehaviour
                 {
                     points[n] = myTrail.GetPosition(i);
                 }
-
-                CreateMesh(points);
+                
+                Vector2[] anglePoints = FindAngles(points).ToArray();
+                if(anglePoints.Length > 2){
+                    CreateMesh(anglePoints);
+                }
+                
 
             }
           
@@ -118,6 +124,7 @@ public class TrailManager : MonoBehaviour
         bool createGO = false;
         //GameObject newObject;
         int availableGO = -1;
+        //check if there's an instantiated shape available//
         if(closedShapes.Count > 0){
             for (int i = 0; i < closedShapes.Count; i++)
             {
@@ -136,7 +143,7 @@ public class TrailManager : MonoBehaviour
         else{
             createGO = true;
         }
-        
+        //if not create one//
         if(createGO){
             newObject = new GameObject("TrailShape",typeof(PolygonCollider2D),typeof(MeshRenderer),typeof(MeshFilter));
         }
@@ -156,8 +163,10 @@ public class TrailManager : MonoBehaviour
         float t = 2f;
 
         if(Area(mesh) > 0.1f){
-            //HideShape(newObject,0f);
             myTrail.Clear();
+            if(DebugShape){
+                Debug.Log(GeometricalShape.DetectShape(points));
+            }
         }
         else{
             HideShape(newObject,100f);
@@ -207,12 +216,70 @@ public class TrailManager : MonoBehaviour
         gObject.transform.position = newPosition;
 
     }
+    private List<Vector2> FindAngles(Vector2[] points){
+        List<Vector2> anglePoints = new List<Vector2>();
+        float[] angles = new float[points.Length];
+        Vector2 vA = Vector2.zero;
+        Vector2 vB = Vector2.zero;
+        //calculate the angle at each point//
+        for (int i = 0; i < points.Length; i++)
+        {
+            if(i-1 < 0){
+                vA = points[points.Length-1] - points[i];
+            }
+            else{
+                vA = points[i-1] - points[i];
+            }
+
+            if(i+1 >= points.Length){
+                vB = points[0] - points[i];
+            }
+            else{
+                vB = points[i+1] - points[i];
+            }
+
+            float angle = Vector2.Angle(vA,vB); //angle in degre
+            angles[i] = angle;
+        }
+
+        //comparing each angle//
+        for (int i = 0; i < points.Length; i++)
+        {
+            float Min = 0;
+            if(i-1 < 0){
+                if(i+1 >= points.Length){
+                    Min = Mathf.Min(angles[i],angles[angles.Length -1],angles[0]);
+                }
+                else{
+                    Min = Mathf.Min(angles[i],angles[angles.Length -1],angles[i+1]);
+                }
+            }
+            else{
+                if(i+1 >= points.Length){
+                    Min = Mathf.Min(angles[i],angles[i-1],angles[0]);
+                }
+                else{
+                    Min = Mathf.Min(angles[i],angles[i-1],angles[i+1]);
+                }
+            }
+            //adding the angle to anglePoints if it's a corner//
+            if(angles[i] < 170f && Min == angles[i]){
+                anglePoints.Add(points[i]);
+            }
+        }
+
+        /*if(anglePoints.Count > 0){
+            Debug.Log("there is " + anglePoints.Count + " angles.");
+        }*/
+
+        return anglePoints;
+    }
     #endregion
 
     void IncreaseTrailDuration(int level){
         trailDuration += step*level; 
         myTrail.time = trailDuration;
-        ;
+        
     }
 
 }

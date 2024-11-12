@@ -79,7 +79,7 @@ public class EnemyController : MonoBehaviour
         spriteRenderer.color = originalColor;
     }
 
-    private void Die(){
+    public virtual void Die(){
         //drop orb//
 
         //check if an orb object is available//

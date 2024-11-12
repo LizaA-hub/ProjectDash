@@ -9,4 +9,11 @@ public class ChargingEnemyControllerTEST : EnemyController
     public bool isDashing = false,isCharging = false;
     [HideInInspector]
     public Vector3 dashTarget;
+
+    public override void Die(){
+        chargeTimer = 1f;
+        isDashing = false;
+        isCharging = false;
+        base.Die();
+    }
 }

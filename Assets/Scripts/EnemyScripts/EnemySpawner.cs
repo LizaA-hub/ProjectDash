@@ -17,6 +17,7 @@ public class EnemySpawner : MonoBehaviour
     EnemyDataManager.EnemyData[] datas;
 
     Vector3[] spawningPoints = new Vector3[4];
+    [SerializeField]
     List<Transform> instantiatedEnemies = new List<Transform>();
     float[] timers;
     float difficultyTimer = 0f;

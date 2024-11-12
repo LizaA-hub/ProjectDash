@@ -2876,6 +2876,7 @@ MonoBehaviour:
     speed: 5
     experience: 10
     spawnDelay: 50
+  instantiatedEnemies: []
 --- !u!4 &954499559
 Transform:
   m_ObjectHideFlags: 0
