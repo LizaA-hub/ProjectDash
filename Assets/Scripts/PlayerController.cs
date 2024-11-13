@@ -1,12 +1,18 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
-
+using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 20f;
     [SerializeField]
     Transform projectilePrefab, map;
+    [SerializeField]
+    GraphicRaycaster m_Raycaster;
+    PointerEventData m_PointerEventData;
+    [SerializeField]
+    EventSystem m_EventSystem;
     private Camera cam;
     private Vector3 mousePos;
     private bool mouseDown = false, invincible = false;
@@ -14,7 +20,6 @@ public class PlayerController : MonoBehaviour
 
     private List<Transform> projectiles = new List<Transform>();
     private Transform newProjectile;
-    
     #region Unity Functions
     // Start is called before the first frame update
     void Start()
@@ -28,7 +33,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0) && !mouseDown){
+        if(Input.GetMouseButtonDown(0) && !mouseDown && !MouseOverUI()){
             mouseDown = true;
             mousePos = cam.ScreenToWorldPoint(Input.mousePosition) ;
             mousePos.z = transform.position.z;
@@ -59,7 +64,9 @@ public class PlayerController : MonoBehaviour
         }
         
         UpdateProjectile(Time.deltaTime);
+        
     }
+
 
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Enemy")){
@@ -143,6 +150,30 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        
+        private bool MouseOverUI(){
+            //Set up the new Pointer Event
+            m_PointerEventData = new PointerEventData(m_EventSystem);
+            //Set the Pointer Event Position to that of the mouse position
+            m_PointerEventData.position = Input.mousePosition;
+
+            //Create a list of Raycast Results
+            List<RaycastResult> results = new List<RaycastResult>();
+
+            //Raycast using the Graphics Raycaster and mouse click position
+            m_Raycaster.Raycast(m_PointerEventData, results);
+
+            /*//For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            foreach (RaycastResult result in results)
+            {
+                Debug.Log("Hit " + result.gameObject.name);
+            }*/
+
+            if(results.Count > 0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
     #endregion
 }

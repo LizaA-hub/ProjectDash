@@ -7,6 +7,8 @@ public class CameraController : MonoBehaviour
     Transform player, map;
     [SerializeField, Range(0f,1f)]
     float smoothTime = 0.5f;
+    [SerializeField]
+    bool focusPlayer = false;
     bool followMouse = false;
     private Vector3 target, smoothPosition, velocity = Vector3.zero, lowerBound, bound, mousePos;
 
@@ -26,7 +28,7 @@ public class CameraController : MonoBehaviour
             followMouse = false;
         }
         //mouse is at the edge of the screen
-        if (followMouse){
+        if (followMouse && !focusPlayer){
             target = GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
         }
         else{//follow the player

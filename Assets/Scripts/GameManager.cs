@@ -61,10 +61,8 @@ public static class GameManager
         levelChange.Invoke(level);
     }
 
-    public static int GetLevel(){
-        return level;
-    }
-
+    public static int GetLevel() => level;
+    
     public static void ModifyHealth(float amount){
         var newHealth = Mathf.Clamp(health + amount,0f,maxHealth);
         if(health != newHealth){
@@ -78,6 +76,8 @@ public static class GameManager
         }
         
     }
+
+    public static float GetHealth() => health;
 
     public static void ModifyMaxHealth(float value){
         maxHealth = value;

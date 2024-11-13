@@ -77,6 +77,11 @@ public class PowerUpManager : MonoBehaviour
                     powerId = 5;
                 }
             }
+            else{
+                if(powerId == 5){
+                    powerId = IsPowerTaken(3)? 4 : 3;
+                }
+            }
             correspondingPower[i] = powerId;
             name.text = datas[powerId].name;
             description.text = datas[powerId].description;
