@@ -7,9 +7,10 @@ public static class GameManager
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
     public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
     public static UnityEvent gameOver = new UnityEvent();
-    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f;
-    public static int enemyKilled = 0;
-    public static bool haveProjectile = false;
+    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f,
+                        shockWaveCooldown = 2f, shockWaveMaxRadius = 5f;
+    public static int enemyKilled = 0, projectileNb = 0;
+    public static bool haveProjectile = false, haveShockWave = false;
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
     private static bool inPlayGround = false;
@@ -122,24 +123,18 @@ public static class GameManager
             case PowerUpDataManager.PowerUpType.Strength :
                 float s = playerStrength*0.1f;
                 playerStrength += s;
+                s = projectileDamage*0.1f;
+                projectileDamage += s;
                 break;
             case PowerUpDataManager.PowerUpType.XP :
                 xpMultiplier = 0.1f*level;
                 break;
-            case PowerUpDataManager.PowerUpType.UnlockProjectile :
-                haveProjectile = true;
-                break;
-            case PowerUpDataManager.PowerUpType.ProjectileCooldown :
-                if(haveProjectile){
-                    float c = projectileCooldown*0.1f;
-                    projectileCooldown -= c;
+            case PowerUpDataManager.PowerUpType.Projectile :
+                if(level == 1){
+                    haveProjectile = true;
                 }
-                break;
-            case PowerUpDataManager.PowerUpType.ProjectileDamage :
-                if(haveProjectile){
-                    float d = projectileDamage*0.1f;
-                    projectileDamage += d;
-                }
+                projectileNb = level;
+                
                 break;
             default:
             break;

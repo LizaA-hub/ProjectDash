@@ -1907,8 +1907,10 @@ MonoBehaviour:
   moveSpeed: 10
   cooldown: 2
   projectileSpeed: 15
+  waveSpeed: 10
   projectilePrefab: {fileID: 8175187030059307689, guid: ae7ded195440c1f4890e5fed1dd5d7ea, type: 3}
   map: {fileID: 1395205163}
+  shockWavePrefab: {fileID: 8090062928529375664, guid: 9034c4ca66858054f871e025dd4d2711, type: 3}
   m_Raycaster: {fileID: 1384839748}
   m_EventSystem: {fileID: 795228186}
 --- !u!61 &677403902
@@ -4614,31 +4616,25 @@ MonoBehaviour:
     name: Trail duration
     description: Increase the trail duration by 1 second.
     level: 1
+    levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 2
-    name: Trail damage
-    description: Increase trail damage by 10%
+    name: Increase damage
+    description: Increase all type of damages by 10%
     level: 1
+    levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 1
     name: XP gain
     description: Increase the xp gain by 10%
     level: 1
-    icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  - type: 3
-    name: Projectile damage
-    description: Increase the damage of the dash projectile by 10%
-    level: 1
-    icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  - type: 4
-    name: Projectile cooldown
-    description: Reduce the cooldown between each dash projectile by 10%
-    level: 1
+    levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 3
     name: Dash projectile
-    description: When dashing, throw a projectile in the same direction
+    description: Your dash fire a projectile that deals damage to the enemy
     level: 1
+    levelLimit: 9
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   buttons:
   - {fileID: 1754611698}

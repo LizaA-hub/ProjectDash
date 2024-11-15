@@ -72,16 +72,7 @@ public class PowerUpManager : MonoBehaviour
                             }
                         }
                 }
-            if(!GameManager.haveProjectile){
-                if(powerId == 3 ||powerId == 4){
-                    powerId = 5;
-                }
-            }
-            else{
-                if(powerId == 5){
-                    powerId = IsPowerTaken(3)? 4 : 3;
-                }
-            }
+          
             correspondingPower[i] = powerId;
             name.text = datas[powerId].name;
             description.text = datas[powerId].description;
@@ -97,6 +88,11 @@ public class PowerUpManager : MonoBehaviour
     }
 
     private bool IsPowerTaken(int Id){
+        if(datas[Id].levelLimit > 0){
+            if(datas[Id].levelLimit >= datas[Id].level){
+                return true;
+            }
+        }
         foreach (int powerId in correspondingPower)
         {
             if (powerId == Id){

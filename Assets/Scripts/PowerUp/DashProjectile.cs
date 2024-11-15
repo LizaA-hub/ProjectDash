@@ -9,7 +9,7 @@ public class DashProjectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Enemy")){
-            manager.DisableProjectile(transform);
+            manager.DisableTransform(transform);
         }
     }
 }

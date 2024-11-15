@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class DebugSceneManager : MonoBehaviour
 {
@@ -6,8 +7,11 @@ public class DebugSceneManager : MonoBehaviour
     GameObject panel;
     [SerializeField]
     EnemySpawnerDebug spawner;
+    [SerializeField]
+    TMP_Text DashAttackText;
 
     bool showPanel = true;
+    int dashAttackLevel = 0;
     
     #region Unity Functions
 
@@ -35,13 +39,13 @@ public class DebugSceneManager : MonoBehaviour
     }
 
     public void UnlockDash(){
-        if(!GameManager.haveProjectile){
-            GameManager.Upgrade(PowerUpDataManager.PowerUpType.UnlockProjectile,1 );
-            Debug.Log("dash attack unlocked");
+        if(dashAttackLevel >= 9 ){
+            Debug.Log("Dash attack is at max level.");
+            return;
         }
-        else{
-            Debug.Log("dash attack already unlocked");
-        }
+        dashAttackLevel += 1;
+        GameManager.Upgrade(PowerUpDataManager.PowerUpType.Projectile,dashAttackLevel);
+        DashAttackText.text = "Lvl " + dashAttackLevel;
     }
 
     public void SpawnBasicEnemy(){
