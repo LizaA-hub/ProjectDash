@@ -8,7 +8,7 @@ public static class GameManager
     public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
     public static UnityEvent gameOver = new UnityEvent();
     public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f,
-                        shockWaveCooldown = 2f, shockWaveMaxRadius = 5f;
+                        shockWaveCooldown = 2f, shockWaveMaxRadius = 5f, shockWaveStrength = 2f;
     public static int enemyKilled = 0, projectileNb = 0;
     public static bool haveProjectile = false, haveShockWave = false;
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
@@ -121,10 +121,9 @@ public static class GameManager
                 trailIncrease.Invoke(level);
                 break;
             case PowerUpDataManager.PowerUpType.Strength :
-                float s = playerStrength*0.1f;
-                playerStrength += s;
-                s = projectileDamage*0.1f;
-                projectileDamage += s;
+                playerStrength += playerStrength*0.1f;
+                projectileDamage += projectileDamage*0.1f;
+                shockWaveStrength += shockWaveStrength*0.1f;
                 break;
             case PowerUpDataManager.PowerUpType.XP :
                 xpMultiplier = 0.1f*level;
@@ -134,6 +133,17 @@ public static class GameManager
                     haveProjectile = true;
                 }
                 projectileNb = level;
+                
+                break;
+            case PowerUpDataManager.PowerUpType.Wave :
+                if(level == 1){
+                    haveShockWave = true;
+                }
+                else{
+                    shockWaveMaxRadius += shockWaveMaxRadius*0.1f;
+                    shockWaveStrength += shockWaveStrength*0.1f;
+                }
+                
                 
                 break;
             default:
@@ -146,16 +156,30 @@ public static class GameManager
     #region Private Functions
 
     private static void InitializeVariables(){
+        //XP variables//
         experience = 0f;
+        xpToNextLevel = 100f;
+        level = 1;
+        xpMultiplier = 0f;
+        //health variables//
         maxHealth = currentStats.defaultHealth;
         health = maxHealth;
-        xpToNextLevel = 100f;
+        //damage variables//
         playerStrength = currentStats.defaultStrength;
         totalDamages = 0f;
-        gameDuration = 0f;
-        level = 1;
         enemyKilled = 0;
+        projectileDamage = 2f;
+        projectileNb = 0;
+        gameDuration = 0f;
+        shockWaveStrength = 2f;
+        shockWaveMaxRadius = 5f;
+        //time variables//
         Time.timeScale = 1f;
+        projectileCooldown = 2f;
+        shockWaveCooldown = 2f;
+        //bool variables//
+        haveProjectile = false;
+        haveShockWave = false;
         //check if playing in playground//
         var scene = SceneManager.GetActiveScene();
         if(scene.name == "ProgrammationPlayground1"){

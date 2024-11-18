@@ -4636,6 +4636,13 @@ MonoBehaviour:
     level: 1
     levelLimit: 9
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  - type: 4
+    name: Shock wave
+    description: After your dash, you create a shock wave that deals damage to the
+      enemy
+    level: 1
+    levelLimit: -1
+    icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   buttons:
   - {fileID: 1754611698}
   - {fileID: 249661595}

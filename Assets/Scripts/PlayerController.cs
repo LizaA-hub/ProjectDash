@@ -223,8 +223,8 @@ public class PlayerController : MonoBehaviour
                     var step = projectileSpeed * Time.deltaTime;
                     var target = projectile.gameObject.GetComponent<DashProjectile>().direction;
                     projectile.position = Vector3.MoveTowards(projectile.position, projectile.position+target, step);
-                    //check if projectile is outside the map//
                     
+                    //check if projectile is outside the map//
                     if((Mathf.Abs(projectile.position.x) > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) > map.lossyScale.y/2) ){
                         DisableTransform(projectile);
                     }
@@ -275,8 +275,9 @@ public class PlayerController : MonoBehaviour
                     float segment = 25f/7f*radius+150f/7f;
                     controller.SetRing(radius,(int)segment);
                     //check if radius > max radius
-
-                    if(radius >= GameManager.shockWaveMaxRadius){
+                    var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
+                    var maxRadius = Mathf.Min(mapMaxSize,GameManager.shockWaveMaxRadius);
+                    if(radius >= maxRadius){
                         DisableTransform(wave);
                     }
                 }

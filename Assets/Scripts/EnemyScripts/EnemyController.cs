@@ -46,6 +46,10 @@ public class EnemyController : MonoBehaviour
             //Debug.Log("enemy in a shape");
             TakeDamage(GameManager.projectileDamage);
         }
+        else if(other.gameObject.CompareTag("ShockWave")){
+            //Debug.Log("enemy colliding with wave");
+            TakeDamage(GameManager.shockWaveStrength);
+        }
     }
 
     #region Private Functions

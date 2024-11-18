@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class PowerUpDataManager
 {
-    public enum PowerUpType{Trail,XP,Strength,Projectile,None};
+    public enum PowerUpType{Trail,XP,Strength,Projectile,Wave,None};
     [System.Serializable]
     public struct PowerUpData{
         public PowerUpType type;

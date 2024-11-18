@@ -12,6 +12,7 @@ TagManager:
   - Green
   - Red
   - Projectile
+  - ShockWave
   layers:
   - Default
   - TransparentFX

@@ -8,10 +8,10 @@ public class DebugSceneManager : MonoBehaviour
     [SerializeField]
     EnemySpawnerDebug spawner;
     [SerializeField]
-    TMP_Text DashAttackText;
+    TMP_Text DashAttackText, shockWaveText;
 
     bool showPanel = true;
-    int dashAttackLevel = 0;
+    int dashAttackLevel = 0, shockWaveLevel = 0;
     
     #region Unity Functions
 
@@ -46,6 +46,12 @@ public class DebugSceneManager : MonoBehaviour
         dashAttackLevel += 1;
         GameManager.Upgrade(PowerUpDataManager.PowerUpType.Projectile,dashAttackLevel);
         DashAttackText.text = "Lvl " + dashAttackLevel;
+    }
+
+    public void UnlockWave(){
+        shockWaveLevel += 1;
+        GameManager.Upgrade(PowerUpDataManager.PowerUpType.Wave,shockWaveLevel);
+        shockWaveText.text = "Lvl " + shockWaveLevel;
     }
 
     public void SpawnBasicEnemy(){
