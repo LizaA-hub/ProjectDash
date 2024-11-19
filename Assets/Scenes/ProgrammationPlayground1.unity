@@ -4416,7 +4416,7 @@ MonoBehaviour:
   shapeMaterial: {fileID: 2100000, guid: b77f02894ec3393498c1d163c801138b, type: 2}
   trailDuration: 1
   step: 1
-  DebugShape: 1
+  DebugShape: 0
 --- !u!1 &1599849049
 GameObject:
   m_ObjectHideFlags: 0
@@ -4604,24 +4604,28 @@ MonoBehaviour:
   - type: 0
     name: Trail duration
     description: Increase the trail duration by 1 second.
+    isDashAttack: 0
     level: 1
     levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 2
     name: Increase damage
     description: Increase all type of damages by 10%
+    isDashAttack: 0
     level: 1
     levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 1
     name: XP gain
     description: Increase the xp gain by 10%
+    isDashAttack: 0
     level: 1
     levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   - type: 3
     name: Dash projectile
     description: Your dash fire a projectile that deals damage to the enemy
+    isDashAttack: 1
     level: 1
     levelLimit: 9
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
@@ -4629,6 +4633,7 @@ MonoBehaviour:
     name: Shock wave
     description: After your dash, you create a shock wave that deals damage to the
       enemy
+    isDashAttack: 1
     level: 1
     levelLimit: -1
     icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}

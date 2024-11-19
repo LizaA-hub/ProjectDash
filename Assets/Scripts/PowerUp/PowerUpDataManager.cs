@@ -8,6 +8,7 @@ public static class PowerUpDataManager
     public struct PowerUpData{
         public PowerUpType type;
         public string name,description;
+        public bool isDashAttack;
         public int level, levelLimit;
         public Sprite icon;
     }
