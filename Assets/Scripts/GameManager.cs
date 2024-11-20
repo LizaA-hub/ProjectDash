@@ -9,7 +9,7 @@ public static class GameManager
     public static UnityEvent gameOver = new UnityEvent();
     public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f,
                         shockWaveCooldown = 2f, shockWaveMaxRadius = 5f, shockWaveStrength = 2f;
-    public static int enemyKilled = 0, projectileNb = 0;
+    public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
     public static bool haveProjectile = false, haveShockWave = false;
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
@@ -143,8 +143,9 @@ public static class GameManager
                     shockWaveMaxRadius += shockWaveMaxRadius*0.1f;
                     shockWaveStrength += shockWaveStrength*0.1f;
                 }
-                
-                
+                break;
+            case PowerUpDataManager.PowerUpType.Shield:
+                dashShieldLevel += 1;
                 break;
             default:
             break;
@@ -173,6 +174,7 @@ public static class GameManager
         gameDuration = 0f;
         shockWaveStrength = 2f;
         shockWaveMaxRadius = 5f;
+        dashShieldLevel = 0;
         //time variables//
         Time.timeScale = 1f;
         projectileCooldown = 2f;

@@ -23,7 +23,7 @@ public class PowerUpManager : MonoBehaviour
     #region Unity Functions
     private void Start() {
         GameManager.levelChange.AddListener(NewLevel);
-    }
+     }
     
     private void Update() {
         if(countdown){
@@ -89,7 +89,7 @@ public class PowerUpManager : MonoBehaviour
 
         UnlockPowerup(id);
 
-        return level;
+        return level-1;
     }
 
     public bool IsDashAttack(PowerUpDataManager.PowerUpType type)
@@ -174,7 +174,7 @@ public class PowerUpManager : MonoBehaviour
 
     private bool IsPowerTaken(int Id){
         if(datas[Id].levelLimit > 0){
-            if(datas[Id].levelLimit >= datas[Id].level){
+            if(datas[Id].level >= datas[Id].levelLimit){
                 return true;
             }
         }
@@ -212,7 +212,6 @@ public class PowerUpManager : MonoBehaviour
     private int GetRandomPower(){
         //the upgrade slots are all full//
         if((generalUpgrades.Count == 3) && (dashUpgrades.Count ==3)){
-            //Debug.Log("all upgrade slots are full");
             int powerId = Random.Range(0,6); //take a power within the slots
             if(powerId >= 3){// taking a dash attack 
                 powerId -= 3;
@@ -240,12 +239,9 @@ public class PowerUpManager : MonoBehaviour
         else{
             int powerId = Random.Range(0,datas.Length);
             var data = datas[powerId];
-            //Debug.Log("power id  = " + powerId);
             if(data.isDashAttack){
-                //Debug.Log("is a dash attack");
                 //dash attack slots are full//
                 if(dashUpgrades.Count ==3){
-                    //Debug.Log("dash attack slots are full");
                     if(dashUpgrades.Contains(powerId) && !IsPowerTaken(powerId)){ //upgrade in slot and available
                         return(powerId);
                     }
@@ -264,7 +260,6 @@ public class PowerUpManager : MonoBehaviour
                 else{//there's slots available
                     while (IsPowerTaken(powerId) || !data.isDashAttack) // if upgrade not available, take another dash attack upgrade in the pool
                     {
-                        //Debug.Log("power " + powerId + "is already taken." );
                         powerId += 1;
                         if(powerId >= datas.Length){
                             powerId = 0;
@@ -272,13 +267,11 @@ public class PowerUpManager : MonoBehaviour
                         data = datas[powerId];
                     }
 
-                    //Debug.Log("power " + powerId + "is valid.");
                     return powerId;
                 }
             }
             else{//is a general upgrade
                 if(generalUpgrades.Count ==3){ // general slots are full
-                    //Debug.Log("general slots are full");
                     if (generalUpgrades.Contains(powerId) && !IsPowerTaken(powerId)){ // is within slots and available
                         return(powerId);
                     }
@@ -297,15 +290,12 @@ public class PowerUpManager : MonoBehaviour
                 else{ // there's free slots
                     while (IsPowerTaken(powerId) || data.isDashAttack) //if upgrade not available take another one that is also a general upgrade
                     {
-                        //Debug.Log("power " + powerId + "is already taken.");
                         powerId += 1;
                         if(powerId >= datas.Length){
                             powerId = 0;
                         }
-                        //Debug.Log(powerId);
                         data = datas[powerId];
-                    }
-                    //Debug.Log("power " + powerId + "is valid.");
+                        }
                     return powerId;
                 }
             }

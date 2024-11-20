@@ -13,11 +13,13 @@ public class PlayerController : MonoBehaviour
     PointerEventData m_PointerEventData;
     [SerializeField]
     EventSystem m_EventSystem;
+    [SerializeField]
+    SpriteRenderer shieldSprite;
     private Camera cam;
     private Vector3 mousePos;
     private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false;
     private float cooldownTimer, projectileTimer, shockWaveTimer;
-
+    private int dashShield = 0;
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>();
     private Transform newProjectile, newWave;
     #region Unity Functions
@@ -67,6 +69,9 @@ public class PlayerController : MonoBehaviour
 
             if(!isMoving){
                 isMoving = true;
+                dashShield = GameManager.dashShieldLevel;
+                shieldSprite.enabled = (dashShield>0)? true: false;
+                
             }
             
         }
@@ -83,7 +88,9 @@ public class PlayerController : MonoBehaviour
                 }
                 canFireWave = false;
             }
-            
+            dashShield = 0;
+            shieldSprite.enabled = false;
+
         }
 
         //reset mouse input//
@@ -104,6 +111,13 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Enemy")){
             if(!invincible){
+                if (dashShield > 0)
+                {
+                    dashShield -= 1;
+                    shieldSprite.enabled = (dashShield > 0) ? true : false;
+                    return;
+                }
+                //Debug.Log("player take damages");
                 var strength = other.gameObject.GetComponent<EnemyController>().strength;
                 TakeDamage(strength);
                 invincible = true;
@@ -234,7 +248,7 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
-        #region Wave Functions
+    #region Wave Functions
         private void FireShockWave(){
             //check if there's a wave object avalaible//
             if(shockWaves.Count > 0){
