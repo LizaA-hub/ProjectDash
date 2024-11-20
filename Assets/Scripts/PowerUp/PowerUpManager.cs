@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using System.Data;
 
 public class PowerUpManager : MonoBehaviour
 {
@@ -15,6 +17,8 @@ public class PowerUpManager : MonoBehaviour
     List<int> generalUpgrades = new List<int>(), dashUpgrades = new List<int>();
     float cooldown = 1f;
     bool countdown = false;
+    [HideInInspector]
+    public UnityEvent<PowerUpDataManager.PowerUpType> powerupUnlocked = new UnityEvent<PowerUpDataManager.PowerUpType>();
 
     #region Unity Functions
     private void Start() {
@@ -47,6 +51,95 @@ public class PowerUpManager : MonoBehaviour
             SelectOption(2); 
         }  
     }
+
+    public int IncreaseLevel(PowerUpDataManager.PowerUpType type)
+    {
+        for (int i = 0; i < datas.Length; i++)
+        {
+            if (datas[i].type == type)
+            {
+                datas[i].level += 1;
+                return datas[i].level;
+            }
+        }
+        return 0;
+    }
+
+    public int DebbugPowerup(PowerUpDataManager.PowerUpType type)
+    {
+        int id = 0;
+        for (int i = 0; i < datas.Length; i++)
+        {
+            if(type == datas[i].type)
+            {
+                id = i; break;
+            }
+        }
+
+        var data = datas[id];
+        int level = data.level;
+
+        GameManager.Upgrade(type, level);
+
+        level = IncreaseLevel(type);
+        if (level == 0)
+        {
+            Debug.Log("can't increase upgrade level");
+        }
+
+        UnlockPowerup(id);
+
+        return level;
+    }
+
+    public bool IsDashAttack(PowerUpDataManager.PowerUpType type)
+    {
+        foreach (var data in datas)
+        {
+            if(data.type == type)
+            {
+                return data.isDashAttack;
+            }
+        }
+        return false;
+    }
+
+    public Sprite GetIcon(PowerUpDataManager.PowerUpType type)
+    {
+        foreach (var data in datas)
+        {
+            if (data.type == type)
+            {
+                return data.icon;
+            }
+        }
+        return null;
+    }
+
+    public string GetName(PowerUpDataManager.PowerUpType type)
+    {
+        foreach (var data in datas)
+        {
+            if (data.type == type)
+            {
+                return data.name;
+            }
+        }
+        return "";
+    }
+
+    public int GetLevel(PowerUpDataManager.PowerUpType type)
+    {
+        foreach (var data in datas)
+        {
+            if (data.type == type)
+            {
+                return data.level;
+            }
+        }
+        return 0;
+    }
+
     #endregion
     #region Private Functions
     private void NewLevel(int level){
@@ -85,8 +178,10 @@ public class PowerUpManager : MonoBehaviour
                 return true;
             }
         }
+        //Debug.Log("current displayed power :");
         foreach (int powerId in correspondingPower)
         {
+            //Debug.Log(powerId);
             if (powerId == Id){
                 return true;
             }
@@ -100,30 +195,24 @@ public class PowerUpManager : MonoBehaviour
         PowerUpDataManager.PowerUpType type = data.type;
         int level = data.level; 
         GameManager.Upgrade(type,level);
-        data.level += 1;
-        
+        if(IncreaseLevel(type) == 0)
+        {
+            Debug.Log("can't increase upgrade level");
+        }
+
         panel.SetActive(false);
         Time.timeScale = 1f;
         for(int i = 0; i < correspondingPower.Length ; i++){
             correspondingPower[i] = -1;
         }
-        
-        //add upgrade to slot//
-        if(data.isDashAttack){
-            if(!dashUpgrades.Contains(id)){
-                dashUpgrades.Add(id); //TO DO: function to set up UI slot
-            }
-        }
-        else{
-            if(!generalUpgrades.Contains(id)){
-                generalUpgrades.Add(id);//TO DO: function to set up UI slot
-            }
-        }
+
+        UnlockPowerup(id);
     }
 
     private int GetRandomPower(){
         //the upgrade slots are all full//
         if((generalUpgrades.Count == 3) && (dashUpgrades.Count ==3)){
+            //Debug.Log("all upgrade slots are full");
             int powerId = Random.Range(0,6); //take a power within the slots
             if(powerId >= 3){// taking a dash attack 
                 powerId -= 3;
@@ -151,9 +240,12 @@ public class PowerUpManager : MonoBehaviour
         else{
             int powerId = Random.Range(0,datas.Length);
             var data = datas[powerId];
+            //Debug.Log("power id  = " + powerId);
             if(data.isDashAttack){
+                //Debug.Log("is a dash attack");
                 //dash attack slots are full//
                 if(dashUpgrades.Count ==3){
+                    //Debug.Log("dash attack slots are full");
                     if(dashUpgrades.Contains(powerId) && !IsPowerTaken(powerId)){ //upgrade in slot and available
                         return(powerId);
                     }
@@ -170,24 +262,27 @@ public class PowerUpManager : MonoBehaviour
                     }
                 }
                 else{//there's slots available
-                    while (IsPowerTaken(powerId) && !data.isDashAttack) // if upgrade not available, take another dash attack upgrade in the pool
+                    while (IsPowerTaken(powerId) || !data.isDashAttack) // if upgrade not available, take another dash attack upgrade in the pool
                     {
+                        //Debug.Log("power " + powerId + "is already taken." );
                         powerId += 1;
                         if(powerId >= datas.Length){
                             powerId = 0;
                         }
                         data = datas[powerId];
                     }
-                    
+
+                    //Debug.Log("power " + powerId + "is valid.");
                     return powerId;
                 }
             }
             else{//is a general upgrade
                 if(generalUpgrades.Count ==3){ // general slots are full
-                    if(generalUpgrades.Contains(powerId) && !IsPowerTaken(powerId)){ // is within slots and available
+                    //Debug.Log("general slots are full");
+                    if (generalUpgrades.Contains(powerId) && !IsPowerTaken(powerId)){ // is within slots and available
                         return(powerId);
                     }
-                    else{ // take another upgrade in general slotsthat is available
+                    else{ // take another upgrade in general slots that is available
                         int powerSlot = Random.Range(0,3);
                         while (IsPowerTaken(generalUpgrades[powerSlot]))
                         {
@@ -196,23 +291,47 @@ public class PowerUpManager : MonoBehaviour
                                 powerSlot = 0;
                             }
                         }
-                        return(generalUpgrades[powerSlot]);
+                        return (generalUpgrades[powerSlot]);
                     }
                 }
                 else{ // there's free slots
-                    while (IsPowerTaken(powerId) && data.isDashAttack) //if upgrade not available take another one that is also a general upgrade
+                    while (IsPowerTaken(powerId) || data.isDashAttack) //if upgrade not available take another one that is also a general upgrade
                     {
+                        //Debug.Log("power " + powerId + "is already taken.");
                         powerId += 1;
                         if(powerId >= datas.Length){
                             powerId = 0;
                         }
+                        //Debug.Log(powerId);
                         data = datas[powerId];
                     }
-                    
+                    //Debug.Log("power " + powerId + "is valid.");
                     return powerId;
                 }
             }
         }
     }
+
+    private void UnlockPowerup(int id)
+    {
+        if (datas[id].isDashAttack)
+        {
+            if (!dashUpgrades.Contains(id))
+            {
+                dashUpgrades.Add(id);
+                powerupUnlocked.Invoke(datas[id].type);
+            }
+        }
+        else
+        {
+            if (!generalUpgrades.Contains(id))
+            {
+                generalUpgrades.Add(id);
+                powerupUnlocked.Invoke(datas[id].type);
+            }
+        }
+    }
+
+    
     #endregion
 }

@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     {
         //checking if the mouse is a the edge of the screen//
         mousePos = GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
-        if((Mathf.Abs(mousePos.x - transform.position.x) >= Mathf.Abs(bound.x*3/4))||( Mathf.Abs(mousePos.y - transform.position.y) >= Mathf.Abs(bound.y*3/4))){
+        if((Mathf.Abs(mousePos.x - transform.position.x) >= Mathf.Abs(bound.x*5/6))||( Mathf.Abs(mousePos.y - transform.position.y) >= Mathf.Abs(bound.y* 5/6))){ //trying from 3/4 to 5/6
             followMouse = true;
         }
         else{

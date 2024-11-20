@@ -94,7 +94,7 @@ public class TrailManager : MonoBehaviour
             bool trailContact = false;
             for (int i = 0; i < myTrail.positionCount-3; i++)
             {
-                if(Vector3.Distance(lastPosition,myTrail.GetPosition(i)) < myTrail.minVertexDistance){
+                if(Vector3.Distance(lastPosition,myTrail.GetPosition(i)) < 0.2f ){ //testing out myTrail.minVertexDistance
                     //Debug.Log("trail closed!");
                     crossPoint = i;
                     trailContact = true;

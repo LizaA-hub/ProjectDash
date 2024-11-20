@@ -8,8 +8,8 @@ public class HUDManager : MonoBehaviour
     Slider XPSlider,healthSlider;
     [SerializeField]
     TMP_Text levelIndicator, timerText;
-    [SerializeField]
-    Image healthSliderFill;
+    /*[SerializeField]
+    Image healthSliderFill;*/
     float timer = 0f;
 
     private void Start() {
@@ -43,8 +43,8 @@ public class HUDManager : MonoBehaviour
         var maxHP = GameManager.maxHealth;
         var newValue = value/maxHP;
         healthSlider.value = newValue;
-        //set color//
-        healthSliderFill.color = Vector4.Lerp(Color.red,Color.green,newValue);
+        /*//set color//
+        healthSliderFill.color = Vector4.Lerp(Color.red,Color.green,newValue);*/
         
         
     }

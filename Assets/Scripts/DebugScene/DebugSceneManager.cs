@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class DebugSceneManager : MonoBehaviour
 {
@@ -9,14 +10,18 @@ public class DebugSceneManager : MonoBehaviour
     EnemySpawnerDebug spawner;
     [SerializeField]
     TMP_Text DashAttackText, shockWaveText;
+    [SerializeField]
+    PowerUpManager powerUpManager;
 
     bool showPanel = true;
     int dashAttackLevel = 0, shockWaveLevel = 0;
-    
+
     #region Unity Functions
 
-    private void Update() {
-        if(Input.GetKeyDown(KeyCode.L)){
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
             LevelUp();
         }
     }
@@ -43,13 +48,13 @@ public class DebugSceneManager : MonoBehaviour
             Debug.Log("Dash attack is at max level.");
             return;
         }
-        dashAttackLevel += 1;
+        dashAttackLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Projectile);
         GameManager.Upgrade(PowerUpDataManager.PowerUpType.Projectile,dashAttackLevel);
         DashAttackText.text = "Lvl " + dashAttackLevel;
     }
 
     public void UnlockWave(){
-        shockWaveLevel += 1;
+        shockWaveLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Wave);
         GameManager.Upgrade(PowerUpDataManager.PowerUpType.Wave,shockWaveLevel);
         shockWaveText.text = "Lvl " + shockWaveLevel;
     }
