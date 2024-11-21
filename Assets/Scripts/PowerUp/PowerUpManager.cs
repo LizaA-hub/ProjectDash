@@ -58,8 +58,16 @@ public class PowerUpManager : MonoBehaviour
         {
             if (datas[i].type == type)
             {
-                datas[i].level += 1;
-                return datas[i].level;
+                if ((datas[i].levelLimit>0)&&(datas[i].levelLimit < datas[i].level))
+                {
+                    return 0;
+                }
+                else
+                {
+                    datas[i].level += 1;
+                    return datas[i].level;
+                }
+                
             }
         }
         return 0;
@@ -161,7 +169,23 @@ public class PowerUpManager : MonoBehaviour
             correspondingPower[i] = powerId;
             name.text = datas[powerId].name;
             description.text = datas[powerId].description;
-            level.text = "Level : " + datas[powerId].level;
+
+            if (datas[powerId].levelLimit > 0)
+            {
+                if (datas[powerId].level >= datas[powerId].levelLimit)
+                {
+                    level.text = "Level max";
+                }
+                else
+                {
+                    level.text = "Level : " + datas[powerId].level;
+                }
+            }
+            else
+            {
+                level.text = "Level : " + datas[powerId].level;
+            }
+            
             icon.sprite = datas[powerId].icon;
         }
     }
@@ -194,10 +218,14 @@ public class PowerUpManager : MonoBehaviour
         var data = datas[id];
         PowerUpDataManager.PowerUpType type = data.type;
         int level = data.level; 
-        GameManager.Upgrade(type,level);
+        
         if(IncreaseLevel(type) == 0)
         {
-            Debug.Log("can't increase upgrade level");
+            Debug.Log("upgrade is at max level");
+        }
+        else
+        {
+            GameManager.Upgrade(type,level);
         }
 
         panel.SetActive(false);
@@ -215,25 +243,32 @@ public class PowerUpManager : MonoBehaviour
             int powerId = Random.Range(0,6); //take a power within the slots
             if(powerId >= 3){// taking a dash attack 
                 powerId -= 3;
-                while (IsPowerTaken(dashUpgrades[powerId]))
+                for (int i = 0; i < 3; i++)
                 {
-                    powerId += 1;
-                    if(powerId >= 3){
+                    powerId += i;
+                    if (powerId >= 3)
+                    {
                         powerId = 0;
                     }
-                }
-                return dashUpgrades[powerId];
-            }
-            else{//taking general upgrade
-                while (IsPowerTaken(generalUpgrades[powerId]))
-                {
-                    powerId += 1;
-                    if(powerId >= 3){
-                        powerId = 0;
+                    if (!IsPowerTaken(dashUpgrades[powerId]))
+                    {
+                        return dashUpgrades[powerId];
                     }
                 }
-                return generalUpgrades[powerId];
             }
+            for (int i = 0; i < 3; i++)
+            {
+                powerId += i;
+                if (powerId >= 3)
+                {
+                    powerId = 0;
+                }
+                if (!IsPowerTaken(generalUpgrades[powerId]))
+                {
+                    break;
+                }
+            }
+            return generalUpgrades[powerId];
         }
         //upgrade slots are not all full//
         else{
@@ -247,28 +282,37 @@ public class PowerUpManager : MonoBehaviour
                     }
                     else{// take an upgrade within dash attack slots which is also available
                         int powerSlot = Random.Range(0,3);
-                        while (IsPowerTaken(dashUpgrades[powerSlot]))
+                        for (int i = 0; i < 3; i++)
                         {
-                            powerSlot += 1;
-                            if(powerSlot >= 3){
+                            powerSlot += i;
+                            if (powerSlot >= 3)
+                            {
                                 powerSlot = 0;
                             }
+                            if (!IsPowerTaken(dashUpgrades[powerSlot]))
+                            {
+                                break;
+                            }
                         }
-                        return(dashUpgrades[powerSlot]);
+                        return dashUpgrades[powerSlot];
                     }
                 }
                 else{//there's slots available
-                    while (IsPowerTaken(powerId) || !data.isDashAttack) // if upgrade not available, take another dash attack upgrade in the pool
+                    for (int i = 0; i < 3; i++)// if upgrade not available, take another dash attack upgrade in the pool
                     {
-                        powerId += 1;
-                        if(powerId >= datas.Length){
+                        powerId += i;
+                        if (powerId >= datas.Length)
+                        {
                             powerId = 0;
                         }
-                        data = datas[powerId];
+                        if (!IsPowerTaken(powerId) && data.isDashAttack)
+                        {
+                            break;
+                        }
                     }
-
                     return powerId;
                 }
+            
             }
             else{//is a general upgrade
                 if(generalUpgrades.Count ==3){ // general slots are full
@@ -277,25 +321,34 @@ public class PowerUpManager : MonoBehaviour
                     }
                     else{ // take another upgrade in general slots that is available
                         int powerSlot = Random.Range(0,3);
-                        while (IsPowerTaken(generalUpgrades[powerSlot]))
+                        for (int i = 0; i < 3; i++)
                         {
-                            powerSlot += 1;
-                            if(powerSlot >= 3){
+                            powerSlot += i;
+                            if (powerSlot >= 3)
+                            {
                                 powerSlot = 0;
                             }
+                            if (!IsPowerTaken(generalUpgrades[powerSlot]))
+                            {
+                                break;
+                            }
                         }
-                        return (generalUpgrades[powerSlot]);
+                        return generalUpgrades[powerSlot];
                     }
                 }
                 else{ // there's free slots
-                    while (IsPowerTaken(powerId) || data.isDashAttack) //if upgrade not available take another one that is also a general upgrade
+                    for (int i = 0; i < 3; i++)//if upgrade not available take another one that is also a general upgrade
                     {
-                        powerId += 1;
-                        if(powerId >= datas.Length){
+                        powerId += i;
+                        if (powerId >= datas.Length)
+                        {
                             powerId = 0;
                         }
-                        data = datas[powerId];
+                        if (!IsPowerTaken(powerId) && !data.isDashAttack)
+                        {
+                            break;
                         }
+                    }
                     return powerId;
                 }
             }
