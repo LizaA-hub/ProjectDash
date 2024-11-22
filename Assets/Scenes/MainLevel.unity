@@ -5367,6 +5367,10 @@ PrefabInstance:
       propertyPath: powerUpManager
       value: 
       objectReference: {fileID: 1650176143}
+    - target: {fileID: 4283344237694701721, guid: f399865c10d4e14478082b4db5633bf4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e2fdb8ca6e22c604b904efa534eee0da, type: 3}
     - target: {fileID: 5966995760167182212, guid: f399865c10d4e14478082b4db5633bf4, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
