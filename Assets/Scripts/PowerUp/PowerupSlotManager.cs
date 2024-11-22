@@ -7,7 +7,6 @@ public class PowerupSlotManager : MonoBehaviour
 {
     [SerializeField]
     Transform description;
-    [SerializeField]
     PowerUpManager powerUpManager;
     Image[] slotsIcon = new Image[6];
     PowerUpDataManager.PowerUpType[] unlockedPowerups = new PowerUpDataManager.PowerUpType[6];
@@ -20,11 +19,19 @@ public class PowerupSlotManager : MonoBehaviour
             var child = transform.GetChild(i);
             slotsIcon[i] = child.gameObject.GetComponent<Image>();
         }
-      
-        powerUpManager.powerupUnlocked.AddListener(UnlockUpgrade);
-        for (int i = 0; i < 6; i++)
+
+        powerUpManager = GameObject.Find("LevelUpUI").GetComponent<PowerUpManager>();
+        if (powerUpManager != null)
         {
-            unlockedPowerups[i] = PowerUpDataManager.PowerUpType.None;
+            powerUpManager.powerupUnlocked.AddListener(UnlockUpgrade);
+            for (int i = 0; i < 6; i++)
+            {
+                unlockedPowerups[i] = PowerUpDataManager.PowerUpType.None;
+            }
+        }
+        else
+        {
+            Debug.Log("level up UI object not found");
         }
 
         descriptionUI = description.gameObject.GetComponent<TMP_Text>();

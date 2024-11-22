@@ -9,12 +9,12 @@ public class DebugSceneManager : MonoBehaviour
     [SerializeField]
     EnemySpawnerDebug spawner;
     [SerializeField]
-    TMP_Text DashAttackText, shockWaveText, shieldText;
+    TMP_Text DashAttackText, shockWaveText, shieldText, swordText;
     [SerializeField]
     PowerUpManager powerUpManager;
 
     bool showPanel = true;
-    int dashAttackLevel = 0, shockWaveLevel = 0, shieldLevel;
+    int dashAttackLevel = 0, shockWaveLevel = 0, shieldLevel = 0, swordLevel = 0;
 
     #region Unity Functions
 
@@ -49,24 +49,25 @@ public class DebugSceneManager : MonoBehaviour
             return;
         }
         dashAttackLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Projectile);
-        dashAttackLevel -= 1;
-        GameManager.Upgrade(PowerUpDataManager.PowerUpType.Projectile,dashAttackLevel);
         DashAttackText.text = "Lvl " + dashAttackLevel;
     }
 
     public void UnlockWave(){
         shockWaveLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Wave);
-        GameManager.Upgrade(PowerUpDataManager.PowerUpType.Wave,shockWaveLevel);
         shockWaveText.text = "Lvl " + shockWaveLevel;
     }
 
     public void UnlockShield()
     {
         shieldLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Shield);
-        GameManager.Upgrade(PowerUpDataManager.PowerUpType.Shield, shieldLevel);
-        shieldText.text = "Lvl" + shieldLevel;
+        shieldText.text = "Lvl " + shieldLevel;
     }
 
+    public void UnlockSword()
+    {
+        swordLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Sword);
+        swordText.text = "Lvl " + swordLevel;
+    }
     public void SpawnBasicEnemy(){
         SpawnEnemy(EnemyDataManager.EnemyType.Basic);
         Debug.Log("Basic enemy spawned");

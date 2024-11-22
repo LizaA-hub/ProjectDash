@@ -7,29 +7,55 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
     [SerializeField]
-    Transform projectilePrefab, map, shockWavePrefab;
-    [SerializeField]
-    GraphicRaycaster m_Raycaster;
-    PointerEventData m_PointerEventData;
-    [SerializeField]
-    EventSystem m_EventSystem;
+    Transform projectilePrefab, shockWavePrefab, swordTransform;
     [SerializeField]
     SpriteRenderer shieldSprite;
+    [SerializeField]
+    CircleCollider2D orbMagnet;
+    [SerializeField]
+    LayerMask enemyLayer;
+
+    GraphicRaycaster m_Raycaster;
+    PointerEventData m_PointerEventData;
+    EventSystem m_EventSystem;
     private Camera cam;
     private Vector3 mousePos;
-    private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false;
-    private float cooldownTimer, projectileTimer, shockWaveTimer;
+    private Vector2 swordPos;
+    private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
+    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer;
     private int dashShield = 0;
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>();
-    private Transform newProjectile, newWave;
+    private Transform newProjectile, newWave, map;
+    private TrailRenderer swordTrail;
+
     #region Unity Functions
     // Start is called before the first frame update
-    void Start()
+    void Start()//setting all variables 
     {
         cam = Camera.main;
         cooldownTimer = cooldown;
-        projectileTimer = GameManager.projectileCooldown;
-        shockWaveTimer = GameManager.shockWaveCooldown;
+        projectileTimer = shockWaveTimer = swordTimer = GameManager.dashCooldown;
+        GameManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
+
+        map = GameObject.Find("Ground").GetComponent<Transform>();
+        if(map == null)
+        {
+            Debug.Log("ground object not found");
+        }
+
+        m_Raycaster = GameObject.Find("HUD").GetComponent<GraphicRaycaster>();
+        if(m_Raycaster == null)
+        {
+            Debug.Log("HUD object not found");
+        }
+
+        m_EventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+        if(m_EventSystem == null)
+        {
+            Debug.Log("event system object not found");
+        }
+
+        swordTrail = swordTransform.gameObject.GetComponent<TrailRenderer>();
     }
 
 
@@ -38,8 +64,15 @@ public class PlayerController : MonoBehaviour
     {
         //on mouse click//
         if(Input.GetMouseButtonDown(0) && !mouseDown && !MouseOverUI()){
-            mouseDown = true;
             canFireWave = true;
+            canMoveSword = true;
+
+            if (movingSword)
+            {
+                ToggleSword(false);
+            }
+
+            mouseDown = true;
             mousePos = cam.ScreenToWorldPoint(Input.mousePosition) ;
             mousePos.z = transform.position.z;
 
@@ -58,13 +91,13 @@ public class PlayerController : MonoBehaviour
                     FireProjectile(rotatedDir);
 
                 }
-                projectileTimer = GameManager.projectileCooldown;
+                projectileTimer = GameManager.dashCooldown;
             }
 
             //dash shock wave//
             if((shockWaveTimer <= 0f) && isMoving){
                 FireShockWave();
-                shockWaveTimer = GameManager.shockWaveCooldown;
+                shockWaveTimer = GameManager.dashCooldown;
             }
 
             if(!isMoving){
@@ -77,21 +110,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //moving player//
-        var step = moveSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, mousePos, step);
-        if(Vector3.Distance(transform.position,mousePos) < 0.1f){
-            isMoving = false;
-            if(canFireWave){
-                if(shockWaveTimer <= 0f){
-                    FireShockWave();
-                    shockWaveTimer = GameManager.shockWaveCooldown;
-                }
-                canFireWave = false;
-            }
-            dashShield = 0;
-            shieldSprite.enabled = false;
-
-        }
+        MovePlayer(Time.deltaTime);
 
         //reset mouse input//
         if(Input.GetMouseButtonUp(0)){
@@ -104,7 +123,12 @@ public class PlayerController : MonoBehaviour
         //update instantiated dash attacks//
         UpdateProjectile(Time.deltaTime);
         UpdateWaves(Time.deltaTime);
+        MoveSword(Time.deltaTime);
         
+        
+
+
+
     }
 
 
@@ -149,6 +173,46 @@ public class PlayerController : MonoBehaviour
             if((shockWaveTimer > 0 ) && GameManager.haveShockWave){
                 shockWaveTimer -= t;
             }
+            //sword timer//
+            if (swordTimer > 0 && GameManager.haveSword) { 
+                swordTimer -= t;
+            }
+        }
+
+        private void MovePlayer(float t)
+        {
+            var step = moveSpeed * t;
+            transform.position = Vector3.MoveTowards(transform.position, mousePos, step);
+
+            if (Vector3.Distance(transform.position, mousePos) < 0.1f)//player stop moving
+            {
+                isMoving = false;
+                //fire wave attack//
+                if (canFireWave)
+                {
+                    if (shockWaveTimer <= 0f)
+                    {
+                        FireShockWave();
+                        shockWaveTimer = GameManager.dashCooldown;
+                    }
+                    canFireWave = false;
+                }
+                //hide dash shield//
+                dashShield = 0;
+                shieldSprite.enabled = false;
+
+                //start moving sword
+                if (canMoveSword)
+                {
+                    if (swordTimer <= 0f)
+                        {
+                            ToggleSword(true);
+                        }
+                    canMoveSword = false;
+                }
+                
+
+            }
         }
 
         private void TakeDamage(float amount){
@@ -171,7 +235,7 @@ public class PlayerController : MonoBehaviour
             //Raycast using the Graphics Raycaster and mouse click position
             m_Raycaster.Raycast(m_PointerEventData, results);
 
-            /*//For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            /*// For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in results)
             {
                 Debug.Log("Hit " + result.gameObject.name);
@@ -183,6 +247,13 @@ public class PlayerController : MonoBehaviour
             else{
                 return false;
             }
+        }
+
+        private void IncreaseOrbMagnet()
+        {
+            float radius = orbMagnet.radius;
+            radius += radius * 0.1f;
+            orbMagnet.radius = radius;
         }
 
     #endregion
@@ -297,5 +368,61 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+    #endregion
+    #region Sword Functions
+        private void MoveSword(float t)
+        {
+            if (!movingSword) return;
+            if (angle > -Mathf.PI / 2)
+            {
+                var swordStep = t * swordSpeed;
+                angle -= swordStep;
+                float x = swordPos.x + Mathf.Cos(angle) * swordRadius;
+                float y = swordPos.y + Mathf.Sin(angle) * swordRadius;
+
+                swordTransform.position = new Vector3(x, y, 0);
+            }
+            else
+            {
+            ToggleSword(false);
+            }
+
+    }
+
+        private void ToggleSword(bool toggle)
+        {
+            if (toggle)
+            {
+            //reset variable//
+                
+                angle = Mathf.PI;
+                float coord = Mathf.Sqrt(swordRadius / 2);
+                coord /= 2;
+                swordPos = new Vector2(transform.position.x + coord, transform.position.y + coord);
+                movingSword = true;
+                swordTrail.emitting = true;
+            //detect enemy in range//
+                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(swordPos, swordRadius+(swordTrail.widthMultiplier/2), enemyLayer);
+          
+                foreach (var enemy in hitEnemies)
+                {
+                    //Debug.Log(enemy.name + "touch with sword");
+                    var controller = enemy.GetComponent<EnemyController>();
+                    controller.TakeDamage(GameManager.swordStrength);
+                }
+            }
+            else
+            {
+                swordTimer = GameManager.dashCooldown;
+                movingSword = false;
+                swordTrail.emitting = false;
+            }
+        }
+
+        /*private void OnDrawGizmosSelected()
+        {
+            Gizmos.DrawWireSphere(Vector2.zero, swordRadius+0.35f/2f);
+        }*/
     #endregion
 }

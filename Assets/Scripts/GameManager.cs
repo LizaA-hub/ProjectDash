@@ -6,11 +6,11 @@ public static class GameManager
 {
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
     public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
-    public static UnityEvent gameOver = new UnityEvent();
-    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f, projectileCooldown = 2f,
-                        shockWaveCooldown = 2f, shockWaveMaxRadius = 5f, shockWaveStrength = 2f;
+    public static UnityEvent gameOver = new UnityEvent(), magnetIncrease = new UnityEvent();
+    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f,
+                        shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f;
     public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
-    public static bool haveProjectile = false, haveShockWave = false;
+    public static bool haveProjectile = false, haveShockWave = false, haveSword = false;
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
     private static bool inPlayGround = false;
@@ -147,6 +147,22 @@ public static class GameManager
             case PowerUpDataManager.PowerUpType.Shield:
                 dashShieldLevel += 1;
                 break;
+            case PowerUpDataManager.PowerUpType.Magnet:
+                magnetIncrease.Invoke();
+                break;
+            case PowerUpDataManager.PowerUpType.Cooldown:
+                dashCooldown -= dashCooldown * 0.1f;
+                break;
+            case PowerUpDataManager.PowerUpType.Sword:
+                if (level == 1)
+                {
+                    haveSword = true;
+                }
+                else
+                {
+                    swordStrength += swordStrength * 0.1f;
+                }
+                break;
             default:
             break;
         }
@@ -177,8 +193,7 @@ public static class GameManager
         dashShieldLevel = 0;
         //time variables//
         Time.timeScale = 1f;
-        projectileCooldown = 2f;
-        shockWaveCooldown = 2f;
+        dashCooldown = 2f;
         //bool variables//
         haveProjectile = false;
         haveShockWave = false;

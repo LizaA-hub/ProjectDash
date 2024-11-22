@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5313433068332222433}
   - component: {fileID: 5066282543618726959}
   - component: {fileID: -5322246168190107425}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PI_Enemy_Charging_TEST
   m_TagString: Enemy
   m_Icon: {fileID: 0}

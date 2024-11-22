@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
-    Transform map, player;
+    Transform map;
     [SerializeField]
     float difficultyIncreaseDelay = 30f;
     [SerializeField,Range(0,1)]
@@ -16,6 +16,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     EnemyDataManager.EnemyData[] datas;
 
+    Transform player;
     Vector3[] spawningPoints = new Vector3[4];
     [SerializeField]
     List<Transform> instantiatedEnemies = new List<Transform>();
@@ -30,6 +31,11 @@ public class EnemySpawner : MonoBehaviour
 
     #region Unity Functions
     private void Start() {
+        player = GameObject.Find("Player").GetComponent<Transform>();
+        if (player == null) {
+            Debug.Log("player object not found");
+        }
+
         Vector3 mapSize = map.localScale;
         //implementing spawning point
         spawningPoints[0] = new Vector3(mapSize.x/2,0f,0f);

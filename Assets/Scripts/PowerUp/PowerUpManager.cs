@@ -78,7 +78,7 @@ public class PowerUpManager : MonoBehaviour
         int id = 0;
         for (int i = 0; i < datas.Length; i++)
         {
-            if(type == datas[i].type)
+            if (type == datas[i].type)
             {
                 id = i; break;
             }
@@ -86,18 +86,35 @@ public class PowerUpManager : MonoBehaviour
 
         var data = datas[id];
         int level = data.level;
+        if (data.isDashAttack)
+        {
+            if(dashUpgrades.Count == 3 && !dashUpgrades.Contains(id))
+            {
+                Debug.Log("Dash slots are full.");
+                return level-1;
+            }
+        }
+        else
+        {
+            if(generalUpgrades.Count == 3 && !generalUpgrades.Contains(id))
+            {
+                Debug.Log("general slots are full.");
+                return level-1;
+            }
+        }
+        
 
         GameManager.Upgrade(type, level);
 
-        level = IncreaseLevel(type);
-        if (level == 0)
+        
+        if (IncreaseLevel(type) == 0)
         {
-            Debug.Log("can't increase upgrade level");
+            Debug.Log("max level reached");
         }
 
         UnlockPowerup(id);
 
-        return level-1;
+        return level;
     }
 
     public bool IsDashAttack(PowerUpDataManager.PowerUpType type)

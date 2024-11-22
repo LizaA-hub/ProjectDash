@@ -51,10 +51,8 @@ public class EnemyController : MonoBehaviour
             TakeDamage(GameManager.shockWaveStrength);
         }
     }
-
-    #region Private Functions
-
-    private void TakeDamage(float amount)
+    #region Public Functions
+    public void TakeDamage(float amount)
     {
         if (invincible) return;
 
@@ -71,6 +69,10 @@ public class EnemyController : MonoBehaviour
             StartCoroutine(DamageFlash()); // Start the flash coroutine
         }
     }
+    #endregion
+
+    #region Private Functions
+
     
     //Flash animation when the enemy takes damage
     private IEnumerator DamageFlash()
