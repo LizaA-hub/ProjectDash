@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 mousePos;
     private Vector2 swordPos;
     private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
-    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer;
+    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer, angleLimit = 0f;
     private int dashShield = 0;
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>();
     private Transform newProjectile, newWave, map;
@@ -80,15 +80,9 @@ public class PlayerController : MonoBehaviour
             if(projectileTimer <= 0f){
                 FireProjectile(mousePos);
                 for(int i = 1; i < GameManager.projectileNb;i++){//number of projectile fired dependent of the upgrade level
-                    Vector2 rotatedDir = Vector2.zero;
-                    Vector2 relativTarget = mousePos-transform.position;
-                    float angle = 90f-15f;
-                    rotatedDir.x = relativTarget.x*Mathf.Cos(angle*i)-relativTarget.y*Mathf.Sin(angle*i) + transform.position.x;
-                    rotatedDir.y = relativTarget.x*Mathf.Sin(angle*i)+relativTarget.y*Mathf.Cos(angle*i) + transform.position.y;
-                    FireProjectile(rotatedDir);
-                    rotatedDir.x = relativTarget.x*Mathf.Cos(-angle*i)-relativTarget.y*Mathf.Sin(-angle*i) + transform.position.x;
-                    rotatedDir.y = relativTarget.x*Mathf.Sin(-angle*i)+relativTarget.y*Mathf.Cos(-angle*i) + transform.position.y;
-                    FireProjectile(rotatedDir);
+                    float angle = (90f-15f)*i;
+                    FireProjectile(LocalRotation(transform.position,mousePos,angle));
+                    FireProjectile(LocalRotation(transform.position, mousePos, -angle));
 
                 }
                 projectileTimer = GameManager.dashCooldown;
@@ -256,173 +250,183 @@ public class PlayerController : MonoBehaviour
             orbMagnet.radius = radius;
         }
 
-    #endregion
-
-    #region Projectile Functions
-
-        private void FireProjectile(Vector3 target){
-            
-            if(projectiles.Count > 0){// check if there's a projectile object available
-                bool reuseProjectile = false;
-                foreach (Transform projectile in projectiles)
-                {
-                    if(!projectile.gameObject.activeSelf){
-                        projectile.gameObject.SetActive(true);
-                        newProjectile = projectile;
-                        reuseProjectile = true;
-                        break;
-                    }
-                }
-                if(!reuseProjectile){
-                    //create new projectile//
-                    newProjectile = Instantiate(projectilePrefab);
-                    projectiles.Add(newProjectile);
-                    newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;      
-                }
-
-            }
-            else{
-                //create new projectile//
-                newProjectile = Instantiate(projectilePrefab);
-                projectiles.Add(newProjectile);
-                newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;            
-            }
-
-            //rotate projectile in target direction//
-            newProjectile.position = transform.position;
-            Vector3 direction = target - transform.position;
-            direction = direction.normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            newProjectile.rotation = Quaternion.Euler(0, 0, angle-90f);
-
-            //set variables//
-            var controller = newProjectile.gameObject.GetComponent<DashProjectile>();
-            controller.direction = direction;
-        }
-
-        private void UpdateProjectile(float t){
-            if(projectiles.Count > 0) foreach (Transform projectile in projectiles)
-            {
-                if(projectile.gameObject.activeSelf){
-                    //move projectile//
-                    var step = projectileSpeed * Time.deltaTime;
-                    var target = projectile.gameObject.GetComponent<DashProjectile>().direction;
-                    projectile.position = Vector3.MoveTowards(projectile.position, projectile.position+target, step);
-                    
-                    //check if projectile is outside the map//
-                    if((Mathf.Abs(projectile.position.x) > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) > map.lossyScale.y/2) ){
-                        DisableTransform(projectile);
-                    }
-                }
-            }
+        Vector3 LocalRotation(Vector3 origin,Vector3 from, float angle)
+        {
+            Vector3 localFrom = from - origin;
+            Vector3 to = Vector3.zero;
+            to.x = localFrom.x * Mathf.Cos(angle) - localFrom.y * Mathf.Sin(angle) + transform.position.x;
+            to.y = localFrom.x * Mathf.Sin(angle) + localFrom.y * Mathf.Cos(angle) + transform.position.y;
+            return to;
         }
 
         #endregion
 
-    #region Wave Functions
-        private void FireShockWave(){
-            //check if there's a wave object avalaible//
-            if(shockWaves.Count > 0){
-                bool reuseWave = false;
-                foreach (Transform wave in shockWaves)
+        #region Projectile Functions
+
+            private void FireProjectile(Vector3 target){
+
+                if(projectiles.Count > 0){// check if there's a projectile object available
+                    bool reuseProjectile = false;
+                    foreach (Transform projectile in projectiles)
+                    {
+                        if(!projectile.gameObject.activeSelf){
+                            projectile.gameObject.SetActive(true);
+                            newProjectile = projectile;
+                            reuseProjectile = true;
+                            break;
+                        }
+                    }
+                    if(!reuseProjectile){
+                        //create new projectile//
+                        newProjectile = Instantiate(projectilePrefab);
+                        projectiles.Add(newProjectile);
+                        newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;      
+                    }
+
+                }
+                else{
+                    //create new projectile//
+                    newProjectile = Instantiate(projectilePrefab);
+                    projectiles.Add(newProjectile);
+                    newProjectile.gameObject.GetComponent<DashProjectile>().manager = this;            
+                }
+
+                //rotate projectile in target direction//
+                newProjectile.position = transform.position;
+                Vector3 direction = target - transform.position;
+                direction = direction.normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                newProjectile.rotation = Quaternion.Euler(0, 0, angle-90f);
+
+                //set variables//
+                var controller = newProjectile.gameObject.GetComponent<DashProjectile>();
+                controller.direction = direction;
+            }
+
+            private void UpdateProjectile(float t){
+                if(projectiles.Count > 0) foreach (Transform projectile in projectiles)
                 {
-                    if(!wave.gameObject.activeSelf){
-                        wave.gameObject.SetActive(true);
-                        newWave = wave;
-                        reuseWave = true;
-                        break;
+                    if(projectile.gameObject.activeSelf){
+                        //move projectile//
+                        var step = projectileSpeed * Time.deltaTime;
+                        var target = projectile.gameObject.GetComponent<DashProjectile>().direction;
+                        projectile.position = Vector3.MoveTowards(projectile.position, projectile.position+target, step);
+
+                        //check if projectile is outside the map//
+                        if((Mathf.Abs(projectile.position.x) > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) > map.lossyScale.y/2) ){
+                            DisableTransform(projectile);
+                        }
                     }
                 }
-                if(!reuseWave){
-                    //create a new object//
+            }
+
+            #endregion
+
+        #region Wave Functions
+            private void FireShockWave(){
+                //check if there's a wave object avalaible//
+                if(shockWaves.Count > 0){
+                    bool reuseWave = false;
+                    foreach (Transform wave in shockWaves)
+                    {
+                        if(!wave.gameObject.activeSelf){
+                            wave.gameObject.SetActive(true);
+                            newWave = wave;
+                            reuseWave = true;
+                            break;
+                        }
+                    }
+                    if(!reuseWave){
+                        //create a new object//
+                        newWave = Instantiate(shockWavePrefab);
+                        shockWaves.Add(newWave);
+                    }
+                }
+                else{//create a new object//
                     newWave = Instantiate(shockWavePrefab);
                     shockWaves.Add(newWave);
                 }
-            }
-            else{//create a new object//
-                newWave = Instantiate(shockWavePrefab);
-                shockWaves.Add(newWave);
+
+                newWave.position = transform.position;
+                ShockWave controller = newWave.gameObject.GetComponent<ShockWave>();
+                controller.SetRing(1f,25);
             }
 
-            newWave.position = transform.position;
-            ShockWave controller = newWave.gameObject.GetComponent<ShockWave>();
-            controller.SetRing(1f,25);
-        }
-
-        private void UpdateWaves(float t){
-            foreach (Transform wave in shockWaves)
-            {
-                if(wave.gameObject.activeSelf){
-                    //increase wave 
-                    ShockWave controller = wave.gameObject.GetComponent<ShockWave>();
-                    float step = waveSpeed*t;
-                    float radius = Mathf.MoveTowards(controller.currentRadius, GameManager.shockWaveMaxRadius, step);
-                    float segment = 25f/7f*radius+150f/7f;
-                    controller.SetRing(radius,(int)segment);
-                    //check if radius > max radius
-                    var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
-                    var maxRadius = Mathf.Min(mapMaxSize,GameManager.shockWaveMaxRadius);
-                    if(radius >= maxRadius){
-                        DisableTransform(wave);
+            private void UpdateWaves(float t){
+                foreach (Transform wave in shockWaves)
+                {
+                    if(wave.gameObject.activeSelf){
+                        //increase wave 
+                        ShockWave controller = wave.gameObject.GetComponent<ShockWave>();
+                        float step = waveSpeed*t;
+                        float radius = Mathf.MoveTowards(controller.currentRadius, GameManager.shockWaveMaxRadius, step);
+                        float segment = 25f/7f*radius+150f/7f;
+                        controller.SetRing(radius,(int)segment);
+                        //check if radius > max radius
+                        var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
+                        var maxRadius = Mathf.Min(mapMaxSize,GameManager.shockWaveMaxRadius);
+                        if(radius >= maxRadius){
+                            DisableTransform(wave);
+                        }
                     }
                 }
             }
+
+        #endregion
+        #region Sword Functions
+            private void MoveSword(float t)
+            {
+                if (!movingSword) return;
+                if (angle > angleLimit)
+                {
+                    var swordStep = t * swordSpeed;
+                    angle -= swordStep;
+                    float x = swordPos.x + Mathf.Cos(angle) * swordRadius;
+                    float y = swordPos.y + Mathf.Sin(angle) * swordRadius;
+
+                    swordTransform.position = new Vector3(x, y, 0);
+                }
+                else
+                {
+                ToggleSword(false);
+                }
+
         }
 
-    #endregion
-    #region Sword Functions
-        private void MoveSword(float t)
-        {
-            if (!movingSword) return;
-            if (angle > -Mathf.PI / 2)
+            private void ToggleSword(bool toggle)
             {
-                var swordStep = t * swordSpeed;
-                angle -= swordStep;
-                float x = swordPos.x + Mathf.Cos(angle) * swordRadius;
-                float y = swordPos.y + Mathf.Sin(angle) * swordRadius;
-
-                swordTransform.position = new Vector3(x, y, 0);
-            }
-            else
-            {
-            ToggleSword(false);
-            }
-
-    }
-
-        private void ToggleSword(bool toggle)
-        {
-            if (toggle)
-            {
-            //reset variable//
-                
-                angle = Mathf.PI;
-                float coord = Mathf.Sqrt(swordRadius / 2);
-                coord /= 2;
-                swordPos = new Vector2(transform.position.x + coord, transform.position.y + coord);
-                movingSword = true;
-                swordTrail.emitting = true;
-            //detect enemy in range//
-                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(swordPos, swordRadius+(swordTrail.widthMultiplier/2), enemyLayer);
-          
-                foreach (var enemy in hitEnemies)
+                if (toggle)
                 {
-                    //Debug.Log(enemy.name + "touch with sword");
-                    var controller = enemy.GetComponent<EnemyController>();
-                    controller.TakeDamage(GameManager.swordStrength);
+                    //reset variable//
+
+                    var degAngle = Vector2.SignedAngle(new Vector2(0f,-1f), mousePos - transform.position);
+                    angle = degAngle*Mathf.Deg2Rad;
+                    angleLimit = angle - 3f / 2f * Mathf.PI;
+
+                    float coord = Mathf.Sqrt((swordRadius*swordRadius) / 2);
+
+                    float rotAngle = 90f - 15f;
+                    Vector3 swordLocal = LocalRotation(transform.position, mousePos, rotAngle);
+                    swordPos = (swordLocal-transform.position).normalized * coord + transform.position;
+                    movingSword = true;
+                    swordTrail.emitting = true;
+                    //detect enemy in range//
+                    Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(swordPos, swordRadius+(swordTrail.widthMultiplier/2), enemyLayer);
+          
+                    foreach (var enemy in hitEnemies)
+                    {
+                        //Debug.Log(enemy.name + "touch with sword");
+                        var controller = enemy.GetComponent<EnemyController>();
+                        controller.TakeDamage(GameManager.swordStrength);
+                    }
+                }
+                else
+                {
+                    swordTimer = GameManager.dashCooldown;
+                    movingSword = false;
+                    swordTrail.emitting = false;
                 }
             }
-            else
-            {
-                swordTimer = GameManager.dashCooldown;
-                movingSword = false;
-                swordTrail.emitting = false;
-            }
-        }
 
-        /*private void OnDrawGizmosSelected()
-        {
-            Gizmos.DrawWireSphere(Vector2.zero, swordRadius+0.35f/2f);
-        }*/
-    #endregion
-}
+            #endregion
+        }
