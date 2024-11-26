@@ -3,7 +3,7 @@ using System.Collections;
 
 public static class EnemyDataManager
 {
-    public enum EnemyType {Basic,Tanky,Fast,Charging,None}
+    public enum EnemyType {Basic,Tanky,Fast,Charging,Projectile,None}
     [System.Serializable]
     public struct EnemyData{
         public EnemyType type;

@@ -133,7 +133,8 @@ public class EnemySpawnerDebug : MonoBehaviour
         
     }
 
-    private void UpdateEnemies(float t){
+    private void UpdateEnemies(float t)
+    {
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
             if (instantiatedEnemies[i].gameObject.activeSelf)
@@ -142,45 +143,46 @@ public class EnemySpawnerDebug : MonoBehaviour
                 var step = controller.speed * t;
                 switch (controller.type)
                 {
-                    //Basic enemy movement//
-                    case EnemyDataManager.EnemyType.Basic:
-                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
-                        break;
                     //Dashing enemy movement//
                     case EnemyDataManager.EnemyType.Charging:
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
+                        {
+                            LookAtPlayer(instantiatedEnemies[i]);
+                            chargingController.chargeTimer -= t;
+                            if (chargingController.chargeTimer <= 0f)
                             {
-                                LookAtPlayer(instantiatedEnemies[i]);
-                                chargingController.chargeTimer -= t;
-                                if (chargingController.chargeTimer <= 0f)
-                                {
-                                    chargingController.chargeTimer = 1f;
-                                    chargingController.isCharging = false;
-                                    chargingController.isDashing = true;
-                                    chargingController.dashTarget = instantiatedEnemies[i].position + (player.position - instantiatedEnemies[i].position).normalized * chargingController.dashDistance;
-                                }
+                                chargingController.chargeTimer = 1f;
+                                chargingController.isCharging = false;
+                                chargingController.isDashing = true;
+                                chargingController.dashTarget = instantiatedEnemies[i].position + (player.position - instantiatedEnemies[i].position).normalized * chargingController.dashDistance;
                             }
+                        }
                         else if (chargingController.isDashing)
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, chargingController.dashTarget, step);
+                            // Stop dashing once the enemy has moved the full dash distance
+                            if (Vector3.Distance(instantiatedEnemies[i].position, chargingController.dashTarget) < 0.1f)
                             {
-                                instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, chargingController.dashTarget, step);
-                                // Stop dashing once the enemy has moved the full dash distance
-                                if (Vector3.Distance(instantiatedEnemies[i].position, chargingController.dashTarget) < 0.1f)
-                                {
-                                    chargingController.isDashing = false;
-                                }
+                                chargingController.isDashing = false;
                             }
+                        }
                         else
-                            {
-                                LookAtPlayer(instantiatedEnemies[i]);
-                                chargingController.isCharging = true;
-                            }
+                        {
+                            LookAtPlayer(instantiatedEnemies[i]);
+                            chargingController.isCharging = true;
+                        }
                         break;
-    
-                    default:
+                    case EnemyDataManager.EnemyType.Projectile:
+                        var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
+                        LookAtPlayer(instantiatedEnemies[i]);
+                        projectileController.UpdateBullet(t);
+                        break;
+                    default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
-            }
+                }
             }
         }
     }

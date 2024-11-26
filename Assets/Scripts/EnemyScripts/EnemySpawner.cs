@@ -165,6 +165,12 @@ public class EnemySpawner : MonoBehaviour
                                 chargingController.isCharging = true;
                             }
                         break;
+                    case EnemyDataManager.EnemyType.Projectile:
+                        var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
+                        LookAtPlayer(instantiatedEnemies[i]);
+                        projectileController.UpdateBullet(t);
+                        break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;

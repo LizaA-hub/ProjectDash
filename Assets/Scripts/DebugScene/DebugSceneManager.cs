@@ -83,6 +83,11 @@ public class DebugSceneManager : MonoBehaviour
         SpawnEnemy(EnemyDataManager.EnemyType.Tanky);
         Debug.Log("Tanky enemy spawned");
     }
+    public void SpawnProjectileEnemy()
+    {
+        SpawnEnemy(EnemyDataManager.EnemyType.Projectile);
+        Debug.Log("Projectile enemy spawned");
+    }
     #endregion
     #region Private Functions
     private void LevelUp(){
