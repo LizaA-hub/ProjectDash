@@ -135,10 +135,6 @@ public class EnemySpawner : MonoBehaviour
                 var step = controller.speed * t;
                 switch (controller.type)
                 {
-                    //Basic enemy movement//
-                    case EnemyDataManager.EnemyType.Basic:
-                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
-                        break;
                     //Dashing enemy movement//
                     case EnemyDataManager.EnemyType.Charging:
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
@@ -169,8 +165,7 @@ public class EnemySpawner : MonoBehaviour
                                 chargingController.isCharging = true;
                             }
                         break;
-    
-                    default:
+                    default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
             }

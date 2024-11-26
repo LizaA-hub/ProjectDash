@@ -77,6 +77,12 @@ public class DebugSceneManager : MonoBehaviour
         SpawnEnemy(EnemyDataManager.EnemyType.Charging);
         Debug.Log("Charging enemy spawned");
     }
+
+    public void SpawnTankyEnemy()
+    {
+        SpawnEnemy(EnemyDataManager.EnemyType.Tanky);
+        Debug.Log("Tanky enemy spawned");
+    }
     #endregion
     #region Private Functions
     private void LevelUp(){

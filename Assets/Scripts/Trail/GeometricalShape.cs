@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class GeometricalShape
 {
-    public enum Shape{Triangle, IsoscelesTriangle, Square, Rectangle, Parallelepiped, Pentagram, None};
+    public enum Shape{Triangle, IsoscelesTriangle, Square, Rectangle, Parallelepiped, FourSidedShape, Pentagram, None};
     public static Shape DetectShape(Vector2[] points){
         //3 sides//
         if(points.Length == 3){
@@ -38,7 +38,7 @@ public static class GeometricalShape
                 return Shape.Parallelepiped;
             }
             else{
-                return Shape.None;
+                return Shape.FourSidedShape;
             }
             
 

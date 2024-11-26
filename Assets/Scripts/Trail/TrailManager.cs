@@ -145,12 +145,13 @@ public class TrailManager : MonoBehaviour
         }
         //if not create one//
         if(createGO){
-            newObject = new GameObject("TrailShape",typeof(PolygonCollider2D),typeof(MeshRenderer),typeof(MeshFilter));
+            newObject = new GameObject("TrailShape",typeof(PolygonCollider2D),typeof(MeshRenderer),typeof(MeshFilter), typeof(ClosedShape));
         }
 
         PolygonCollider2D newCollider = newObject.GetComponent<PolygonCollider2D>();
         MeshFilter meshFilter = newObject.GetComponent<MeshFilter>(); 
         MeshRenderer meshRenderer = newObject.GetComponent<MeshRenderer>();
+        ClosedShape closedShape = newObject.GetComponent<ClosedShape>();
 
         newObject.tag = "ClosedShape";
         newCollider.SetPath(0,points);
@@ -164,9 +165,12 @@ public class TrailManager : MonoBehaviour
 
         if(Area(mesh) > 0.1f){
             myTrail.Clear();
-            if(DebugShape){
-                Debug.Log(GeometricalShape.DetectShape(points));
+            GeometricalShape.Shape shape = GeometricalShape.DetectShape(points);
+            if (DebugShape){
+                Debug.Log(shape);
             }
+            closedShape.shape = shape;
+
         }
         else{
             HideShape(newObject,100f);

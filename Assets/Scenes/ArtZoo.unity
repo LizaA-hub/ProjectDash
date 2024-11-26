@@ -531,6 +531,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c9626879fde3c14097205b052f11507, type: 3}
+--- !u!1 &90617658
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90617660}
+  - component: {fileID: 90617659}
+  m_Layer: 0
+  m_Name: HealthPackManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &90617659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90617658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9ae46655ed57fa49b022b84e08f56e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  squarePrefab: {fileID: 2644822699629006324, guid: 738276a4711b8a847b210d29a8bcd236, type: 3}
+  trianglePrefab: {fileID: 5749987622279217835, guid: 81236f5168a76e9419a85768acc2d31a, type: 3}
+  map: {fileID: 1395205163}
+--- !u!4 &90617660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90617658}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.9893994, y: 0.13441634, z: -0.04377928}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &250541651
 GameObject:
   m_ObjectHideFlags: 0
@@ -8050,6 +8097,13 @@ MonoBehaviour:
     speed: 5
     experience: 10
     spawnDelay: 50
+  - type: 1
+    prefab: {fileID: 7307865548004113015, guid: 008c0f8e0d4acdc49b6cad417a5ed950, type: 3}
+    maxHealth: 7
+    strength: 2
+    speed: 1
+    experience: 5
+    spawnDelay: 30
   instantiatedEnemies: []
 --- !u!4 &954499559
 Transform:
@@ -8753,3 +8807,4 @@ SceneRoots:
   - {fileID: 665050397}
   - {fileID: 61194557}
   - {fileID: 540377973}
+  - {fileID: 90617660}
