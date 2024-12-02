@@ -13,6 +13,7 @@ TagManager:
   - Red
   - Projectile
   - ShockWave
+  - Bomb
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, None }
+
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
@@ -14,7 +16,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     functionType function;
     [SerializeField]
-    EnemyDataManager.EnemyData[] datas;
+    EnemyScriptableObject[] enemyPool;
 
     Transform player;
     Vector3[] spawningPoints = new Vector3[4];
@@ -24,9 +26,10 @@ public class EnemySpawner : MonoBehaviour
     float difficultyTimer = 0f;
     Vector3 velocity = Vector3.zero;
 
-    //spawninf function variables//
+    //spawning function variables//
     EnemyController controller;
     Transform newEnemy;
+    EnemyDataManager.EnemyData[] datas;
     EnemyDataManager.EnemyData data;
 
     #region Unity Functions
@@ -44,14 +47,20 @@ public class EnemySpawner : MonoBehaviour
         spawningPoints[3] = new Vector3(0f,-mapSize.y/2,0f);
 
         //setting a timer for each enemy type
-        timers = new float[datas.Length];
+        timers = new float[enemyPool.Length];
+
+
+        datas = new EnemyDataManager.EnemyData[enemyPool.Length];
+        for (int i = 0; i < enemyPool.Length; i++)
+        {
+            datas[i] = new EnemyDataManager.EnemyData(enemyPool[i]);
+        }
 
         //spawning the firts enemies
         foreach (var point in spawningPoints)
         {
-            SpawnEnemy(EnemyDataManager.EnemyType.Basic,point);
+            SpawnEnemy(EnemyType.Basic,point);
         }
-
     }
 
     private void Update() {
@@ -62,26 +71,9 @@ public class EnemySpawner : MonoBehaviour
     }
 
     #endregion
-    #region Public Functions
-
-    /*public void RemoveEnemy(Transform enemy){
-        int toRemove = -1;
-        for (int i = 0; i < instantiatedEnemies.Count; i++)
-        {
-            if(instantiatedEnemies[i] == enemy){
-                toRemove = i;
-            }
-        }
-        if (toRemove == -1){
-            return;
-        }
-        instantiatedEnemies.RemoveAt(toRemove);
-        GameManager.enemyKilled += 1;
-    }*/
-    #endregion
     #region Private Functions
 
-    private void SpawnEnemy(EnemyDataManager.EnemyType type,Vector3 position){
+    private void SpawnEnemy(EnemyType type,Vector3 position){
         
         bool instantiateNewEnemy = true;
 
@@ -136,7 +128,7 @@ public class EnemySpawner : MonoBehaviour
                 switch (controller.type)
                 {
                     //Dashing enemy movement//
-                    case EnemyDataManager.EnemyType.Charging:
+                    case EnemyType.Charging:
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
                             {
@@ -165,7 +157,7 @@ public class EnemySpawner : MonoBehaviour
                                 chargingController.isCharging = true;
                             }
                         break;
-                    case EnemyDataManager.EnemyType.Projectile:
+                    case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
                         LookAtPlayer(instantiatedEnemies[i]);

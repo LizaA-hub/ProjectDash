@@ -905,35 +905,11 @@ MonoBehaviour:
   difficultyIncreasePercentage: 0.05
   functionParameter: 0.1
   function: 0
-  datas:
-  - type: 0
-    prefab: {fileID: 7307865548004113015, guid: a84204f0ba1ca9848a771cda2d912d94, type: 3}
-    maxHealth: 5
-    strength: 1
-    speed: 2
-    experience: 5
-    spawnDelay: 10
-  - type: 3
-    prefab: {fileID: 1974389323076921744, guid: 0dfccdde2737d0b48a0918e17f27a603, type: 3}
-    maxHealth: 10
-    strength: 2
-    speed: 5
-    experience: 10
-    spawnDelay: 50
-  - type: 1
-    prefab: {fileID: 7307865548004113015, guid: 008c0f8e0d4acdc49b6cad417a5ed950, type: 3}
-    maxHealth: 7
-    strength: 2
-    speed: 1
-    experience: 5
-    spawnDelay: 30
-  - type: 4
-    prefab: {fileID: 1974389323076921744, guid: 381cfd7724e89ba41978351cf3e66922, type: 3}
-    maxHealth: 3
-    strength: 1
-    speed: 2
-    experience: 5
-    spawnDelay: 40
+  enemyPool:
+  - {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
+  - {fileID: 11400000, guid: e475681d3b0546640ac72b1d9ac418e2, type: 2}
+  - {fileID: 11400000, guid: 2ef6d84d2269cbb4eb50365e730ac884, type: 2}
+  - {fileID: 11400000, guid: ba25514ab87b59644b741a3b7d0b9d3d, type: 2}
   instantiatedEnemies: []
 --- !u!4 &954499559
 Transform:

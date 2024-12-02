@@ -14,7 +14,7 @@ public class EnemySpawnerDebug : MonoBehaviour
     //[SerializeField]
     functionType function;
     [SerializeField]
-    EnemyDataManager.EnemyData[] datas;
+    EnemyScriptableObject[] datas;
 
     Transform player;
     Vector3[] spawningPoints = new Vector3[4];
@@ -27,7 +27,7 @@ public class EnemySpawnerDebug : MonoBehaviour
     //spawninf function variables//
     EnemyController controller;
     Transform newEnemy;
-    EnemyDataManager.EnemyData data;
+    EnemyScriptableObject data;
 
     #region Unity Functions
     private void Start() {
@@ -79,7 +79,7 @@ public class EnemySpawnerDebug : MonoBehaviour
         instantiatedEnemies.RemoveAt(toRemove);
         GameManager.enemyKilled += 1;
     }*/
-    public void TriggerSpawn(EnemyDataManager.EnemyType type){
+    public void TriggerSpawn(EnemyType type){
         foreach (var point in spawningPoints)
         {
             SpawnEnemy(type,point);
@@ -88,7 +88,7 @@ public class EnemySpawnerDebug : MonoBehaviour
     #endregion
     #region Private Functions
 
-    private void SpawnEnemy(EnemyDataManager.EnemyType type,Vector3 position){
+    private void SpawnEnemy(EnemyType type,Vector3 position){
         
         bool instantiateNewEnemy = true;
 
@@ -144,7 +144,7 @@ public class EnemySpawnerDebug : MonoBehaviour
                 switch (controller.type)
                 {
                     //Dashing enemy movement//
-                    case EnemyDataManager.EnemyType.Charging:
+                    case EnemyType.Charging:
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
                         {
@@ -173,7 +173,7 @@ public class EnemySpawnerDebug : MonoBehaviour
                             chargingController.isCharging = true;
                         }
                         break;
-                    case EnemyDataManager.EnemyType.Projectile:
+                    case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
                         LookAtPlayer(instantiatedEnemies[i]);

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 public class EnemyController : MonoBehaviour
 {
-    public EnemyDataManager.EnemyType type;
+    public EnemyType type;
     [SerializeField]
     Transform orbPrefab;
     [HideInInspector]
@@ -49,6 +49,10 @@ public class EnemyController : MonoBehaviour
         else if(other.gameObject.CompareTag("ShockWave")){
             //Debug.Log("enemy colliding with wave");
             TakeDamage(GameManager.shockWaveStrength);
+        }
+        else if (other.gameObject.CompareTag("Bomb"))
+        {
+            TakeDamage(GameManager.bombStrength);
         }
     }
     #region Public Functions

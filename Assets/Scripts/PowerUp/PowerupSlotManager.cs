@@ -9,7 +9,7 @@ public class PowerupSlotManager : MonoBehaviour
     Transform description;
     PowerUpManager powerUpManager;
     Image[] slotsIcon = new Image[6];
-    PowerUpDataManager.PowerUpType[] unlockedPowerups = new PowerUpDataManager.PowerUpType[6];
+    PowerUpType[] unlockedPowerups = new PowerUpType[6];
     TMP_Text descriptionUI;
 
     private void Start()
@@ -26,7 +26,7 @@ public class PowerupSlotManager : MonoBehaviour
             powerUpManager.powerupUnlocked.AddListener(UnlockUpgrade);
             for (int i = 0; i < 6; i++)
             {
-                unlockedPowerups[i] = PowerUpDataManager.PowerUpType.None;
+                unlockedPowerups[i] = PowerUpType.None;
             }
         }
         else
@@ -40,7 +40,7 @@ public class PowerupSlotManager : MonoBehaviour
     public void ShowDescription(int slot)
     {
         //get variables//
-        if(unlockedPowerups[slot] == PowerUpDataManager.PowerUpType.None)
+        if(unlockedPowerups[slot] == PowerUpType.None)
         {
             return;
         }
@@ -64,7 +64,7 @@ public class PowerupSlotManager : MonoBehaviour
         descriptionUI.enabled = false;
     }
 
-    private void UnlockUpgrade(PowerUpDataManager.PowerUpType type)
+    private void UnlockUpgrade(PowerUpType type)
     {
         bool isDashAttack = powerUpManager.IsDashAttack(type);
         int a = 0, b = 6;
@@ -79,7 +79,7 @@ public class PowerupSlotManager : MonoBehaviour
 
         for (int i = a; i < b; i++)
         {
-            if (unlockedPowerups[i] == PowerUpDataManager.PowerUpType.None)
+            if (unlockedPowerups[i] == PowerUpType.None)
             {
                 unlockedPowerups[i] = type;
                 Sprite icon = powerUpManager.GetIcon(type);

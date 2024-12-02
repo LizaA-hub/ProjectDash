@@ -7,10 +7,10 @@ public static class GameManager
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
     public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
     public static UnityEvent gameOver = new UnityEvent(), magnetIncrease = new UnityEvent();
-    public static float xpToNextLevel = 100f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f,
-                        shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f;
+    public static float xpToNextLevel = 10f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f,
+                        shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f, bombStrength = 5f, bombRadius = 10f;
     public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
-    public static bool haveProjectile = false, haveShockWave = false, haveSword = false;
+    public static bool haveProjectile = false, haveShockWave = false, haveSword = false, haveBomb = false;
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
     private static bool inPlayGround = false;
@@ -58,7 +58,7 @@ public static class GameManager
 
     public static void ModifyLevel(){
         level += 1; 
-        xpToNextLevel = 100*Mathf.Pow(level,growFactor);
+        xpToNextLevel = 10*Mathf.Pow(level,growFactor);
         levelChange.Invoke(level);
     }
 
@@ -114,28 +114,30 @@ public static class GameManager
         ModifySkillPoint(-currentStats.skillPoint);
     }
 
-    public static void Upgrade(PowerUpDataManager.PowerUpType type, int level){
+    public static void Upgrade(PowerUpType type, int level){
         switch (type)
         {
-            case PowerUpDataManager.PowerUpType.Trail :
+            case PowerUpType.Trail :
                 trailIncrease.Invoke(level);
                 break;
-            case PowerUpDataManager.PowerUpType.Strength :
+            case PowerUpType.Strength :
                 playerStrength += playerStrength*0.1f;
                 projectileDamage += projectileDamage*0.1f;
                 shockWaveStrength += shockWaveStrength*0.1f;
+                swordStrength += swordStrength * 0.1f;
+                bombStrength += bombStrength * 0.1f;
                 break;
-            case PowerUpDataManager.PowerUpType.XP :
+            case PowerUpType.XP :
                 xpMultiplier = 0.1f*level;
                 break;
-            case PowerUpDataManager.PowerUpType.Projectile :
+            case PowerUpType.Projectile :
                 if(level == 1){
                     haveProjectile = true;
                 }
                 projectileNb = level;
                 
                 break;
-            case PowerUpDataManager.PowerUpType.Wave :
+            case PowerUpType.Wave :
                 if(level == 1){
                     haveShockWave = true;
                 }
@@ -144,16 +146,16 @@ public static class GameManager
                     shockWaveStrength += shockWaveStrength*0.1f;
                 }
                 break;
-            case PowerUpDataManager.PowerUpType.Shield:
+            case PowerUpType.Shield:
                 dashShieldLevel += 1;
                 break;
-            case PowerUpDataManager.PowerUpType.Magnet:
+            case PowerUpType.Magnet:
                 magnetIncrease.Invoke();
                 break;
-            case PowerUpDataManager.PowerUpType.Cooldown:
+            case PowerUpType.Cooldown:
                 dashCooldown -= dashCooldown * 0.1f;
                 break;
-            case PowerUpDataManager.PowerUpType.Sword:
+            case PowerUpType.Sword:
                 if (level == 1)
                 {
                     haveSword = true;
@@ -161,6 +163,17 @@ public static class GameManager
                 else
                 {
                     swordStrength += swordStrength * 0.1f;
+                }
+                break;
+            case PowerUpType.Bomb:
+                if (level == 1)
+                {
+                    haveBomb = true;
+                }
+                else
+                {
+                    bombStrength += bombStrength * 0.1f;
+                    bombRadius += bombRadius * 0.1f;
                 }
                 break;
             default:
@@ -175,7 +188,7 @@ public static class GameManager
     private static void InitializeVariables(){
         //XP variables//
         experience = 0f;
-        xpToNextLevel = 100f;
+        xpToNextLevel = 10f;
         level = 1;
         xpMultiplier = 0f;
         //health variables//
@@ -191,12 +204,15 @@ public static class GameManager
         shockWaveStrength = 2f;
         shockWaveMaxRadius = 5f;
         dashShieldLevel = 0;
+        bombStrength = 5f;
+        bombRadius = 10f;
         //time variables//
         Time.timeScale = 1f;
         dashCooldown = 2f;
         //bool variables//
         haveProjectile = false;
         haveShockWave = false;
+        haveBomb = false;
         //check if playing in playground//
         var scene = SceneManager.GetActiveScene();
         if(scene.name == "ProgrammationPlayground1"){

@@ -397,6 +397,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 8175187030059307689, guid: ae7ded195440c1f4890e5fed1dd5d7ea, type: 3}
   shockWavePrefab: {fileID: 8090062928529375664, guid: 9034c4ca66858054f871e025dd4d2711, type: 3}
   swordTransform: {fileID: 1251196274673763009}
+  bombPrefab: {fileID: 4544904645171868812, guid: e2b77305738b18b4086c349fb110e3eb, type: 3}
   shieldSprite: {fileID: 1616594296990560483}
   orbMagnet: {fileID: 8508715947325420003}
   enemyLayer:

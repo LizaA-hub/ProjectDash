@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
     [SerializeField]
-    Transform projectilePrefab, shockWavePrefab, swordTransform;
+    Transform projectilePrefab, shockWavePrefab, swordTransform, bombPrefab;
     [SerializeField]
     SpriteRenderer shieldSprite;
     [SerializeField]
@@ -22,10 +22,10 @@ public class PlayerController : MonoBehaviour
     private Vector3 mousePos;
     private Vector2 swordPos;
     private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
-    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer, angleLimit = 0f;
+    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer, angleLimit = 0f, bombTimer;
     private int dashShield = 0;
-    private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>();
-    private Transform newProjectile, newWave, map;
+    private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>();
+    private Transform newProjectile, newWave, map, newBomb;
     private TrailRenderer swordTrail;
 
     #region Unity Functions
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         cam = Camera.main;
         cooldownTimer = cooldown;
-        projectileTimer = shockWaveTimer = swordTimer = GameManager.dashCooldown;
+        projectileTimer = shockWaveTimer = swordTimer = bombTimer = GameManager.dashCooldown;
         GameManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
 
         map = GameObject.Find("Ground").GetComponent<Transform>();
@@ -93,13 +93,19 @@ public class PlayerController : MonoBehaviour
                 FireShockWave();
                 shockWaveTimer = GameManager.dashCooldown;
             }
-
+            //dash shield//
             if(!isMoving){
                 isMoving = true;
                 dashShield = GameManager.dashShieldLevel;
                 shieldSprite.enabled = (dashShield>0)? true: false;
                 
             }
+            //bomb//
+            if (bombTimer <= 0f) {
+                DropBomb();
+                bombTimer = GameManager.dashCooldown;
+            }
+
             
         }
 
@@ -118,11 +124,6 @@ public class PlayerController : MonoBehaviour
         UpdateProjectile(Time.deltaTime);
         UpdateWaves(Time.deltaTime);
         MoveSword(Time.deltaTime);
-        
-        
-
-
-
     }
 
 
@@ -170,6 +171,10 @@ public class PlayerController : MonoBehaviour
             //sword timer//
             if (swordTimer > 0 && GameManager.haveSword) { 
                 swordTimer -= t;
+            }
+            //bomb timer//
+            if (bombTimer > 0f && GameManager.haveBomb) {
+                bombTimer -= t;
             }
         }
 
@@ -428,5 +433,41 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            #endregion
+    #endregion
+    #region Bomb Functions
+    private void DropBomb()
+    {
+
+        if (bombs.Count > 0)
+        {// check if there's a bomb object available
+            bool reuseBomb = false;
+            foreach (Transform bomb in bombs)
+            {
+                if (!bomb.gameObject.activeSelf)
+                {
+                    bomb.gameObject.SetActive(true);
+                    newBomb = bomb;
+                    reuseBomb = true;
+                    break;
+                }
+            }
+            if (!reuseBomb)
+            {
+                //create new bomb//
+                newBomb = Instantiate(bombPrefab);
+                bombs.Add(newBomb);
+            }
+
         }
+        else
+        {
+            //create new bomb//
+            newBomb = Instantiate(bombPrefab);
+            bombs.Add(newBomb);
+        }
+
+        newBomb.position = transform.position;
+    }
+
+    #endregion
+}

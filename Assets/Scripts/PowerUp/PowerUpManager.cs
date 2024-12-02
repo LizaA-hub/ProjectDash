@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using System.Data;
 
+public enum PowerUpType { Trail, XP, Strength, Projectile, Wave, Shield, Magnet, Cooldown, Sword, Bomb, None };
+
 public class PowerUpManager : MonoBehaviour
 {
     [SerializeField]
     GameObject panel;
     [SerializeField]
-    PowerUpDataManager.PowerUpData[] datas;
+    PowerUpScriptableObject[] upgradePool;
     [SerializeField]
     Transform[] buttons;
     int[] correspondingPower = {-1,-1,-1};
@@ -18,12 +20,19 @@ public class PowerUpManager : MonoBehaviour
     float cooldown = 1f;
     bool countdown = false;
     [HideInInspector]
-    public UnityEvent<PowerUpDataManager.PowerUpType> powerupUnlocked = new UnityEvent<PowerUpDataManager.PowerUpType>();
+    public UnityEvent<PowerUpType> powerupUnlocked = new UnityEvent<PowerUpType>();
+
+    PowerUpDataManager.PowerUpData[] datas;
 
     #region Unity Functions
     private void Start() {
         GameManager.levelChange.AddListener(NewLevel);
-     }
+        datas = new PowerUpDataManager.PowerUpData[upgradePool.Length];
+        for(int i = 0; i < upgradePool.Length ; i++)
+        {
+            datas[i] = new PowerUpDataManager.PowerUpData(upgradePool[i]);
+        }
+    }
     
     private void Update() {
         if(countdown){
@@ -52,7 +61,7 @@ public class PowerUpManager : MonoBehaviour
         }  
     }
 
-    public int IncreaseLevel(PowerUpDataManager.PowerUpType type)
+    public int IncreaseLevel(PowerUpType type)
     {
         for (int i = 0; i < datas.Length; i++)
         {
@@ -73,7 +82,7 @@ public class PowerUpManager : MonoBehaviour
         return 0;
     }
 
-    public int DebbugPowerup(PowerUpDataManager.PowerUpType type)
+    public int DebbugPowerup(PowerUpType type)
     {
         int id = 0;
         for (int i = 0; i < datas.Length; i++)
@@ -102,7 +111,6 @@ public class PowerUpManager : MonoBehaviour
                 return level-1;
             }
         }
-        
 
         GameManager.Upgrade(type, level);
 
@@ -117,7 +125,7 @@ public class PowerUpManager : MonoBehaviour
         return level;
     }
 
-    public bool IsDashAttack(PowerUpDataManager.PowerUpType type)
+    public bool IsDashAttack(PowerUpType type)
     {
         foreach (var data in datas)
         {
@@ -129,7 +137,7 @@ public class PowerUpManager : MonoBehaviour
         return false;
     }
 
-    public Sprite GetIcon(PowerUpDataManager.PowerUpType type)
+    public Sprite GetIcon(PowerUpType type)
     {
         foreach (var data in datas)
         {
@@ -141,7 +149,7 @@ public class PowerUpManager : MonoBehaviour
         return null;
     }
 
-    public string GetName(PowerUpDataManager.PowerUpType type)
+    public string GetName(PowerUpType type)
     {
         foreach (var data in datas)
         {
@@ -153,7 +161,7 @@ public class PowerUpManager : MonoBehaviour
         return "";
     }
 
-    public int GetLevel(PowerUpDataManager.PowerUpType type)
+    public int GetLevel(PowerUpType type)
     {
         foreach (var data in datas)
         {
@@ -233,7 +241,7 @@ public class PowerUpManager : MonoBehaviour
     private void SelectOption(int option){
         int id = correspondingPower[option];
         var data = datas[id];
-        PowerUpDataManager.PowerUpType type = data.type;
+        PowerUpType type = data.type;
         int level = data.level; 
         
         if(IncreaseLevel(type) == 0)

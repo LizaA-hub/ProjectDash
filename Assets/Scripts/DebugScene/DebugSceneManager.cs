@@ -9,12 +9,12 @@ public class DebugSceneManager : MonoBehaviour
     [SerializeField]
     EnemySpawnerDebug spawner;
     [SerializeField]
-    TMP_Text DashAttackText, shockWaveText, shieldText, swordText;
+    TMP_Text DashAttackText, shockWaveText, shieldText, swordText, bombText;
     [SerializeField]
     PowerUpManager powerUpManager;
 
     bool showPanel = true;
-    int dashAttackLevel = 0, shockWaveLevel = 0, shieldLevel = 0, swordLevel = 0;
+    int dashAttackLevel = 0, shockWaveLevel = 0, shieldLevel = 0, swordLevel = 0, bombLevel=0;
 
     #region Unity Functions
 
@@ -48,44 +48,50 @@ public class DebugSceneManager : MonoBehaviour
             Debug.Log("Dash attack is at max level.");
             return;
         }
-        dashAttackLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Projectile);
+        dashAttackLevel = powerUpManager.DebbugPowerup(PowerUpType.Projectile);
         DashAttackText.text = "Lvl " + dashAttackLevel;
     }
 
     public void UnlockWave(){
-        shockWaveLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Wave);
+        shockWaveLevel = powerUpManager.DebbugPowerup(PowerUpType.Wave);
         shockWaveText.text = "Lvl " + shockWaveLevel;
     }
 
     public void UnlockShield()
     {
-        shieldLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Shield);
+        shieldLevel = powerUpManager.DebbugPowerup(PowerUpType.Shield);
         shieldText.text = "Lvl " + shieldLevel;
     }
 
     public void UnlockSword()
     {
-        swordLevel = powerUpManager.DebbugPowerup(PowerUpDataManager.PowerUpType.Sword);
+        swordLevel = powerUpManager.DebbugPowerup(PowerUpType.Sword);
         swordText.text = "Lvl " + swordLevel;
     }
+
+    public void UnlockBomb()
+    {
+        bombLevel = powerUpManager.DebbugPowerup(PowerUpType.Bomb);
+        bombText.text = "Lvl " + bombLevel;
+    }
     public void SpawnBasicEnemy(){
-        SpawnEnemy(EnemyDataManager.EnemyType.Basic);
+        SpawnEnemy(EnemyType.Basic);
         Debug.Log("Basic enemy spawned");
     }
 
     public void SpawnChargingEnemy(){
-        SpawnEnemy(EnemyDataManager.EnemyType.Charging);
+        SpawnEnemy(EnemyType.Charging);
         Debug.Log("Charging enemy spawned");
     }
 
     public void SpawnTankyEnemy()
     {
-        SpawnEnemy(EnemyDataManager.EnemyType.Tanky);
+        SpawnEnemy(EnemyType.Tanky);
         Debug.Log("Tanky enemy spawned");
     }
     public void SpawnProjectileEnemy()
     {
-        SpawnEnemy(EnemyDataManager.EnemyType.Projectile);
+        SpawnEnemy(EnemyType.Projectile);
         Debug.Log("Projectile enemy spawned");
     }
     #endregion
@@ -97,7 +103,7 @@ public class DebugSceneManager : MonoBehaviour
         GameManager.ModifyExperience(diff);
     }
 
-    private void SpawnEnemy(EnemyDataManager.EnemyType type){
+    private void SpawnEnemy(EnemyType type){
         spawner.TriggerSpawn(type);
     }
     #endregion
