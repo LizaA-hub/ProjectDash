@@ -109,8 +109,7 @@ public class EnemySpawnerDebug : MonoBehaviour
                 break;
         }
 
-        position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
-        position += cam.transform.position;
+        position = new Vector3(X * cameraBound.x + cam.transform.position.x, Y * cameraBound.y + cam.transform.position.y, 0f);
         return position;
     }
 
