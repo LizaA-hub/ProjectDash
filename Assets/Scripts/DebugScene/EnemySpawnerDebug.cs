@@ -1,33 +1,21 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditorInternal;
 
 public class EnemySpawnerDebug : MonoBehaviour
 {
     [SerializeField]
-    Transform map;
-    //[SerializeField]
-    float difficultyIncreaseDelay = 30f;
-    //[SerializeField,Range(0,1)]
-    float difficultyIncreasePercentage = 0.05f, functionParameter = 0.1f;
-
-    private enum functionType{Linear, Exponential};
-    //[SerializeField]
-    functionType function;
-    [SerializeField]
-    EnemyScriptableObject[] datas;
-
+    EnemyScriptableObject[] enemyPool;
+    
     Transform player;
-    Vector3[] spawningPoints = new Vector3[4];
-    [SerializeField]
     List<Transform> instantiatedEnemies = new List<Transform>();
-    float[] timers;
-    float difficultyTimer = 0f;
-    Vector3 velocity = Vector3.zero;
-
+    
+    Vector3 velocity = Vector3.zero, cameraBound;
+    Camera cam;
     //spawninf function variables//
     EnemyController controller;
     Transform newEnemy;
-    EnemyScriptableObject data;
+    EnemyDataManager.EnemyData data;
 
     #region Unity Functions
     private void Start() {
@@ -37,66 +25,34 @@ public class EnemySpawnerDebug : MonoBehaviour
             Debug.Log("player object not found");
         }
 
-        Vector3 mapSize = map.localScale;
-        //implementing spawning point
-        spawningPoints[0] = new Vector3(mapSize.x/2,0f,0f);
-        spawningPoints[1] = new Vector3(0f,mapSize.y/2,0f);
-        spawningPoints[2] = new Vector3(-mapSize.x/2,0f,0f);
-        spawningPoints[3] = new Vector3(0f,-mapSize.y/2,0f);
-
-        //setting a timer for each enemy type
-        timers = new float[datas.Length];
-
-        /*//spawning the firts enemies
-        foreach (var point in spawningPoints)
-        {
-            SpawnEnemy(EnemyDataManager.EnemyType.Basic,point);
-        }*/
+        cam = Camera.main;
+        cameraBound = cam.ScreenToWorldPoint(Vector3.zero);
 
     }
 
     private void Update() {
         
         UpdateEnemies(Time.deltaTime);
-
-        //UpdateTimers(Time.deltaTime);
     }
 
     #endregion
     #region Public Functions
 
-    /*public void RemoveEnemy(Transform enemy){
-        int toRemove = -1;
-        for (int i = 0; i < instantiatedEnemies.Count; i++)
-        {
-            if(instantiatedEnemies[i] == enemy){
-                toRemove = i;
-            }
-        }
-        if (toRemove == -1){
-            return;
-        }
-        instantiatedEnemies.RemoveAt(toRemove);
-        GameManager.enemyKilled += 1;
-    }*/
     public void TriggerSpawn(EnemyType type){
-        foreach (var point in spawningPoints)
-        {
-            SpawnEnemy(type,point);
-        }
+            SpawnEnemy(type);
     }
     #endregion
     #region Private Functions
 
-    private void SpawnEnemy(EnemyType type,Vector3 position){
+    private void SpawnEnemy(EnemyType type){
         
         bool instantiateNewEnemy = true;
 
         //find the data corresponding to the type//
-        foreach (var correspondingData in datas)
+        foreach (var enemy in enemyPool)
         {
-            if(type == correspondingData.type){
-                data = correspondingData;
+            if(enemy.data.type == type){
+                data = enemy.data;
                 break;
             }
         }
@@ -124,13 +80,38 @@ public class EnemySpawnerDebug : MonoBehaviour
         }
 
         //set variables//
-        newEnemy.position = position;
+        newEnemy.position = GetSpawningPosition();
         controller.health = data.maxHealth;
         controller.strength = data.strength;
         controller.speed = data.speed;
         controller.experience = data.experience;
         
         
+    }
+
+    private Vector3 GetSpawningPosition()
+    {
+        int[] randomInt = { -1, 1 };
+        float X = 0f, Y = 0f;
+        Vector3 position = Vector3.zero;
+        switch (Random.Range(0, 2))
+        {
+            case 0://position up or down the camera
+                X = Random.Range(-1, 1);
+                Y = randomInt[Random.Range(0, 2)];
+                position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+                break;
+
+            default://position left or rigth the camera
+                Y = Random.Range(-1, 1);
+                X = randomInt[Random.Range(0, 2)];
+                position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+                break;
+        }
+
+        position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+        position += cam.transform.position;
+        return position;
     }
 
     private void UpdateEnemies(float t)
@@ -184,53 +165,6 @@ public class EnemySpawnerDebug : MonoBehaviour
                         break;
                 }
             }
-        }
-    }
-
-
-    private void UpdateTimers(float t){
-
-        for (int i = 0; i < datas.Length; i++)
-        {
-          timers[i] += t;
-          if (timers[i] >= datas[i].spawnDelay){//does the timer exceed the corresponding delay?
-            timers[i] -= datas[i].spawnDelay;
-            foreach (var point in spawningPoints)
-            {
-                SpawnEnemy(datas[i].type,point);
-            }
-          }
-          
-        }
-
-        difficultyTimer += t;
-        if (difficultyTimer >= difficultyIncreaseDelay){
-            difficultyTimer -= difficultyIncreaseDelay;
-            IncreaseDifficulty();
-        }
-    }
-
-    private void IncreaseDifficulty(){
-        
-        for (int i = 0; i < datas.Length; i++)
-        {
-            if (function == functionType.Linear){
-                var _delay = datas[i].spawnDelay;
-                if (_delay > 1f){
-                    _delay -= functionParameter;
-                    datas[i].spawnDelay = _delay;
-                }
-                
-            }
-            else{
-                var _delay = datas[i].spawnDelay;
-                if (_delay > 1f){
-                    _delay *= Mathf.Exp(-functionParameter);
-                    datas[i].spawnDelay = _delay;
-                }
-            }
-            datas[i].maxHealth += datas[i].maxHealth*difficultyIncreasePercentage;
-            datas[i].strength += datas[i].strength*difficultyIncreasePercentage;
         }
     }
 

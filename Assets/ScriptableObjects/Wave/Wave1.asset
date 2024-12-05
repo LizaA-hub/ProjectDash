@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cd02698740c3b74bb168a9da04063c1, type: 3}
-  m_Name: Tank
+  m_Script: {fileID: 11500000, guid: 4d8d6de98b126d14a8a77d7fee548fe5, type: 3}
+  m_Name: Wave1
   m_EditorClassIdentifier: 
-  data:
-    type: 1
-    prefab: {fileID: 7307865548004113015, guid: 008c0f8e0d4acdc49b6cad417a5ed950, type: 3}
-    maxHealth: 5
-    strength: 1
-    speed: 1
-    experience: 1
-    spawnDelay: 20
+  enemyGroups:
+  - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
+    maxNumber: 10
+    spawnDelay: 1
+    property: 4
+    propertyMultiplier: 0

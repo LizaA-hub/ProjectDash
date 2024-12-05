@@ -1,30 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, None }
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawnerV2 : MonoBehaviour
 {
+    //inspector variabless//
     [SerializeField]
-    Transform map;
-    [SerializeField]
-    float difficultyIncreaseDelay = 30f;
+    float waveDelay = 30f;
+    [Header("Variables to increase enemy difficulty over time.")]
     [SerializeField,Range(0,1)]
-    float difficultyIncreasePercentage = 0.05f, functionParameter = 0.1f;
-
-    private enum functionType{Linear, Exponential};
+    float speedMultiplier = 0.05f, healthMultiplier = 0.1f, strengthMultiplier = 0.1f;
     [SerializeField]
-    functionType function;
-    [SerializeField]
-    EnemyScriptableObject[] enemyPool;
+    WaveScriptableObject[] waves;
 
+    //private variables//
     Transform player;
-    Vector3[] spawningPoints = new Vector3[4];
-    [SerializeField]
     List<Transform> instantiatedEnemies = new List<Transform>();
-    float[] timers;
-    float difficultyTimer = 0f;
-    Vector3 velocity = Vector3.zero;
+    float[] intraWaveTimers;
+    float interWaveTimer = 0f;
+    Vector3 velocity = Vector3.zero, cameraBound;
+    int waveNumber = 0;
+    Camera cam;
+    WaveScriptableObject currentWave;
+    int[] enemySpawned;
+    bool timersOn = true;
 
     //spawning function variables//
     EnemyController controller;
@@ -39,60 +41,44 @@ public class EnemySpawner : MonoBehaviour
             Debug.Log("player object not found");
         }
 
-        Vector3 mapSize = map.localScale;
-        //implementing spawning point
-        spawningPoints[0] = new Vector3(mapSize.x/2,0f,0f);
-        spawningPoints[1] = new Vector3(0f,mapSize.y/2,0f);
-        spawningPoints[2] = new Vector3(-mapSize.x/2,0f,0f);
-        spawningPoints[3] = new Vector3(0f,-mapSize.y/2,0f);
+        cam = Camera.main;
+        cameraBound = cam.ScreenToWorldPoint(Vector3.zero);
 
-        //setting a timer for each enemy type
-        timers = new float[enemyPool.Length];
-
-
-        datas = new EnemyDataManager.EnemyData[enemyPool.Length];
-        for (int i = 0; i < enemyPool.Length; i++)
+        if(waves.Length > 0)
         {
-            datas[i] = new EnemyDataManager.EnemyData(enemyPool[i]);
+            NextWave();
         }
-
-        //spawning the firts enemies
-        foreach (var point in spawningPoints)
+        else
         {
-            SpawnEnemy(EnemyType.Basic,point);
+            Debug.Log("no wave in the waves array.");
         }
+            
     }
 
     private void Update() {
         
         UpdateEnemies(Time.deltaTime);
 
-        UpdateTimers(Time.deltaTime);
+        if(timersOn)
+            UpdateTimers(Time.deltaTime);
     }
 
     #endregion
     #region Private Functions
 
-    private void SpawnEnemy(EnemyType type,Vector3 position){
+    private void SpawnEnemy(EnemyScriptableObject enemy, int enemyGroup){
         
         bool instantiateNewEnemy = true;
 
-        //find the data corresponding to the type//
-        foreach (var correspondingData in datas)
-        {
-            if(type == correspondingData.type){
-                data = correspondingData;
-                break;
-            }
-        }
+        data = enemy.data;
 
         //check if an already instantiated child is available//
-        foreach (var enemy in instantiatedEnemies)
+        foreach (var enemyTransform in instantiatedEnemies)
         {
-            if(!enemy.gameObject.activeSelf){
-                controller = enemy.GetComponent<EnemyController>() ; 
-                if(controller.type == type){
-                    newEnemy = enemy;
+            if(!enemyTransform.gameObject.activeSelf){
+                controller = enemyTransform.GetComponent<EnemyController>() ; 
+                if(controller.type == data.type){
+                    newEnemy = enemyTransform;
                     newEnemy.gameObject.SetActive(true);
                     instantiateNewEnemy = false;
                     break;
@@ -109,13 +95,55 @@ public class EnemySpawner : MonoBehaviour
         }
 
         //set variables//
-        newEnemy.position = position;
-        controller.health = data.maxHealth;
-        controller.strength = data.strength;
-        controller.speed = data.speed;
+        newEnemy.position = GetSpawningPosition(); //to do function get random position based on the camera
+        controller.health = data.maxHealth * ( 1+healthMultiplier * waveNumber);
+        controller.strength = data.strength * (1 + strengthMultiplier * waveNumber);
+        controller.speed = data.speed * (1 + speedMultiplier * waveNumber);
         controller.experience = data.experience;
-        
-        
+
+        //check for special property in the wave
+        switch (currentWave.enemyGroups[enemyGroup].property)
+        {
+            case EnemyDataManager.propertyType.Health:
+                controller.health *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
+                break;
+            case EnemyDataManager.propertyType.Strength:
+                controller.strength *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
+                break;
+            case EnemyDataManager.propertyType.Speed:
+                controller.speed *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
+                break;
+            case EnemyDataManager.propertyType.XP:
+                controller.experience *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private Vector3 GetSpawningPosition()
+    {
+        int[] randomInt = {-1, 1};
+        float X = 0f, Y = 0f;
+        Vector3 position = Vector3.zero;
+        switch (Random.Range(0, 2))
+        {
+            case 0://position up or down the camera
+                X = Random.Range(-1, 1);
+                Y = randomInt[Random.Range(0, 2)];
+                position = new Vector3(X*cameraBound.x, Y*cameraBound.y, 0f);
+                break;
+
+            default://position left or rigth the camera
+                Y = Random.Range(-1, 1);
+                X = randomInt[Random.Range(0, 2)];
+                position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+                break;
+        }
+
+        position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+        position += cam.transform.position;
+        return position;
     }
 
     private void UpdateEnemies(float t){
@@ -174,47 +202,43 @@ public class EnemySpawner : MonoBehaviour
 
     private void UpdateTimers(float t){
 
-        for (int i = 0; i < datas.Length; i++)
+        //Timer inside wave
+        for (int i = 0; i < intraWaveTimers.Length; i++)
         {
-          timers[i] += t;
-          if (timers[i] >= datas[i].spawnDelay){//does the timer exceed the corresponding delay?
-            timers[i] -= datas[i].spawnDelay;
-            foreach (var point in spawningPoints)
+            if (enemySpawned[i] >= currentWave.enemyGroups[i].maxNumber) //check if the number of enemies in this wave is reach 
+                continue;
+            
+            intraWaveTimers[i] += t;
+            if (currentWave.enemyGroups[i].spawnDelay <= intraWaveTimers[i])
             {
-                SpawnEnemy(datas[i].type,point);
+                intraWaveTimers[i] = 0;
+                enemySpawned[i]++;
+                SpawnEnemy(currentWave.enemyGroups[i].enemy,i);
             }
-          }
-          
         }
-
-        difficultyTimer += t;
-        if (difficultyTimer >= difficultyIncreaseDelay){
-            difficultyTimer -= difficultyIncreaseDelay;
-            IncreaseDifficulty();
+        //Global timer
+        interWaveTimer += t;
+        if (interWaveTimer >= waveDelay) {
+            interWaveTimer = 0;
+            NextWave();
         }
+        
     }
 
-    private void IncreaseDifficulty(){
-        
-        for (int i = 0; i < datas.Length; i++)
+    private void NextWave()
+    {
+        waveNumber++;
+        if (waveNumber > waves.Length)
         {
-            if (function == functionType.Linear){
-                var _delay = datas[i].spawnDelay;
-                if (_delay > 1f){
-                    _delay -= functionParameter;
-                    datas[i].spawnDelay = _delay;
-                }
-                
-            }
-            else{
-                var _delay = datas[i].spawnDelay;
-                if (_delay > 1f){
-                    _delay *= Mathf.Exp(-functionParameter);
-                    datas[i].spawnDelay = _delay;
-                }
-            }
-            datas[i].maxHealth += datas[i].maxHealth*difficultyIncreasePercentage;
-            datas[i].strength += datas[i].strength*difficultyIncreasePercentage;
+            Debug.Log("no more waves!");
+            timersOn = false;
+        }
+        else
+        {
+            currentWave = waves[waveNumber-1];
+            //reset timers
+            intraWaveTimers = new float[currentWave.enemyGroups.Length];
+            enemySpawned = new int[currentWave.enemyGroups.Length];
         }
     }
 

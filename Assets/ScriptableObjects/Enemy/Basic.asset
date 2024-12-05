@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cd02698740c3b74bb168a9da04063c1, type: 3}
   m_Name: Basic
   m_EditorClassIdentifier: 
-  type: 0
-  prefab: {fileID: 7307865548004113015, guid: a84204f0ba1ca9848a771cda2d912d94, type: 3}
-  maxHealth: 2
-  strength: 1
-  speed: 2
-  experience: 1
-  spawnDelay: 10
+  data:
+    type: 0
+    prefab: {fileID: 7307865548004113015, guid: a84204f0ba1ca9848a771cda2d912d94, type: 3}
+    maxHealth: 3
+    strength: 1
+    speed: 2
+    experience: 1
+    spawnDelay: 10
