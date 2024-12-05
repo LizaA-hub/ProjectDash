@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PowerupSlot : MonoBehaviour
 {
     [SerializeField]
     int Id;
+    public Image Icon, disableIcon;
     PowerupSlotManager controller;
     private void Start()
     {

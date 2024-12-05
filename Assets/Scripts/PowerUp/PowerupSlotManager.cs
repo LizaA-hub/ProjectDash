@@ -8,7 +8,7 @@ public class PowerupSlotManager : MonoBehaviour
     [SerializeField]
     Transform description;
     PowerUpManager powerUpManager;
-    Image[] slotsIcon = new Image[6];
+    Image[] slotsIcon = new Image[6], iconDisable = new Image[6];
     PowerUpType[] unlockedPowerups = new PowerUpType[6];
     TMP_Text descriptionUI;
 
@@ -17,7 +17,9 @@ public class PowerupSlotManager : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             var child = transform.GetChild(i);
-            slotsIcon[i] = child.gameObject.GetComponent<Image>();
+            var controller = child.gameObject.GetComponent<PowerupSlot>();
+            slotsIcon[i] = controller.Icon;
+            iconDisable[i] = controller.disableIcon;
         }
 
         powerUpManager = GameObject.Find("LevelUpUI").GetComponent<PowerUpManager>();
@@ -35,6 +37,59 @@ public class PowerupSlotManager : MonoBehaviour
         }
 
         descriptionUI = description.gameObject.GetComponent<TMP_Text>();
+    }
+
+    private void Update()
+    {
+        if (unlockedPowerups.Length > 0)
+            UpdateIconTimers();
+    }
+
+    private void UpdateIconTimers()
+    {
+        float div = 1;
+        for(int i = 0; i < unlockedPowerups.Length; i ++)
+        {
+            var power = unlockedPowerups[i];
+            switch (power)
+            {
+                case PowerUpType.Projectile:
+                    if(GameManager.projectileNb > 0)
+                    {
+                        div -= PlayerController.projectileTimer / GameManager.dashCooldown;
+                    }
+                    break;
+                case PowerUpType.Wave:
+                    if (GameManager.haveShockWave)
+                    {
+                        div -= PlayerController.shockWaveTimer / GameManager.dashCooldown;
+                    }
+                    break;
+                case PowerUpType.Shield:
+                    if (GameManager.dashShieldLevel > 0)
+                    {
+                        div -= Mathf.Clamp(PlayerController.dashShield,0,1);
+                        
+                    }
+                    break;
+                case PowerUpType.Sword:
+                    if (GameManager.haveSword)
+                    {
+                        div -= PlayerController.swordTimer / GameManager.dashCooldown;
+                    }
+                    break;
+                case PowerUpType.Bomb:
+                    if (GameManager.haveBomb)
+                    {
+                        div -= PlayerController.bombTimer / GameManager.dashCooldown;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if(div != slotsIcon[i].fillAmount)
+                slotsIcon[i].fillAmount = div;
+        }
     }
 
     public void ShowDescription(int slot)
@@ -85,7 +140,9 @@ public class PowerupSlotManager : MonoBehaviour
                 Sprite icon = powerUpManager.GetIcon(type);
                 if (icon != null)
                 {
+                    slotsIcon[i].enabled = true;
                     slotsIcon[i].sprite = icon;
+                    iconDisable[i].sprite = icon;
                 }
                 else
                 {

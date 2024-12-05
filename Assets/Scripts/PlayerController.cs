@@ -22,8 +22,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 mousePos;
     private Vector2 swordPos;
     private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
-    private float cooldownTimer, projectileTimer, shockWaveTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, swordTimer, angleLimit = 0f, bombTimer;
-    private int dashShield = 0;
+    private float cooldownTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f;
+    public static float projectileTimer, shockWaveTimer, swordTimer, bombTimer;
+    public static int dashShield = 0;
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>();
     private Transform newProjectile, newWave, map, newBomb;
     private TrailRenderer swordTrail;
