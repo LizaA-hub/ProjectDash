@@ -1,21 +1,43 @@
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
+//using UnityEditor;
+
+public enum skillTypes { 
+    //general skills//
+    General_HP,Dash_Colldown,Trail_Damage,Trail_Duration,Dash_Speed,General_XP,
+    //triangle skills//
+    Triangle_Damage, Triangle_Gravity, Triangle_DOT, Triangle_Stun, Triangle_Support, Triangle_6,
+    //square skills//
+    Square_Damage, Square_Slow, Square_Flame, Square_Trap, Square_Heal, Square_6,
+    //pentagon skills//
+    Pentagon_Damage, Pentagon_Blade, Pentagon_Implosion, Pentagon_Drain, Pentagon_Bomb, Pentagon_6,
+    //hexagon skills//
+    Hexagon_Damage, Hexagon_Meteor, Hexagon_Lightning, Hexagon_Area, Hexagon_Slow, Hexagon_6,
+    //pentagram skills//
+    Pentagram_Damage, Pentagram_Duration, Pentagram_Critical, Pentagram_Start, Pentagram_Octagon, Pentagram_6,
+    //branch7 skills//
+    Branch7_1, Branch7_2, Branch7_3, Branch7_4, Branch7_5, Branch7_6
+};
 
 public class SkillTreeManager : MonoBehaviour
 {
-    public List<Skill> allSkills;  // All skills in the tree
-    public int availablePoints = 10;  // Total points for the player to spend
-    public TextMeshProUGUI skillPointsText;  // UI text for displaying skill points
+    [HideInInspector]
+    public UnityEvent<skillTypes> skillUnlocked = new UnityEvent<skillTypes>();
+    private int availablePoints;  // Total points for the player to spend
+    [SerializeField]
+    TextMeshProUGUI skillPointsText;  // UI text for displaying skill points
+
 
     private void Start()
     {
         availablePoints = (int)GameManager.GetSkillPoint();
         UpdateSkillPointsUI();  // Initial display of skill points
+        UpdateSkillSlots();
     }
 
     // Function to unlock a skill
-    public bool UnlockSkill(Skill skill)
+    /*public bool UnlockSkill(Skill skill)
     {
         // Check if skill is already unlocked
         if (skill.isUnlocked)
@@ -50,19 +72,18 @@ public class SkillTreeManager : MonoBehaviour
 
         UpdateSkillPointsUI();  // Update the UI with the new skill points total
         return true;
-    }
+    }*/
 
-    // Reset all skills (for testing or respec feature)
-    public void ResetSkills()
+    private void UpdateSkillSlots()
     {
-        foreach (Skill skill in allSkills)
+        for (int i = 0; i < GameManager.skillLevels.Length; i++)
         {
-            skill.isUnlocked = false;
+            if (GameManager.skillLevels[i] > 0)
+            {
+                skillUnlocked.Invoke((skillTypes)i);
+            }
         }
-        availablePoints = 10;  // Reset points as desired
-        UpdateSkillPointsUI();  // Update the UI after resetting
     }
-
     // Method to update the skill points text UI
     private void UpdateSkillPointsUI()
     {
@@ -71,4 +92,15 @@ public class SkillTreeManager : MonoBehaviour
             skillPointsText.text = $"Skill Points: {availablePoints}";
         }
     }
+
+    //function used to create all the skills scriptable objects. uncomment "using UnityEditor" to use//
+    /*private void CreateSkillObject()
+    {
+        for (int i = 0; i < 42; i++)
+        {
+            SkillScriptableObject skillObject = ScriptableObject.CreateInstance<SkillScriptableObject>();
+            AssetDatabase.CreateAsset(skillObject, $"Assets/ScriptableObjects/Skill/Skill{i+1}.asset");
+        }
+
+    }*/
 }

@@ -16,11 +16,6 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("SkillTree");
     }
 
-    public void BackToMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
-
     // Optional: Function to quit the game
     public void QuitGame()
     {
@@ -33,8 +28,4 @@ public class MainMenu : MonoBehaviour
 #endif
     }
 
-    public void ResetSkillPoints(){
-        GameManager.ResetSkillPoints();
-        OpenSkillTree();
-    }
 }

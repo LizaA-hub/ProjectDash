@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cd02698740c3b74bb168a9da04063c1, type: 3}
-  m_Name: Projectile
+  m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
+  m_Name: Skill25
   m_EditorClassIdentifier: 
-  data:
-    type: 4
-    prefab: {fileID: 1974389323076921744, guid: 381cfd7724e89ba41978351cf3e66922, type: 3}
-    maxHealth: 3
-    strength: 1
-    speed: 2
-    experience: 3
+  type: 0
+  skillName: 
+  description: 
+  icon: {fileID: 0}
+  nextSkills: 
+  cost: 1

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,8 @@ public static class GameManager
                         shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f, bombStrength = 5f, bombRadius = 10f;
     public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
     public static bool haveProjectile = false, haveShockWave = false, haveSword = false, haveBomb = false;
+    public static int[] skillLevels;
+
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
     private static bool inPlayGround = false;
@@ -217,6 +220,13 @@ public static class GameManager
         var scene = SceneManager.GetActiveScene();
         if(scene.name == "ProgrammationPlayground1"){
             inPlayGround = true;
+        }
+        //skill tree variables//
+        if(skillLevels.Length == 0)
+        {
+            int count = skillTypes.GetNames(typeof(skillTypes)).Length;
+            skillLevels = new int[count];
+            skillLevels[0] = 1;
         }
         
     }
