@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill28
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 27
+  skillName: Hexagon Effect Radius
+  description: Increase the area of hexagon effect
+  statInfo: 5% per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 190000001d000000
   cost: 1

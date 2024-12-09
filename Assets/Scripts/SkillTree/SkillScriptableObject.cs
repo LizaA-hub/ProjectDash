@@ -6,7 +6,8 @@ public class SkillScriptableObject : ScriptableObject
 {
     public skillTypes type;
     public string skillName;
-    public string description;
+    [TextArea]
+    public string description, statInfo;
     public Sprite icon;
     public List<skillTypes> nextSkills;
     public int cost = 1;  // Cost of unlocking the skill

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill36
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 35
+  skillName: Pentagram Skill 6
+  description: To be defined
+  statInfo: /
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 2200000021000000
   cost: 1

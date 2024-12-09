@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 4
   skillName: Dash Speed
   description: Increase dash speed
+  statInfo: 10% per level
   icon: {fileID: 0}
   nextSkills: 0500000002000000
   cost: 1

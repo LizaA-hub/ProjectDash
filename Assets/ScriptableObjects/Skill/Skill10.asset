@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 9
   skillName: Stun Triangle
   description: Enemies damaged by a triangle are stunned for a short duration
+  statInfo: Stun starts at 1 second, gain +0.5 second per level
   icon: {fileID: 0}
   nextSkills: 0b0000000e00000007000000
   cost: 1

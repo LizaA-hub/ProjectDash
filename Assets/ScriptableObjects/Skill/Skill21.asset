@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill21
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 20
+  skillName: Pentagon Implosion
+  description: After completion, the pentagon collapses inward, pulling enemies toward
+    the center and dealing massive damage
+  statInfo: 10% critical chance per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 1200000016000000
   cost: 1

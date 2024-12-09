@@ -7,30 +7,35 @@ public class SkillButton : MonoBehaviour
     [SerializeField]
     SkillScriptableObject skill;
 
+    Color lockedColor = new Color(0.8f, 0.8f,0.8f, 0.5f);
+
     Button button;
+    Image image;
     SkillTreeManager manager;
 
     private void Start()
     {
         button = GetComponent<Button>();
+        button.onClick.AddListener(OnButtonClick);
+
         manager = GameObject.FindObjectOfType<SkillTreeManager>();
         manager.skillUnlocked.AddListener(ToggleButton);
+
+        image = GetComponent<Image>();
+        image.color = lockedColor;
     }
-    /*
+    
     public void OnButtonClick()
     {
-        if (skillTreeManager != null && skill != null)
+        if (manager != null)
         {
-            if (skillTreeManager.UnlockSkill(skill))
-            {
-                UpdateButtonState();
-            }
+            manager.ShowPanel(skill);
         }
-    }*/
+    }
 
     public void ToggleButton(skillTypes type)
     {
-        if(type == skill.type)
-            button.interactable = true;
+        if (type == skill.type)
+            image.color = Color.white;
     }
 }

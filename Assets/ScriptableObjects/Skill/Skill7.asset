@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 6
   skillName: Triangle Damage Boost
   description: Increase the damage dealt by forming a triangle
+  statInfo: 10% per level
   icon: {fileID: 0}
   nextSkills: 0700000008000000
   cost: 1

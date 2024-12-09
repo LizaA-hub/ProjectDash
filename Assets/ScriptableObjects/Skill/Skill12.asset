@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 11
   skillName: 6th Triangle Skill
   description: To be implemented
+  statInfo: /
   icon: {fileID: 0}
   nextSkills: 0a00000009000000
   cost: 1

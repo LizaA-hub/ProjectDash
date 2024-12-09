@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill19
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 18
+  skillName: Boosts the damage of pentagon attacks
+  description: 'Increase damage '
+  statInfo: 10% per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 1400000013000000
   cost: 1

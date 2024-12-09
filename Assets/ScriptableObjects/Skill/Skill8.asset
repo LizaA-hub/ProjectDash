@@ -16,6 +16,10 @@ MonoBehaviour:
   skillName: Gravity Triangle
   description: If there are no enemies within a triangle, it will suck enemies closer
     to it
+  statInfo: '10% per level
+
+    Area of attraction proportionnal to the triangle
+    area'
   icon: {fileID: 0}
   nextSkills: 09000000
   cost: 1

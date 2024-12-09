@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 3
   skillName: Trail Duration Increase
   description: Extends the duration of the trail
+  statInfo: 0.5 seconds per level
   icon: {fileID: 0}
   nextSkills: 0500000001000000
   cost: 1

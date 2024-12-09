@@ -15,7 +15,7 @@ public enum skillTypes {
     //hexagon skills//
     Hexagon_Damage, Hexagon_Meteor, Hexagon_Lightning, Hexagon_Area, Hexagon_Slow, Hexagon_6,
     //pentagram skills//
-    Pentagram_Damage, Pentagram_Duration, Pentagram_Critical, Pentagram_Start, Pentagram_Octagon, Pentagram_6,
+    Pentagram_Damage, Pentagram_Duration, Pentagram_Critical, Pentagram_Star, Pentagram_Octagon, Pentagram_6,
     //branch7 skills//
     Branch7_1, Branch7_2, Branch7_3, Branch7_4, Branch7_5, Branch7_6
 };
@@ -27,6 +27,9 @@ public class SkillTreeManager : MonoBehaviour
     private int availablePoints;  // Total points for the player to spend
     [SerializeField]
     TextMeshProUGUI skillPointsText;  // UI text for displaying skill points
+    [SerializeField]
+    GameObject infoPanel;
+    SkillScriptableObject selectedSkill;
 
 
     private void Start()
@@ -36,6 +39,20 @@ public class SkillTreeManager : MonoBehaviour
         UpdateSkillSlots();
     }
 
+    public void ShowPanel(SkillScriptableObject skill)
+    {
+        if(selectedSkill == skill && infoPanel.activeSelf)
+        {
+            infoPanel.SetActive(false);
+            selectedSkill = null;
+        }
+        else
+        {
+            selectedSkill = skill;
+            infoPanel.SetActive(true);
+        }
+        
+    }
     // Function to unlock a skill
     /*public bool UnlockSkill(Skill skill)
     {

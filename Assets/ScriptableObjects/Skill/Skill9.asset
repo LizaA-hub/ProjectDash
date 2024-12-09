@@ -15,6 +15,9 @@ MonoBehaviour:
   type: 8
   skillName: DOT Triangle
   description: Enemies damaged by a triangle take damage over time
+  statInfo: 'Effect lest 5 seconds
+
+    Starts at 1 dps. +1dps per level'
   icon: {fileID: 0}
   nextSkills: 0a000000
   cost: 1

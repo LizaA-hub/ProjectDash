@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 0
   skillName: Max HP Increase
   description: Increases maximum health
+  statInfo: 10% per level
   icon: {fileID: 0}
   nextSkills: 0100000002000000
   cost: 1

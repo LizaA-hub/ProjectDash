@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill34
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 33
+  skillName: Start shape Unlock
+  description: Unlock the ability to create a star shape
+  statInfo: unlocks star shape
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 230000001f00000026000000
   cost: 1

@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 2
   skillName: Trail Damage Boost
   description: Increase base damage
+  statInfo: 5% per level
   icon: {fileID: 0}
   nextSkills: 04000000
   cost: 1

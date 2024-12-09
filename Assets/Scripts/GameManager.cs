@@ -222,7 +222,7 @@ public static class GameManager
             inPlayGround = true;
         }
         //skill tree variables//
-        if(skillLevels.Length == 0)
+        if(skillLevels == null)
         {
             int count = skillTypes.GetNames(typeof(skillTypes)).Length;
             skillLevels = new int[count];

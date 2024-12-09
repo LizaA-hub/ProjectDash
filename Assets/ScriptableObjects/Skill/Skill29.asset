@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill29
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 28
+  skillName: Hexagon Slow Effect
+  description: Adds a minor slow effect to hexagon attacks
+  statInfo: 2% per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 1a0000001d00000025000000
   cost: 1

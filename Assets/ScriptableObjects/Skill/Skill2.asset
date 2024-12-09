@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 1
   skillName: Dash Attack Cooldown
   description: Decrease dash attack cooldown
+  statInfo: 10% per level
   icon: {fileID: 0}
   nextSkills: 03000000
   cost: 1

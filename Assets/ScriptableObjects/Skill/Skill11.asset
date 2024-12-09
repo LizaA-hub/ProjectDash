@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 10
   skillName: Support Triangle
   description: Enemies damaged by a triangle take extra damage from all sources
+  statInfo: Starts at 50% then +10% per level
   icon: {fileID: 0}
   nextSkills: 0b0000001300000008000000
   cost: 1

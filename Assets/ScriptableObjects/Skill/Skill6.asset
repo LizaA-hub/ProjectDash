@@ -15,6 +15,7 @@ MonoBehaviour:
   type: 5
   skillName: XP Gain Increase
   description: Boost XP gained from orbs
+  statInfo: 10% per level
   icon: {fileID: 0}
   nextSkills: 060000000400000003000000
   cost: 1

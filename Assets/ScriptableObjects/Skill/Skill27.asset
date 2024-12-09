@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill27
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 26
+  skillName: Hexagon Lightning Strike
+  description: Enemies damaged by a hexagon take lightning damage, which increase
+    based on how many enemies were hit
+  statInfo: 10% per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 1c00000018000000
   cost: 1

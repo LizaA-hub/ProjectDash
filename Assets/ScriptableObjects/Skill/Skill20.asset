@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1854a435e0297b842aab55f8ba892c2d, type: 3}
   m_Name: Skill20
   m_EditorClassIdentifier: 
-  type: 0
-  skillName: 
-  description: 
+  type: 19
+  skillName: Pentagon Blades
+  description: Completing a pentagon summons five spinning blades that orbit its
+    edges, dealing damage to ennemies that touch them
+  statInfo: 10% per level
   icon: {fileID: 0}
-  nextSkills: 
+  nextSkills: 120000001500000009000000
   cost: 1
