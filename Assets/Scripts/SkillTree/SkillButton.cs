@@ -20,9 +20,11 @@ public class SkillButton : MonoBehaviour
 
         manager = GameObject.FindObjectOfType<SkillTreeManager>();
         manager.skillUnlocked.AddListener(ToggleButton);
+        manager.unlockAdjacent.AddListener(GetAdjacentSkills);
+        manager.resetSkills.AddListener(ResetColor);
 
         image = GetComponent<Image>();
-        image.color = lockedColor;
+        ResetColor();
     }
     
     public void OnButtonClick()
@@ -33,9 +35,22 @@ public class SkillButton : MonoBehaviour
         }
     }
 
-    public void ToggleButton(skillTypes type)
+    private void ToggleButton(skillTypes type)
     {
         if (type == skill.type)
             image.color = Color.white;
+    }
+
+    private void GetAdjacentSkills(skillTypes type)
+    {
+        if (type == skill.type)
+        {
+            manager.UnlockSkills(skill.nextSkills);
+        }
+    }
+
+    private void ResetColor()
+    {
+        image.color = lockedColor;
     }
 }

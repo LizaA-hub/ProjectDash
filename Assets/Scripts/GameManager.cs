@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -12,34 +14,37 @@ public static class GameManager
                         shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f, bombStrength = 5f, bombRadius = 10f;
     public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
     public static bool haveProjectile = false, haveShockWave = false, haveSword = false, haveBomb = false;
-    public static int[] skillLevels;
+    
 
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
     private static int level= 1;
     private static bool inPlayGround = false;
 
-    public struct persistantStats{//a separate struct for the stats that can be upgraded by the player between run
-        public float defaultHealth;
-        public float defaultStrength;
+    public struct savedDatas{//datas that need to be saved 
+        public int[] skillLevels;
         public float skillPoint;
 
-        public persistantStats(float h, float s){
-            defaultHealth = h;
-            defaultStrength = s;
-            //check if there's saved data for skill points//
-            if(PlayerPrefs.HasKey("skillPoint")){
-                skillPoint = PlayerPrefs.GetFloat("skillPoint");
-            }
-            else{
-                skillPoint = 0f;
-            }
+        public savedDatas(int length) {
+            skillLevels = new int[length];
+            skillPoint = 0;
         }
+
     }
 
-    static persistantStats currentStats;
+    static savedDatas currentDatas;
 
     static GameManager(){
-        currentStats = new persistantStats(10f,1f);
+        string filePath = Application.persistentDataPath + "/playerData.json";
+        if (System.IO.File.Exists(filePath))
+        {
+            string playerData = System.IO.File.ReadAllText(filePath);
+            currentDatas = JsonUtility.FromJson<savedDatas>(playerData);
+        }
+        else
+        {
+            int count = Enum.GetNames(typeof(skillTypes)).Length;
+            currentDatas = new savedDatas(count);
+        }
         InitializeVariables();
     }
 
@@ -85,7 +90,6 @@ public static class GameManager
 
     public static void ModifyMaxHealth(float value){
         maxHealth = value;
-        //set health to max health?
     }
 
     public static void StartGame(){
@@ -105,16 +109,16 @@ public static class GameManager
     }
 
     public static void ModifySkillPoint(float amount){
-        currentStats.skillPoint += amount;
-        PlayerPrefs.SetFloat("skillPoint",currentStats.skillPoint);
+        currentDatas.skillPoint += amount;
+        Save();
     }
 
     public static float GetSkillPoint(){
-        return currentStats.skillPoint;
+        return currentDatas.skillPoint;
     }
 
     public static void ResetSkillPoints(){
-        ModifySkillPoint(-currentStats.skillPoint);
+        ModifySkillPoint(-currentDatas.skillPoint);
     }
 
     public static void Upgrade(PowerUpType type, int level){
@@ -184,6 +188,28 @@ public static class GameManager
         }
     }
 
+    public static void Save()
+    {
+        string filePath = Application.persistentDataPath + "/playerData.json";
+        string playerData = JsonUtility.ToJson(currentDatas);
+        System.IO.File.WriteAllText(filePath, playerData);
+        //Debug.Log("datas saved at " + filePath);
+    }
+    
+    public static int[] GetSkillLevels()
+    {
+        return currentDatas.skillLevels;
+    }
+
+    public static int GetSkillLevelAt(int position)
+    {
+        return currentDatas.skillLevels[position];
+    }
+    public static void SetSkillLevel(int position, int value)
+    {
+        currentDatas.skillLevels[position] = value;
+        Save();
+    }
     #endregion
 
     #region Private Functions
@@ -195,10 +221,10 @@ public static class GameManager
         level = 1;
         xpMultiplier = 0f;
         //health variables//
-        maxHealth = currentStats.defaultHealth;
+        maxHealth = 10f;
         health = maxHealth;
         //damage variables//
-        playerStrength = currentStats.defaultStrength;
+        playerStrength = 1f;
         totalDamages = 0f;
         enemyKilled = 0;
         projectileDamage = 2f;
@@ -221,14 +247,8 @@ public static class GameManager
         if(scene.name == "ProgrammationPlayground1"){
             inPlayGround = true;
         }
-        //skill tree variables//
-        if(skillLevels == null)
-        {
-            int count = skillTypes.GetNames(typeof(skillTypes)).Length;
-            skillLevels = new int[count];
-            skillLevels[0] = 1;
-        }
         
+
     }
 
     private static void OnGameOver(){

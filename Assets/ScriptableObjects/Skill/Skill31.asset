@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Skill31
   m_EditorClassIdentifier: 
   type: 30
-  skillName: Pentagram Damage Boost
-  description: Increase the base damage of pentagram attacks, making it a highly
-    powerful shape
-  statInfo: 15% per level
+  skillName: Pentagram Shape Duration
+  description: Unlocks the ability to create a pentagram shape
+  statInfo: 1.5 seconds per level
   icon: {fileID: 0}
   nextSkills: 1f0000002000000017000000
   cost: 1

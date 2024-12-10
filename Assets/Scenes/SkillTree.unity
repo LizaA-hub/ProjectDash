@@ -253,7 +253,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -19.074997}
+  m_AnchoredPosition: {x: 0, y: -19.075012}
   m_SizeDelta: {x: 271.86, y: 38.149994}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &54681028
@@ -472,7 +472,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 60620326}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1047112373}
+        m_TargetAssemblyTypeName: SkillTreeManager, Assembly-CSharp
+        m_MethodName: LevelUPSkill
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &60620326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1568,7 +1580,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &800733628
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1750,8 +1762,19 @@ MonoBehaviour:
   skillUnlocked:
     m_PersistentCalls:
       m_Calls: []
+  unlockAdjacent:
+    m_PersistentCalls:
+      m_Calls: []
   skillPointsText: {fileID: 54323303}
+  skillName: {fileID: 482039089}
+  skillDescription: {fileID: 1930367229}
+  skillStat: {fileID: 394697168}
+  skillCost: {fileID: 54681030}
+  skillLevel: {fileID: 1655889701}
+  lockPanelText: {fileID: 158414315}
   infoPanel: {fileID: 1070655391}
+  costPanel: {fileID: 800733627}
+  lockPanel: {fileID: 68487207}
 --- !u!1001 &1065481890
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2527,7 +2550,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1657224833}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1047112373}
+        m_TargetAssemblyTypeName: SkillTreeManager, Assembly-CSharp
+        m_MethodName: MainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1657224833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3111,7 +3146,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2104296120}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1047112373}
+        m_TargetAssemblyTypeName: SkillTreeManager, Assembly-CSharp
+        m_MethodName: ResetSkillTree
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2104296120
 MonoBehaviour:
   m_ObjectHideFlags: 0
