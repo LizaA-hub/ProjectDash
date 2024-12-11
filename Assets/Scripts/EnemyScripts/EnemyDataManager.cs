@@ -24,6 +24,12 @@ public static class EnemyDataManager
         public EnemyScriptableObject enemy;
         public int maxNumber;
         public float spawnDelay;
+        public SpecialProperty[] specialProperties;
+    }
+
+    [System.Serializable]
+    public struct SpecialProperty
+    {
         public propertyType property;
         public float propertyMultiplier;
     }

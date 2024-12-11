@@ -102,22 +102,31 @@ public class EnemySpawnerV2 : MonoBehaviour
         controller.experience = data.experience;
 
         //check for special property in the wave
-        switch (currentWave.enemyGroups[enemyGroup].property)
-        {
-            case EnemyDataManager.propertyType.Health:
-                controller.health *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
-                break;
-            case EnemyDataManager.propertyType.Strength:
-                controller.strength *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
-                break;
-            case EnemyDataManager.propertyType.Speed:
-                controller.speed *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
-                break;
-            case EnemyDataManager.propertyType.XP:
-                controller.experience *= (1 + currentWave.enemyGroups[enemyGroup].propertyMultiplier);
-                break;
-            default:
-                break;
+        var length = currentWave.enemyGroups[enemyGroup].specialProperties.Length;
+        if ( length > 0) {
+            for (int i = 0; i < length; i++)
+            {
+                var property = currentWave.enemyGroups[enemyGroup].specialProperties[i].property;
+                var multiplier = currentWave.enemyGroups[enemyGroup].specialProperties[i].propertyMultiplier;
+
+                switch (property) 
+                {
+                    case EnemyDataManager.propertyType.Health:
+                        controller.health *= (1 + multiplier);
+                        break;
+                    case EnemyDataManager.propertyType.Strength:
+                        controller.strength *= (1 + multiplier);
+                        break;
+                    case EnemyDataManager.propertyType.Speed:
+                        controller.speed *= (1 + multiplier);
+                        break;
+                    case EnemyDataManager.propertyType.XP:
+                        controller.experience *= (1 + multiplier);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 

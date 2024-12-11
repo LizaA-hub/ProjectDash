@@ -18,5 +18,5 @@ MonoBehaviour:
     edges, dealing damage to ennemies that touch them
   statInfo: 10% per level
   icon: {fileID: 0}
-  nextSkills: 120000001500000009000000
+  nextSkills: 12000000150000000a000000
   cost: 1

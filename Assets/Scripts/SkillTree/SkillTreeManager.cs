@@ -94,7 +94,7 @@ public class SkillTreeManager : MonoBehaviour
         {
             unlockAdjacent.Invoke(selectedSkill.type);
         }
-        else if(level == 9)
+        else if(level == 5)
         {
             costPanel.SetActive(false);
             lockPanel.SetActive(true);
@@ -115,6 +115,7 @@ public class SkillTreeManager : MonoBehaviour
         selectedSkill = null;
         resetSkills.Invoke();
         GameManager.ResetSkillPoints();
+        availablePoints = 0;
         UpdateSkillPointsUI();
         for (int i = 0; i < GameManager.GetSkillLevels().Length; i++)
         {
@@ -166,7 +167,7 @@ public class SkillTreeManager : MonoBehaviour
             skillLevel.text = $"Level {level}";
             skillLevel.color = Color.white;
 
-            if(level < 9)
+            if(level < 5)
             {
                 costPanel.SetActive(true); //show the cost to next level
                 lockPanel.SetActive(false);

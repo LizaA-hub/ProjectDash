@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class PowerUpDataManager
 {
@@ -20,5 +21,11 @@ public static class PowerUpDataManager
             levelLimit = scriptableObject.levelLimit;
             icon = scriptableObject.icon;
         }
+    }
+
+    public struct UpgradableDatas
+    {
+        public UnityEvent<int> trailIncrease;
+        public float trailDamage,projectileDamage,waveDamage,swordDamage,bombDamage;
     }
 }
