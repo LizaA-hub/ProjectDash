@@ -102,6 +102,7 @@ public class EnemySpawnerV2 : MonoBehaviour
         controller.experience = data.experience;
 
         //check for special property in the wave
+        if (currentWave.enemyGroups[enemyGroup].specialProperties == null) return;
         var length = currentWave.enemyGroups[enemyGroup].specialProperties.Length;
         if ( length > 0) {
             for (int i = 0; i < length; i++)

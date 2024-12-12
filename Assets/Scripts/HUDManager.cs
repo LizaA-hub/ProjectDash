@@ -19,8 +19,7 @@ public class HUDManager : MonoBehaviour
         ModifyLevel(1);
 
         GameManager.healthChange.AddListener(ModifyHealth);
-        ModifyHealth(GameManager.maxHealth);
-
+        ModifyHealth(GameManager.skillVariables.maxHealth);
     }
 
     private void Update() {
@@ -40,11 +39,9 @@ public class HUDManager : MonoBehaviour
     }
 
     private void ModifyHealth(float value){
-        var maxHP = GameManager.maxHealth;
+        var maxHP = GameManager.skillVariables.maxHealth;
         var newValue = value/maxHP;
         healthSlider.value = newValue;
-        /*//set color//
-        healthSliderFill.color = Vector4.Lerp(Color.red,Color.green,newValue);*/
         
         
     }

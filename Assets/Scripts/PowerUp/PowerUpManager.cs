@@ -21,11 +21,23 @@ public class PowerUpManager : MonoBehaviour
     bool countdown = false;
     [HideInInspector]
     public UnityEvent<PowerUpType> powerupUnlocked = new UnityEvent<PowerUpType>();
+    [HideInInspector]
+    public static UnityEvent<int> trailIncrease = new UnityEvent<int>();
+    [HideInInspector]
+    public static UnityEvent magnetIncrease = new UnityEvent();
+    [HideInInspector]
+    public static PowerUpDataManager.UpgradableDatas upgradableDatas;
 
     PowerUpDataManager.PowerUpData[] datas;
 
     #region Unity Functions
+
+    private void Awake()
+    {
+        upgradableDatas = new PowerUpDataManager.UpgradableDatas(0);
+    }
     private void Start() {
+        
         GameManager.levelChange.AddListener(NewLevel);
         datas = new PowerUpDataManager.PowerUpData[upgradePool.Length];
         for(int i = 0; i < upgradePool.Length ; i++)
@@ -112,7 +124,7 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        GameManager.Upgrade(type, level);
+        Upgrade(type, level);
 
         
         if (IncreaseLevel(type) == 0)
@@ -250,7 +262,7 @@ public class PowerUpManager : MonoBehaviour
         }
         else
         {
-            GameManager.Upgrade(type,level);
+            Upgrade(type,level);
         }
 
         panel.SetActive(false);
@@ -260,6 +272,76 @@ public class PowerUpManager : MonoBehaviour
         }
 
         UnlockPowerup(id);
+    }
+    public static void Upgrade(PowerUpType type, int level)
+    {
+        switch (type)
+        {
+            case PowerUpType.Trail:
+                trailIncrease.Invoke(level);
+                break;
+            case PowerUpType.Strength:
+                upgradableDatas.trailDamage += upgradableDatas.trailDamage * 0.1f;
+                upgradableDatas.projectileDamage += upgradableDatas.projectileDamage * 0.1f;
+                upgradableDatas.waveDamage += upgradableDatas.waveDamage * 0.1f;
+                upgradableDatas.swordDamage += upgradableDatas.swordDamage * 0.1f;
+                upgradableDatas.bombDamage += upgradableDatas.bombDamage * 0.1f;
+                break;
+            case PowerUpType.XP:
+                upgradableDatas.xpMultiplier = 0.1f * level;
+                break;
+            case PowerUpType.Projectile:
+                if (level == 1)
+                {
+                    upgradableDatas.haveProjectile = true;
+                }
+                upgradableDatas.projectileNb = level;
+
+                break;
+            case PowerUpType.Wave:
+                if (level == 1)
+                {
+                    upgradableDatas.haveWave = true;
+                }
+                else
+                {
+                    upgradableDatas.waveRadius += upgradableDatas.waveRadius * 0.1f;
+                    upgradableDatas.waveDamage += upgradableDatas.waveDamage * 0.1f;
+                }
+                break;
+            case PowerUpType.Shield:
+                upgradableDatas.shieldLevel += 1;
+                break;
+            case PowerUpType.Magnet:
+                magnetIncrease.Invoke();
+                break;
+            case PowerUpType.Cooldown:
+                upgradableDatas.dashCooldown -= upgradableDatas.dashCooldown * 0.1f;
+                break;
+            case PowerUpType.Sword:
+                if (level == 1)
+                {
+                    upgradableDatas.haveSword = true;
+                }
+                else
+                {
+                    upgradableDatas.swordDamage += upgradableDatas.swordDamage * 0.1f;
+                }
+                break;
+            case PowerUpType.Bomb:
+                if (level == 1)
+                {
+                    upgradableDatas.haveBomb = true;
+                }
+                else
+                {
+                    upgradableDatas.bombDamage += upgradableDatas.bombDamage * 0.1f;
+                    upgradableDatas.bombRadius += upgradableDatas.bombRadius * 0.1f;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private int GetRandomPower(){

@@ -35,8 +35,9 @@ public class PlayerController : MonoBehaviour
     {
         cam = Camera.main;
         cooldownTimer = cooldown;
-        projectileTimer = shockWaveTimer = swordTimer = bombTimer = GameManager.dashCooldown;
-        GameManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
+        projectileTimer = shockWaveTimer = swordTimer = bombTimer = PowerUpManager.upgradableDatas.dashCooldown;
+        //Debug.Log(projectileTimer);
+        PowerUpManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
 
         map = GameObject.Find("Ground").GetComponent<Transform>();
         if(map == null)
@@ -80,31 +81,31 @@ public class PlayerController : MonoBehaviour
             //dash projectile//
             if(projectileTimer <= 0f){
                 FireProjectile(mousePos);
-                for(int i = 1; i < GameManager.projectileNb;i++){//number of projectile fired dependent of the upgrade level
+                for(int i = 1; i < PowerUpManager.upgradableDatas.projectileNb;i++){//number of projectile fired dependent of the upgrade level
                     float angle = (90f-15f)*i;
                     FireProjectile(LocalRotation(transform.position,mousePos,angle));
                     FireProjectile(LocalRotation(transform.position, mousePos, -angle));
 
                 }
-                projectileTimer = GameManager.dashCooldown;
+                projectileTimer = PowerUpManager.upgradableDatas.dashCooldown;
             }
 
             //dash shock wave//
             if((shockWaveTimer <= 0f) && isMoving){
                 FireShockWave();
-                shockWaveTimer = GameManager.dashCooldown;
+                shockWaveTimer = PowerUpManager.upgradableDatas.dashCooldown;
             }
             //dash shield//
             if(!isMoving){
                 isMoving = true;
-                dashShield = GameManager.dashShieldLevel;
+                dashShield = PowerUpManager.upgradableDatas.shieldLevel;
                 shieldSprite.enabled = (dashShield>0)? true: false;
                 
             }
             //bomb//
             if (bombTimer <= 0f) {
                 DropBomb();
-                bombTimer = GameManager.dashCooldown;
+                bombTimer = PowerUpManager.upgradableDatas.dashCooldown;
             }
 
             
@@ -162,19 +163,19 @@ public class PlayerController : MonoBehaviour
                 }
             }
             //dash projectile timer//
-            if((projectileTimer > 0 ) && GameManager.haveProjectile){
+            if((projectileTimer > 0 ) && PowerUpManager.upgradableDatas.haveProjectile){
                 projectileTimer -= t;
             }
             //shock wave timer//
-            if((shockWaveTimer > 0 ) && GameManager.haveShockWave){
+            if((shockWaveTimer > 0 ) && PowerUpManager.upgradableDatas.haveWave){
                 shockWaveTimer -= t;
             }
             //sword timer//
-            if (swordTimer > 0 && GameManager.haveSword) { 
+            if (swordTimer > 0 && PowerUpManager.upgradableDatas.haveSword) { 
                 swordTimer -= t;
             }
             //bomb timer//
-            if (bombTimer > 0f && GameManager.haveBomb) {
+            if (bombTimer > 0f && PowerUpManager.upgradableDatas.haveBomb) {
                 bombTimer -= t;
             }
         }
@@ -193,7 +194,7 @@ public class PlayerController : MonoBehaviour
                     if (shockWaveTimer <= 0f)
                     {
                         FireShockWave();
-                        shockWaveTimer = GameManager.dashCooldown;
+                        shockWaveTimer = PowerUpManager.upgradableDatas.dashCooldown;
                     }
                     canFireWave = false;
                 }
@@ -365,12 +366,12 @@ public class PlayerController : MonoBehaviour
                         //increase wave 
                         ShockWave controller = wave.gameObject.GetComponent<ShockWave>();
                         float step = waveSpeed*t;
-                        float radius = Mathf.MoveTowards(controller.currentRadius, GameManager.shockWaveMaxRadius, step);
+                        float radius = Mathf.MoveTowards(controller.currentRadius, PowerUpManager.upgradableDatas.waveRadius, step);
                         float segment = 25f/7f*radius+150f/7f;
                         controller.SetRing(radius,(int)segment);
                         //check if radius > max radius
                         var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
-                        var maxRadius = Mathf.Min(mapMaxSize,GameManager.shockWaveMaxRadius);
+                        var maxRadius = Mathf.Min(mapMaxSize, PowerUpManager.upgradableDatas.waveRadius);
                         if(radius >= maxRadius){
                             DisableTransform(wave);
                         }
@@ -423,12 +424,12 @@ public class PlayerController : MonoBehaviour
                     {
                         //Debug.Log(enemy.name + "touch with sword");
                         var controller = enemy.GetComponent<EnemyController>();
-                        controller.TakeDamage(GameManager.swordStrength);
+                        controller.TakeDamage(PowerUpManager.upgradableDatas.swordDamage);
                     }
                 }
                 else
                 {
-                    swordTimer = GameManager.dashCooldown;
+                    swordTimer = PowerUpManager.upgradableDatas.dashCooldown;
                     movingSword = false;
                     swordTrail.emitting = false;
                 }

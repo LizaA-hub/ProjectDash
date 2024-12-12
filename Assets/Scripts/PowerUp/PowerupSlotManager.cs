@@ -54,34 +54,34 @@ public class PowerupSlotManager : MonoBehaviour
             switch (power)
             {
                 case PowerUpType.Projectile:
-                    if(GameManager.projectileNb > 0)
+                    if(PowerUpManager.upgradableDatas.projectileNb > 0)
                     {
-                        div -= PlayerController.projectileTimer / GameManager.dashCooldown;
+                        div -= PlayerController.projectileTimer / PowerUpManager.upgradableDatas.dashCooldown;
                     }
                     break;
                 case PowerUpType.Wave:
-                    if (GameManager.haveShockWave)
+                    if (PowerUpManager.upgradableDatas.haveWave)
                     {
-                        div -= PlayerController.shockWaveTimer / GameManager.dashCooldown;
+                        div -= PlayerController.shockWaveTimer / PowerUpManager.upgradableDatas.dashCooldown;
                     }
                     break;
                 case PowerUpType.Shield:
-                    if (GameManager.dashShieldLevel > 0)
+                    if (PowerUpManager.upgradableDatas.shieldLevel > 0)
                     {
                         div -= Mathf.Clamp(PlayerController.dashShield,0,1);
                         
                     }
                     break;
                 case PowerUpType.Sword:
-                    if (GameManager.haveSword)
+                    if (PowerUpManager.upgradableDatas.haveSword)
                     {
-                        div -= PlayerController.swordTimer / GameManager.dashCooldown;
+                        div -= PlayerController.swordTimer / PowerUpManager.upgradableDatas.dashCooldown;
                     }
                     break;
                 case PowerUpType.Bomb:
-                    if (GameManager.haveBomb)
+                    if (PowerUpManager.upgradableDatas.haveBomb)
                     {
-                        div -= PlayerController.bombTimer / GameManager.dashCooldown;
+                        div -= PlayerController.bombTimer / PowerUpManager.upgradableDatas.dashCooldown;
                     }
                     break;
                 default:

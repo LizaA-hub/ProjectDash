@@ -2,12 +2,10 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
-//using UnityEditor;
 
-public enum skillTypes { 
+public enum skillTypes { //WARNING: THIS ELEMENTS NEED TO STAY IN THE RIGHT ORDER FOR THE SYSTEM TO WORK//
     //general skills//
-    General_HP,Dash_Colldown,Trail_Damage,Trail_Duration,Dash_Speed,General_XP,
+    General_HP,Dash_Cooldown,Trail_Damage,Trail_Duration,Dash_Speed,General_XP,
     //triangle skills//
     Triangle_Damage, Triangle_Gravity, Triangle_DOT, Triangle_Stun, Triangle_Support, Triangle_6,
     //square skills//
@@ -85,9 +83,11 @@ public class SkillTreeManager : MonoBehaviour
         GameManager.ModifySkillPoint(-selectedSkill.cost);
         UpdateSkillPointsUI();
         //update skill level//
-        var level = GameManager.GetSkillLevelAt((int)selectedSkill.type);
-        level++;
-        GameManager.SetSkillLevel((int)selectedSkill.type,level);
+        var level = GameManager.SkillEnhance(selectedSkill.type);
+        if(level == 0)
+        {
+            Debug.Log("skill manager : can't enhance skill");
+        }
         skillLevel.text = $"Level {level}";
         //to do : update level up cost
         if(level == 3)

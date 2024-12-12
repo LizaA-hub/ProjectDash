@@ -35,24 +35,24 @@ public class EnemyController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("PlayerTrail")){
-            TakeDamage(GameManager.playerStrength);
+            TakeDamage(PowerUpManager.upgradableDatas.trailDamage);
             //Debug.Log("enemy touched trail");
         }
         else if(other.gameObject.CompareTag("ClosedShape")){
             //Debug.Log("enemy in a shape");
-            TakeDamage(GameManager.playerStrength*5f); //will have its own variable
+            TakeDamage(PowerUpManager.upgradableDatas.trailDamage * 5f); //will have its own variable
         }
         else if(other.gameObject.CompareTag("Projectile")){
             //Debug.Log("enemy in a shape");
-            TakeDamage(GameManager.projectileDamage);
+            TakeDamage(PowerUpManager.upgradableDatas.projectileDamage);
         }
         else if(other.gameObject.CompareTag("ShockWave")){
             //Debug.Log("enemy colliding with wave");
-            TakeDamage(GameManager.shockWaveStrength);
+            TakeDamage(PowerUpManager.upgradableDatas.waveDamage);
         }
         else if (other.gameObject.CompareTag("Bomb"))
         {
-            TakeDamage(GameManager.bombStrength);
+            TakeDamage(PowerUpManager.upgradableDatas.bombDamage);
         }
     }
     #region Public Functions

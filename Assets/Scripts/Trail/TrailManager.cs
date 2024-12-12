@@ -22,10 +22,11 @@ public class TrailManager : MonoBehaviour
     #region Unity Functions
     void Awake()
     {
+        trailDuration += GameManager.skillVariables.trailDuration;
         myTrail = this.GetComponent<TrailRenderer>();   
         myTrail.time = trailDuration;
         myCollider = GetValidCollider();
-        GameManager.trailIncrease.AddListener(IncreaseTrailDuration);
+        PowerUpManager.trailIncrease.AddListener(IncreaseTrailDuration);
     }   
  
     void Update()

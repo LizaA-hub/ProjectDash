@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -8,12 +6,10 @@ using UnityEngine.SceneManagement;
 public static class GameManager
 {
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
-    public static UnityEvent<int> levelChange = new UnityEvent<int>(), trailIncrease = new UnityEvent<int>();
-    public static UnityEvent gameOver = new UnityEvent(), magnetIncrease = new UnityEvent();
-    public static float xpToNextLevel = 10f, playerStrength = 1f, maxHealth = 10f, totalDamages = 0f, gameDuration = 0f, xpMultiplier = 0f, projectileDamage = 2f,
-                        shockWaveMaxRadius = 5f, shockWaveStrength = 2f, dashCooldown = 2f, swordStrength = 4f, bombStrength = 5f, bombRadius = 10f;
-    public static int enemyKilled = 0, projectileNb = 0, dashShieldLevel = 0;
-    public static bool haveProjectile = false, haveShockWave = false, haveSword = false, haveBomb = false;
+    public static UnityEvent<int> levelChange = new UnityEvent<int>();
+    public static UnityEvent gameOver = new UnityEvent();
+    public static float xpToNextLevel = 10f, totalDamages = 0f, gameDuration = 0f;
+    public static int enemyKilled = 0;
     
 
     private static float experience = 0f, growFactor = 1.3f, health = 10f;
@@ -33,25 +29,43 @@ public static class GameManager
 
     static savedDatas currentDatas;
 
+    public struct SkillVariables //WIP//
+    {
+        public float trailDamage, xpMultiplier, dashCooldown, maxHealth, trailDuration;
+
+    }
+    public static SkillVariables skillVariables;
+
     static GameManager(){
+        //fetch datas from saved file//
         string filePath = Application.persistentDataPath + "/playerData.json";
         if (System.IO.File.Exists(filePath))
         {
             string playerData = System.IO.File.ReadAllText(filePath);
             currentDatas = JsonUtility.FromJson<savedDatas>(playerData);
         }
-        else
+        else // if no saved files create new datas
         {
             int count = Enum.GetNames(typeof(skillTypes)).Length;
             currentDatas = new savedDatas(count);
         }
+
+        //set skills datas based on the saved skill levels//
+        skillVariables = new SkillVariables();
+        for (int i = 0; i < currentDatas.skillLevels.Length; i++)
+        {
+            skillTypes type = (skillTypes)i;
+            SetSkillVariable(type, currentDatas.skillLevels[i]);
+        }
+
+        //set other game variables//
         InitializeVariables();
     }
 
     #region Public Functions
 
     public static void ModifyExperience(float amount){
-        float m = amount*xpMultiplier;
+        float m = amount*skillVariables.xpMultiplier;
         experience += amount + m; 
         if (experience >= xpToNextLevel){
             experience -= xpToNextLevel;
@@ -73,7 +87,7 @@ public static class GameManager
     public static int GetLevel() => level;
     
     public static void ModifyHealth(float amount){
-        var newHealth = Mathf.Clamp(health + amount,0f,maxHealth);
+        var newHealth = Mathf.Clamp(health + amount,0f,skillVariables.maxHealth);
         if(health != newHealth){
             health = newHealth;
             healthChange.Invoke(health);
@@ -88,9 +102,9 @@ public static class GameManager
 
     public static float GetHealth() => health;
 
-    public static void ModifyMaxHealth(float value){
+    /*public static void ModifyMaxHealth(float value){
         maxHealth = value;
-    }
+    }*/
 
     public static void StartGame(){
         //Reset stats//
@@ -121,71 +135,14 @@ public static class GameManager
         ModifySkillPoint(-currentDatas.skillPoint);
     }
 
-    public static void Upgrade(PowerUpType type, int level){
-        switch (type)
-        {
-            case PowerUpType.Trail :
-                trailIncrease.Invoke(level);
-                break;
-            case PowerUpType.Strength :
-                playerStrength += playerStrength*0.1f;
-                projectileDamage += projectileDamage*0.1f;
-                shockWaveStrength += shockWaveStrength*0.1f;
-                swordStrength += swordStrength * 0.1f;
-                bombStrength += bombStrength * 0.1f;
-                break;
-            case PowerUpType.XP :
-                xpMultiplier = 0.1f*level;
-                break;
-            case PowerUpType.Projectile :
-                if(level == 1){
-                    haveProjectile = true;
-                }
-                projectileNb = level;
-                
-                break;
-            case PowerUpType.Wave :
-                if(level == 1){
-                    haveShockWave = true;
-                }
-                else{
-                    shockWaveMaxRadius += shockWaveMaxRadius*0.1f;
-                    shockWaveStrength += shockWaveStrength*0.1f;
-                }
-                break;
-            case PowerUpType.Shield:
-                dashShieldLevel += 1;
-                break;
-            case PowerUpType.Magnet:
-                magnetIncrease.Invoke();
-                break;
-            case PowerUpType.Cooldown:
-                dashCooldown -= dashCooldown * 0.1f;
-                break;
-            case PowerUpType.Sword:
-                if (level == 1)
-                {
-                    haveSword = true;
-                }
-                else
-                {
-                    swordStrength += swordStrength * 0.1f;
-                }
-                break;
-            case PowerUpType.Bomb:
-                if (level == 1)
-                {
-                    haveBomb = true;
-                }
-                else
-                {
-                    bombStrength += bombStrength * 0.1f;
-                    bombRadius += bombRadius * 0.1f;
-                }
-                break;
-            default:
-            break;
-        }
+    public static int SkillEnhance(skillTypes type)
+    {
+        int pos = (int)type;
+        int level = currentDatas.skillLevels[pos];
+        level++;
+        SetSkillLevel(pos, level);
+        SetSkillVariable(type, level);
+        return level;
     }
 
     public static void Save()
@@ -219,29 +176,15 @@ public static class GameManager
         experience = 0f;
         xpToNextLevel = 10f;
         level = 1;
-        xpMultiplier = 0f;
         //health variables//
-        maxHealth = 10f;
-        health = maxHealth;
-        //damage variables//
-        playerStrength = 1f;
+        health = skillVariables.maxHealth;
+        //game variables//
         totalDamages = 0f;
         enemyKilled = 0;
-        projectileDamage = 2f;
-        projectileNb = 0;
         gameDuration = 0f;
-        shockWaveStrength = 2f;
-        shockWaveMaxRadius = 5f;
-        dashShieldLevel = 0;
-        bombStrength = 5f;
-        bombRadius = 10f;
         //time variables//
         Time.timeScale = 1f;
-        dashCooldown = 2f;
-        //bool variables//
-        haveProjectile = false;
-        haveShockWave = false;
-        haveBomb = false;
+
         //check if playing in playground//
         var scene = SceneManager.GetActiveScene();
         if(scene.name == "ProgrammationPlayground1"){
@@ -254,6 +197,104 @@ public static class GameManager
     private static void OnGameOver(){
         float newSkillPoint = (float)enemyKilled + totalDamages*gameDuration;
         ModifySkillPoint(newSkillPoint);
+    }
+
+    private static void SetSkillVariable(skillTypes type, int level)
+    {
+        switch (type)
+        {
+            case skillTypes.General_HP:
+                skillVariables.maxHealth = 10f * (1 + 0.1f * level);
+                break;
+            case skillTypes.Dash_Cooldown:
+                skillVariables.dashCooldown = 0.1f * level;
+                break;
+            case skillTypes.Trail_Damage:
+                skillVariables.trailDamage = 0.05f * level;
+                break;
+            case skillTypes.Trail_Duration:
+                skillVariables.trailDuration = 0.5f * level;
+                break;
+            case skillTypes.Dash_Speed:
+                break;
+            case skillTypes.General_XP:
+                skillVariables.xpMultiplier = 0.1f * level;
+                break;
+            case skillTypes.Triangle_Damage:
+                break;
+            case skillTypes.Triangle_Gravity:
+                break;
+            case skillTypes.Triangle_DOT:
+                break;
+            case skillTypes.Triangle_Stun:
+                break;
+            case skillTypes.Triangle_Support:
+                break;
+            case skillTypes.Triangle_6:
+                break;
+            case skillTypes.Square_Damage:
+                break;
+            case skillTypes.Square_Slow:
+                break;
+            case skillTypes.Square_Flame:
+                break;
+            case skillTypes.Square_Trap:
+                break;
+            case skillTypes.Square_Heal:
+                break;
+            case skillTypes.Square_6:
+                break;
+            case skillTypes.Pentagon_Damage:
+                break;
+            case skillTypes.Pentagon_Blade:
+                break;
+            case skillTypes.Pentagon_Implosion:
+                break;
+            case skillTypes.Pentagon_Drain:
+                break;
+            case skillTypes.Pentagon_Bomb:
+                break;
+            case skillTypes.Pentagon_6:
+                break;
+            case skillTypes.Hexagon_Damage:
+                break;
+            case skillTypes.Hexagon_Meteor:
+                break;
+            case skillTypes.Hexagon_Lightning:
+                break;
+            case skillTypes.Hexagon_Area:
+                break;
+            case skillTypes.Hexagon_Slow:
+                break;
+            case skillTypes.Hexagon_6:
+                break;
+            case skillTypes.Pentagram_Duration:
+                break;
+            case skillTypes.Pentagram_Damage:
+                break;
+            case skillTypes.Pentagram_Critical:
+                break;
+            case skillTypes.Pentagram_Star:
+                break;
+            case skillTypes.Pentagram_Octagon:
+                break;
+            case skillTypes.Pentagram_6:
+                break;
+            case skillTypes.Branch7_1:
+                break;
+            case skillTypes.Branch7_2:
+                break;
+            case skillTypes.Branch7_3:
+                break;
+            case skillTypes.Branch7_4:
+                break;
+            case skillTypes.Branch7_5:
+                break;
+            case skillTypes.Branch7_6:
+                break;
+            default:
+                break;
+        }
     }
 
     #endregion

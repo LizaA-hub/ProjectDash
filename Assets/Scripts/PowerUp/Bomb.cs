@@ -52,7 +52,7 @@ public class Bomb : MonoBehaviour
         m_renderer.color = normal;
         m_renderer.enabled = false;
         explosionArea.gameObject.SetActive(true);
-        explosionArea.localScale = Vector3.one * GameManager.bombRadius;
+        explosionArea.localScale = Vector3.one * PowerUpManager.upgradableDatas.bombRadius;
         yield return new WaitForSeconds(0.5f);
         explosionArea.gameObject.SetActive(false);
         gameObject.SetActive(false);
