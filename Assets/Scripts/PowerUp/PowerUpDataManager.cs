@@ -27,7 +27,7 @@ public static class PowerUpDataManager
     public struct UpgradableDatas
     {
         
-        public float trailDamage, projectileDamage, waveDamage, swordDamage, bombDamage, xpMultiplier, waveRadius, dashCooldown, bombRadius;
+        public float trailDamage, projectileDamage, waveDamage, swordDamage, bombDamage, xpMultiplier, waveRadius, dashCooldown, bombRadius, strengthBonus;
         public bool haveProjectile, haveWave, haveSword, haveBomb;
         public int projectileNb, shieldLevel;
 
@@ -40,6 +40,7 @@ public static class PowerUpDataManager
             bombDamage = 5f;
             waveRadius = 5f;
             bombRadius = 10f;
+            strengthBonus = 0f;
 
             haveProjectile = haveWave = haveSword = haveBomb = false;
 

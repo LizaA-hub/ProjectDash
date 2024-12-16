@@ -281,11 +281,7 @@ public class PowerUpManager : MonoBehaviour
                 trailIncrease.Invoke(level);
                 break;
             case PowerUpType.Strength:
-                upgradableDatas.trailDamage += upgradableDatas.trailDamage * 0.1f;
-                upgradableDatas.projectileDamage += upgradableDatas.projectileDamage * 0.1f;
-                upgradableDatas.waveDamage += upgradableDatas.waveDamage * 0.1f;
-                upgradableDatas.swordDamage += upgradableDatas.swordDamage * 0.1f;
-                upgradableDatas.bombDamage += upgradableDatas.bombDamage * 0.1f;
+                upgradableDatas.strengthBonus += 0.1f;
                 break;
             case PowerUpType.XP:
                 upgradableDatas.xpMultiplier = 0.1f * level;

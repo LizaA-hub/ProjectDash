@@ -123,6 +123,7 @@ public class SkillTreeManager : MonoBehaviour
         }
         unlockedSkills.Clear();
         UpdateSkillSlots();
+        GameManager.UpdateAllSkills();
     }
 
     #endregion

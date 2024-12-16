@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -31,7 +32,11 @@ public static class GameManager
 
     public struct SkillVariables //WIP//
     {
-        public float trailDamage, xpMultiplier, dashCooldown, maxHealth, trailDuration;
+        //general skills//
+        public float trailDamage, xpMultiplier, dashCooldown, maxHealth, trailDuration, dashSpeed;
+        //triangle skills//
+        public float triangleDamage, triangleGravityDuration, DOT, stunDuration, supportStrength;
+        public bool triangleGravity;
 
     }
     public static SkillVariables skillVariables;
@@ -52,11 +57,7 @@ public static class GameManager
 
         //set skills datas based on the saved skill levels//
         skillVariables = new SkillVariables();
-        for (int i = 0; i < currentDatas.skillLevels.Length; i++)
-        {
-            skillTypes type = (skillTypes)i;
-            SetSkillVariable(type, currentDatas.skillLevels[i]);
-        }
+        UpdateAllSkills();
 
         //set other game variables//
         InitializeVariables();
@@ -162,6 +163,15 @@ public static class GameManager
     {
         return currentDatas.skillLevels[position];
     }
+
+    public static void UpdateAllSkills()
+    {
+        for (int i = 0; i < currentDatas.skillLevels.Length; i++)
+        {
+            skillTypes type = (skillTypes)i;
+            SetSkillVariable(type, currentDatas.skillLevels[i]);
+        }
+    }
     public static void SetSkillLevel(int position, int value)
     {
         currentDatas.skillLevels[position] = value;
@@ -216,21 +226,52 @@ public static class GameManager
                 skillVariables.trailDuration = 0.5f * level;
                 break;
             case skillTypes.Dash_Speed:
+                skillVariables.dashSpeed = 0.1f * level;
                 break;
             case skillTypes.General_XP:
                 skillVariables.xpMultiplier = 0.1f * level;
                 break;
             case skillTypes.Triangle_Damage:
+                skillVariables.triangleDamage = 2f*(level*0.1f+1);
                 break;
             case skillTypes.Triangle_Gravity:
+                if (level == 0)
+                {
+                    skillVariables.triangleGravity = false;
+                }
+                else
+                {
+                    skillVariables.triangleGravity = true;
+                    skillVariables.triangleGravityDuration = 1f + 0.2f * level;
+                }
+
                 break;
             case skillTypes.Triangle_DOT:
+                skillVariables.DOT = level;
                 break;
             case skillTypes.Triangle_Stun:
+                if(level > 0)
+                {
+                    skillVariables.stunDuration = 1f + 0.5f * (level - 1f);
+                }
+                else
+                {
+                    skillVariables.stunDuration = 0f;
+                }
+                
                 break;
             case skillTypes.Triangle_Support:
+                if (level > 0)
+                {
+                    skillVariables.supportStrength = 0.5f + 0.1f * (level - 1f);
+                }
+                else
+                {
+                    skillVariables.supportStrength = 0f;
+                }
                 break;
             case skillTypes.Triangle_6:
+                //To be implemented
                 break;
             case skillTypes.Square_Damage:
                 break;

@@ -12,6 +12,7 @@ public class DebugSceneManager : MonoBehaviour
     TMP_Text DashAttackText, shockWaveText, shieldText, swordText, bombText;
     [SerializeField]
     PowerUpManager powerUpManager;
+    public bool debug = true;
 
     bool showPanel = true;
     int dashAttackLevel = 0, shockWaveLevel = 0, shieldLevel = 0, swordLevel = 0, bombLevel=0;
@@ -76,23 +77,27 @@ public class DebugSceneManager : MonoBehaviour
     }
     public void SpawnBasicEnemy(){
         SpawnEnemy(EnemyType.Basic);
-        Debug.Log("Basic enemy spawned");
+        if(debug)
+            Debug.Log("Basic enemy spawned");
     }
 
     public void SpawnChargingEnemy(){
         SpawnEnemy(EnemyType.Charging);
-        Debug.Log("Charging enemy spawned");
+        if (debug)
+            Debug.Log("Charging enemy spawned");
     }
 
     public void SpawnTankyEnemy()
     {
         SpawnEnemy(EnemyType.Tanky);
-        Debug.Log("Tanky enemy spawned");
+        if (debug)
+            Debug.Log("Tanky enemy spawned");
     }
     public void SpawnProjectileEnemy()
     {
         SpawnEnemy(EnemyType.Projectile);
-        Debug.Log("Projectile enemy spawned");
+        if (debug)
+            Debug.Log("Projectile enemy spawned");
     }
     #endregion
     #region Private Functions

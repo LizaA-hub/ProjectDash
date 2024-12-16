@@ -32,7 +32,9 @@ public class ProjectileEnemyController : EnemyController
 
     public void UpdateBullet(float t)
     {
-        Timer -= t;
+        if(!isAttracked)
+            Timer -= t;
+
         if (Timer <= 0f)
         {
             if (!inCoolDown)

@@ -58,6 +58,8 @@ public class PlayerController : MonoBehaviour
         }
 
         swordTrail = swordTransform.gameObject.GetComponent<TrailRenderer>();
+
+        moveSpeed *= (1 + GameManager.skillVariables.dashSpeed);
     }
 
 

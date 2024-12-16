@@ -162,10 +162,20 @@ public class EnemySpawnerV2 : MonoBehaviour
             {
                 var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
                 var step = controller.speed * t;
+                if (controller.stun>0f)
+                {
+                    controller.stun -= t;
+                    continue;
+                }
                 switch (controller.type)
                 {
                     //Dashing enemy movement//
                     case EnemyType.Charging:
+                        if (controller.isAttracked) //triangle gravity
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                            break;
+                        }
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
                             {
@@ -196,12 +206,22 @@ public class EnemySpawnerV2 : MonoBehaviour
                         break;
                     case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
-                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
-                        LookAtPlayer(instantiatedEnemies[i]);
                         projectileController.UpdateBullet(t);
+                        if (controller.isAttracked)//triangle gravity
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                        }
+                        else { 
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
+                            LookAtPlayer(instantiatedEnemies[i]);}
                         break;
                     default://basic and tank enemies
-                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        if (controller.isAttracked)//triangle gravity
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                        }
+                        else { 
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);}
                         break;
             }
             }
