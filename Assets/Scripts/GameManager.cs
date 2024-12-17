@@ -37,6 +37,9 @@ public static class GameManager
         //triangle skills//
         public float triangleDamage, triangleGravityDuration, DOT, stunDuration, supportStrength;
         public bool triangleGravity;
+        //square skills//
+        public float squareDamage, squareSlow, squareFlame, squareTrap, squareHeal;
+
 
     }
     public static SkillVariables skillVariables;
@@ -102,10 +105,6 @@ public static class GameManager
     }
 
     public static float GetHealth() => health;
-
-    /*public static void ModifyMaxHealth(float value){
-        maxHealth = value;
-    }*/
 
     public static void StartGame(){
         //Reset stats//
@@ -274,16 +273,30 @@ public static class GameManager
                 //To be implemented
                 break;
             case skillTypes.Square_Damage:
+                skillVariables.squareDamage = 2f * (level * 0.1f + 1);
                 break;
             case skillTypes.Square_Slow:
+                if(level > 0)
+                {
+                    skillVariables.squareSlow = 0.2f + 0.1f * level;
+                }
+                else
+                {
+                    skillVariables.squareSlow = 0f;
+                }
+                
                 break;
             case skillTypes.Square_Flame:
+                skillVariables.squareFlame = level;
                 break;
             case skillTypes.Square_Trap:
+                skillVariables.squareTrap = 0.05f * level;
                 break;
             case skillTypes.Square_Heal:
+                skillVariables.squareHeal = level;
                 break;
             case skillTypes.Square_6:
+                //to be implemented
                 break;
             case skillTypes.Pentagon_Damage:
                 break;

@@ -2,11 +2,11 @@ using UnityEngine;
 
 public static class GeometricalShape
 {
-    public enum Shape{Triangle, IsoscelesTriangle, Square, Rectangle, Parallelepiped, FourSidedShape, Pentagram, None};
+    public enum Shape{Triangle, Square, Pentagon, None};
     public static Shape DetectShape(Vector2[] points){
         //3 sides//
         if(points.Length == 3){
-            float sideA = Vector2.Distance(points[0],points[1]);
+            /*float sideA = Vector2.Distance(points[0],points[1]);
             float sideB = Vector2.Distance(points[1],points[2]);
             float sideC = Vector2.Distance(points[2],points[0]);
             if(Mathf.Abs(sideA - sideB) < 0.1f && Mathf.Abs(sideC - sideB) < 0.1f){
@@ -14,7 +14,8 @@ public static class GeometricalShape
             }
             else{
                 return Shape.Triangle;
-            }
+            }*/
+            return Shape.Triangle;
         }
         //4 sides//
         if(points.Length == 4){
@@ -22,7 +23,7 @@ public static class GeometricalShape
             float sideB = Vector2.Distance(points[1],points[2]);
             float sideC = Vector2.Distance(points[2],points[3]);
             
-            float angleA = Vector2.Angle(points[0],points[1]);
+            /*float angleA = Vector2.Angle(points[0],points[1]);
             float angleB = Vector2.Angle(points[1],points[2]);
             if(Mathf.Abs(angleA - 90) < 0.1f && Mathf.Abs(angleB - 90) < 0.1f){
                 //square//
@@ -34,11 +35,11 @@ public static class GeometricalShape
                     return Shape.Rectangle;
                 }
             }
-            else if(Mathf.Abs(sideA - sideC) < 0.1f){
-                return Shape.Parallelepiped;
+            else*/ if(Mathf.Abs(sideA - sideC) < 1f){
+                return Shape.Square;
             }
             else{
-                return Shape.FourSidedShape;
+                return Shape.None;
             }
             
 
@@ -58,7 +59,7 @@ public static class GeometricalShape
             }
 
             if(Mathf.Abs(side-med/5)<0.1f){
-                return Shape.Pentagram;
+                return Shape.Pentagon;
             }
             else{
                 return Shape.None;

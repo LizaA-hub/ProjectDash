@@ -171,11 +171,18 @@ public class TrailManager : MonoBehaviour
                 Debug.Log(shape);
             }
             closedShape.shape = shape;
+            //Debug.Log("you made a " + shape);
             closedShape.points = points;
             closedShape.area = Area(mesh);
             if (shape == GeometricalShape.Shape.Triangle)
             {
                 StartCoroutine(closedShape.HasField(GameManager.skillVariables.triangleGravity));
+            }
+            else if (shape == GeometricalShape.Shape.Square)
+            {
+                GameManager.ModifyHealth(GameManager.skillVariables.squareHeal);
+                if(GameManager.skillVariables.squareSlow > 0f) { 
+                t += 5f;}
             }
 
         }

@@ -9,8 +9,9 @@ public class EnemyController : MonoBehaviour
     public float health, strength, speed, experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
     public Vector3 attractionTarget;
     public bool isAttracked = false;
-    bool invincible = false, takeExtraDamages = false; 
+    bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false; 
     Transform orb;
+    private float initialSpeed;
 
     //added for damage animation
     private SpriteRenderer spriteRenderer;
@@ -73,6 +74,21 @@ public class EnemyController : MonoBehaviour
         {
             //Debug.Log("enemy leave the triangle flied");
             isAttracked = false;
+        }
+        else if (collision.gameObject.CompareTag("ClosedShape"))
+        {
+            ClosedShape closedShape = collision.gameObject.GetComponent<ClosedShape>();
+            if(closedShape.shape == GeometricalShape.Shape.Square)
+            {
+                if (burning)
+                    burning = false;
+
+                if (slowed)
+                {
+                    slowed = false;
+                    speed = initialSpeed;
+                }
+            }
         }
     }
     #region Public Functions
@@ -177,8 +193,30 @@ public class EnemyController : MonoBehaviour
                     takeExtraDamages = true;
                 }
                 break;
+            case GeometricalShape.Shape.Square:
+                TakeDamage(GameManager.skillVariables.squareDamage);
+
+                if((GameManager.skillVariables.squareSlow > 0f)&&!slowed)
+                {
+                    initialSpeed = speed;
+                    speed *= 1 - GameManager.skillVariables.squareSlow;
+                    slowed = true;
+                }
+
+                if((GameManager.skillVariables.squareFlame > 0f) && gameObject.activeSelf)
+                {
+                    burning = true;
+                    StartCoroutine(FlameDamage());
+                }
+
+                if((GameManager.skillVariables.squareTrap > 0f) && !trapped)
+                {
+                    trapped = true;
+                    speed *= 1-GameManager.skillVariables.squareTrap;
+                }
+                break;
             default:
-                TakeDamage(PowerUpManager.upgradableDatas.trailDamage * 5f);
+                TakeDamage(1f);
                 break;
         }
     }
@@ -192,6 +230,16 @@ public class EnemyController : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
         
+    }
+
+    private IEnumerator FlameDamage()
+    {
+        while (burning)
+        {
+            TakeDamage(GameManager.skillVariables.squareFlame, true);
+            yield return new WaitForSeconds(1f);
+        }
+
     }
 
     #endregion

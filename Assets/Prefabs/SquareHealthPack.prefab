@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healingAmount: 2
-  acceptedShapes: 02000000030000000400000005000000
+  acceptedShapes: 01000000
   type: 0
 --- !u!61 &6082288228487545502
 BoxCollider2D:

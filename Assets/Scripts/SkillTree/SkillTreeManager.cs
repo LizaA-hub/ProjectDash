@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using Unity.Collections;
+using System;
+using static UnityEngine.Rendering.DebugUI;
 
 public enum skillTypes { //WARNING: THIS ELEMENTS NEED TO STAY IN THE RIGHT ORDER FOR THE SYSTEM TO WORK//
     //general skills//
@@ -109,7 +112,7 @@ public class SkillTreeManager : MonoBehaviour
         GameManager.LoadMenu();
     }
 
-    public void ResetSkillTree() //re check
+    public void ResetSkillTree()
     {
         infoPanel.SetActive(false);
         selectedSkill = null;
@@ -124,6 +127,21 @@ public class SkillTreeManager : MonoBehaviour
         unlockedSkills.Clear();
         UpdateSkillSlots();
         GameManager.UpdateAllSkills();
+    }
+
+    public void SetPoints(string value)
+    {
+        if (float.TryParse(value, out float result))
+        {
+            availablePoints = Mathf.RoundToInt(result);
+            GameManager.ResetSkillPoints();
+            GameManager.ModifySkillPoint(availablePoints);
+            UpdateSkillPointsUI();
+        }
+        else
+        {
+            Debug.Log("invalid format");
+        }
     }
 
     #endregion
