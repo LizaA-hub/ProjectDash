@@ -19,3 +19,9 @@ MonoBehaviour:
     specialProperties:
     - property: 0
       propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
+    maxNumber: 5
+    spawnDelay: 3
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20

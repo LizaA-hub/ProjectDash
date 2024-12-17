@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     Transform orbPrefab;
     [HideInInspector]
-    public float health, strength, speed, experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
+    public float health, strength, speed,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
     public Vector3 attractionTarget;
     public bool isAttracked = false;
     bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false; 
@@ -196,6 +196,12 @@ public class EnemyController : MonoBehaviour
             case GeometricalShape.Shape.Square:
                 TakeDamage(GameManager.skillVariables.squareDamage);
 
+                if((GameManager.skillVariables.squareTrap > 0f) && !trapped)
+                {
+                    trapped = true;
+                    speed *= 1-GameManager.skillVariables.squareTrap;
+                }
+
                 if((GameManager.skillVariables.squareSlow > 0f)&&!slowed)
                 {
                     initialSpeed = speed;
@@ -209,11 +215,6 @@ public class EnemyController : MonoBehaviour
                     StartCoroutine(FlameDamage());
                 }
 
-                if((GameManager.skillVariables.squareTrap > 0f) && !trapped)
-                {
-                    trapped = true;
-                    speed *= 1-GameManager.skillVariables.squareTrap;
-                }
                 break;
             default:
                 TakeDamage(1f);
