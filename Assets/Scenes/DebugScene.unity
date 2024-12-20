@@ -6231,6 +6231,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4764925578583415029, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4826292184903621429, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
+      propertyPath: DebugShape
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6085409527051210732, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6275,8 +6283,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6540039897004273655, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8517442942212870548, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
       propertyPath: m_Emitting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8517442942212870548, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
+      propertyPath: m_PreviewTimeScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8517442942212870548, guid: 876e926e1409fa84a8caee534bd76215, type: 3}

@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
-        #region Projectile Functions
+    #region Projectile Functions
 
             private void FireProjectile(Vector3 target){
 
@@ -331,58 +331,58 @@ public class PlayerController : MonoBehaviour
 
             #endregion
 
-        #region Wave Functions
-            private void FireShockWave(){
-                //check if there's a wave object avalaible//
-                if(shockWaves.Count > 0){
-                    bool reuseWave = false;
-                    foreach (Transform wave in shockWaves)
-                    {
-                        if(!wave.gameObject.activeSelf){
-                            wave.gameObject.SetActive(true);
-                            newWave = wave;
-                            reuseWave = true;
-                            break;
-                        }
-                    }
-                    if(!reuseWave){
-                        //create a new object//
-                        newWave = Instantiate(shockWavePrefab);
-                        shockWaves.Add(newWave);
+    #region Wave Functions
+        private void FireShockWave(){
+            //check if there's a wave object avalaible//
+            if(shockWaves.Count > 0){
+                bool reuseWave = false;
+                foreach (Transform wave in shockWaves)
+                {
+                    if(!wave.gameObject.activeSelf){
+                        wave.gameObject.SetActive(true);
+                        newWave = wave;
+                        reuseWave = true;
+                        break;
                     }
                 }
-                else{//create a new object//
+                if(!reuseWave){
+                    //create a new object//
                     newWave = Instantiate(shockWavePrefab);
                     shockWaves.Add(newWave);
                 }
-
-                newWave.position = transform.position;
-                ShockWave controller = newWave.gameObject.GetComponent<ShockWave>();
-                controller.SetRing(1f,25);
+            }
+            else{//create a new object//
+                newWave = Instantiate(shockWavePrefab);
+                shockWaves.Add(newWave);
             }
 
-            private void UpdateWaves(float t){
-                foreach (Transform wave in shockWaves)
-                {
-                    if(wave.gameObject.activeSelf){
-                        //increase wave 
-                        ShockWave controller = wave.gameObject.GetComponent<ShockWave>();
-                        float step = waveSpeed*t;
-                        float radius = Mathf.MoveTowards(controller.currentRadius, PowerUpManager.upgradableDatas.waveRadius, step);
-                        float segment = 25f/7f*radius+150f/7f;
-                        controller.SetRing(radius,(int)segment);
-                        //check if radius > max radius
-                        var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
-                        var maxRadius = Mathf.Min(mapMaxSize, PowerUpManager.upgradableDatas.waveRadius);
-                        if(radius >= maxRadius){
-                            DisableTransform(wave);
-                        }
+            newWave.position = transform.position;
+            ShockWave controller = newWave.gameObject.GetComponent<ShockWave>();
+            controller.SetRing(1f,25);
+        }
+
+        private void UpdateWaves(float t){
+            foreach (Transform wave in shockWaves)
+            {
+                if(wave.gameObject.activeSelf){
+                    //increase wave 
+                    ShockWave controller = wave.gameObject.GetComponent<ShockWave>();
+                    float step = waveSpeed*t;
+                    float radius = Mathf.MoveTowards(controller.currentRadius, PowerUpManager.upgradableDatas.waveRadius, step);
+                    float segment = 25f/7f*radius+150f/7f;
+                    controller.SetRing(radius,(int)segment);
+                    //check if radius > max radius
+                    var mapMaxSize = Mathf.Max(map.lossyScale.x/2,map.lossyScale.y/2);
+                    var maxRadius = Mathf.Min(mapMaxSize, PowerUpManager.upgradableDatas.waveRadius);
+                    if(radius >= maxRadius){
+                        DisableTransform(wave);
                     }
                 }
             }
+        }
 
-        #endregion
-        #region Sword Functions
+    #endregion
+    #region Sword Functions
             private void MoveSword(float t)
             {
                 if (!movingSword) return;

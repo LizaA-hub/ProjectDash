@@ -9,7 +9,7 @@ public class EnemyController : MonoBehaviour
     public float health, strength, speed,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
     public Vector3 attractionTarget;
     public bool isAttracked = false;
-    bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false; 
+    bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false; 
     Transform orb;
     private float initialSpeed;
 
@@ -66,6 +66,27 @@ public class EnemyController : MonoBehaviour
             isAttracked = true;
             attractionTarget = other.transform.position;
         }
+        else if (other.gameObject.CompareTag("PentagonBlade"))
+        {
+            TakeDamage(GameManager.skillVariables.bladeDamage, true);
+        }
+        else if (other.gameObject.CompareTag("PentagonWave"))
+        {
+            float chance = Random.Range(0f, 1f);
+            if(chance > GameManager.skillVariables.pentagonCriticalChance)
+            {
+                TakeDamage(5f, true);
+            }
+            else
+            {
+                TakeDamage(10f, true);
+            }
+            
+        }
+        else if (other.gameObject.CompareTag("PentagonBomb"))
+        {
+            TakeDamage(GameManager.skillVariables.pentagonBombDamage, true);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -78,17 +99,25 @@ public class EnemyController : MonoBehaviour
         else if (collision.gameObject.CompareTag("ClosedShape"))
         {
             ClosedShape closedShape = collision.gameObject.GetComponent<ClosedShape>();
-            if(closedShape.shape == GeometricalShape.Shape.Square)
-            {
-                if (burning)
-                    burning = false;
+            switch (closedShape.shape) { 
+                case GeometricalShape.Shape.Square:
+                    if (burning)
+                        burning = false;
 
-                if (slowed)
-                {
-                    slowed = false;
-                    speed = initialSpeed;
-                }
+                    if (slowed)
+                    {
+                        slowed = false;
+                        speed = initialSpeed;
+                    }
+                    break;
+                case GeometricalShape.Shape.Pentagon:
+                    inPentagon = false; 
+                    break;
+                default:
+                    break;
+              
             }
+            
         }
     }
     #region Public Functions
@@ -154,6 +183,15 @@ public class EnemyController : MonoBehaviour
         takeExtraDamages = false;
         DOT_Timer = 0f;
         stun = 0f;
+
+        if (inPentagon)
+        {
+            float chance = Random.Range(0f, 1f);
+            if(chance <= 0.3f){ //arbitrary value can be changed
+                GameManager.ModifyHealth(GameManager.skillVariables.pentagonHeal);
+            }
+            inPentagon = false;
+        }
         gameObject.SetActive(false);
     }
 
@@ -215,6 +253,10 @@ public class EnemyController : MonoBehaviour
                     StartCoroutine(FlameDamage());
                 }
 
+                break;
+            case GeometricalShape.Shape.Pentagon:
+                TakeDamage(GameManager.skillVariables.pentagonDamage);
+                inPentagon = true;
                 break;
             default:
                 TakeDamage(1f);

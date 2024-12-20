@@ -15,6 +15,9 @@ TagManager:
   - ShockWave
   - Bomb
   - ShapeField
+  - PentagonBlade
+  - PentagonWave
+  - PentagonBomb
   layers:
   - Default
   - TransparentFX

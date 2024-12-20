@@ -39,6 +39,9 @@ public static class GameManager
         public bool triangleGravity;
         //square skills//
         public float squareDamage, squareSlow, squareFlame, squareTrap, squareHeal;
+        //pentagon skills//
+        public float pentagonDamage, bladeDamage, pentagonCriticalChance, pentagonHeal, pentagonBombDamage;
+        public bool pentagonBlade, pentagonBomb;
 
 
     }
@@ -273,7 +276,7 @@ public static class GameManager
                 //To be implemented
                 break;
             case skillTypes.Square_Damage:
-                skillVariables.squareDamage = 2f * (level * 0.1f + 1);
+                skillVariables.squareDamage = 2f * (level * 0.1f + 1f);
                 break;
             case skillTypes.Square_Slow:
                 if(level > 0)
@@ -299,14 +302,36 @@ public static class GameManager
                 //to be implemented
                 break;
             case skillTypes.Pentagon_Damage:
+                skillVariables.pentagonDamage = 2f * (level * 0.1f + 1f);
                 break;
             case skillTypes.Pentagon_Blade:
+                if(level == 0)
+                {
+                    skillVariables.pentagonBlade = false;
+                }
+                else
+                {
+                    skillVariables.pentagonBlade = true;
+                    skillVariables.bladeDamage = (1f + 0.1f* level)*4f;
+                }
+                
                 break;
             case skillTypes.Pentagon_Implosion:
+                skillVariables.pentagonCriticalChance = level*0.1f;
                 break;
             case skillTypes.Pentagon_Drain:
+                skillVariables.pentagonHeal = level;
                 break;
             case skillTypes.Pentagon_Bomb:
+                if(level == 0)
+                {
+                    skillVariables.pentagonBomb = false;
+                }
+                else
+                {
+                    skillVariables.pentagonBomb = true;
+                    skillVariables.pentagonDamage = 5f * (1f + 0.1f * level);
+                }
                 break;
             case skillTypes.Pentagon_6:
                 break;

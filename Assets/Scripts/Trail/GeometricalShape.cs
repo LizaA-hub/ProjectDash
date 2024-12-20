@@ -46,7 +46,7 @@ public static class GeometricalShape
         }
         //5 sides//
         if(points.Length == 5){
-            float med = 0;
+            /*float med = 0;
             float side = Vector2.Distance(points[0],points[1]);
             for (int i = 0; i < points.Length; i++)
             {
@@ -63,7 +63,27 @@ public static class GeometricalShape
             }
             else{
                 return Shape.None;
+            }*/
+            Vector2[] sides = { points[0] - points[1],points[1]-points[2], points[2] - points[3], points[3] - points[4], points[4] - points[0] };
+            float sum = 0f;
+            for (int i = 0; i < 5; i++)
+            {
+                float angle = 0f;
+                if(i+1 >= 5)
+                {
+                    angle = Vector2.Angle(sides[i], -sides[0]);
+                }
+                else
+                {
+                    angle = Vector2.Angle(sides[i], -sides[i + 1]);
+                }
+                sum += angle;
             }
+            if(sum != 540f)
+            {
+                return Shape.None;
+            }
+            return Shape.Pentagon;
         }
 
         return Shape.None;
