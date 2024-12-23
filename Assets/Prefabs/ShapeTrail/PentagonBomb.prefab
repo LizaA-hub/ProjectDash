@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6603581014487714368}
   - component: {fileID: 6393418071916420686}
   m_Layer: 0
-  m_Name: Bomb
+  m_Name: PentagonBomb
   m_TagString: PentagonBomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

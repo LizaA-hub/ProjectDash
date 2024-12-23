@@ -42,6 +42,8 @@ public static class GameManager
         //pentagon skills//
         public float pentagonDamage, bladeDamage, pentagonCriticalChance, pentagonHeal, pentagonBombDamage;
         public bool pentagonBlade, pentagonBomb;
+        //hexagon skills//
+        public float hexagonDamage, hexagonMeteor, meteorDamage;
 
 
     }
@@ -336,8 +338,11 @@ public static class GameManager
             case skillTypes.Pentagon_6:
                 break;
             case skillTypes.Hexagon_Damage:
+                skillVariables.hexagonDamage = 2f * (level * 0.1f + 1f);
                 break;
             case skillTypes.Hexagon_Meteor:
+                skillVariables.hexagonMeteor = level;
+                skillVariables.meteorDamage = 5f * (1f + 0.1f * level);
                 break;
             case skillTypes.Hexagon_Lightning:
                 break;

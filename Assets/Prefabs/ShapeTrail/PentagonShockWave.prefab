@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8737731060004841411}
   - component: {fileID: 8518335755571026243}
   m_Layer: 0
-  m_Name: ShockWave
+  m_Name: PentagonShockWave
   m_TagString: PentagonWave
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

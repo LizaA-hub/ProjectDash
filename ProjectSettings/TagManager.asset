@@ -18,6 +18,7 @@ TagManager:
   - PentagonBlade
   - PentagonWave
   - PentagonBomb
+  - Meteor
   layers:
   - Default
   - TransparentFX

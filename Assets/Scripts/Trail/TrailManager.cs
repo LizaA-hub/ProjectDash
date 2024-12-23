@@ -11,15 +11,17 @@ public class TrailManager : MonoBehaviour
     float trailDuration = 1f, step = 1f;
     [SerializeField]
     bool DebugShape = true;
+    [SerializeField]
+    Transform[] shapePool;
     TrailRenderer myTrail;
     EdgeCollider2D myCollider;
  
     static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
 
-    List<GameObject> closedShapes = new List<GameObject>();
+    List<Transform> closedShapes = new List<Transform>();
     List<float> shapeTimers = new List<float>();
-    GameObject newObject;
-
+    Transform newObject;
+    GameObject closedShapeParent;
     
     #region Unity Functions
     void Awake()
@@ -144,11 +146,13 @@ public class TrailManager : MonoBehaviour
         bool createGO = false;
         //GameObject newObject;
         int availableGO = -1;
+        GeometricalShape.Shape shape = GeometricalShape.DetectShape(points);
         //check if there's an instantiated shape available//
-        if(closedShapes.Count > 0){
+        if (closedShapes.Count > 0){
             for (int i = 0; i < closedShapes.Count; i++)
             {
-                if (shapeTimers[i] <= 0f){
+                ClosedShape shapeController = closedShapes[i].GetComponent<ClosedShape>();
+                if ((shapeTimers[i] <= 0f) && (shapeController.shape == shape)){
                     availableGO = i;
                 }
             }
@@ -164,39 +168,67 @@ public class TrailManager : MonoBehaviour
             createGO = true;
         }
         //if not create one//
-        if(createGO){
-            newObject = new GameObject("TrailShape",typeof(PolygonCollider2D),typeof(MeshRenderer),typeof(MeshFilter), typeof(ClosedShape));
+        if (createGO)
+        {
+            if(closedShapeParent == null)
+            {
+                closedShapeParent = new GameObject("ClosedShapeParent");
+            }
+            bool prefabFound = false;
+            foreach (var prefab in shapePool)
+            {
+                ClosedShape controller = prefab.GetComponent<ClosedShape>();
+                if (controller.shape == shape)
+                {
+                    newObject = Instantiate(prefab,closedShapeParent.transform);
+                    prefabFound = true;
+                    break;
+                }
+            }
+
+            if (!prefabFound)
+            {
+                foreach (var prefab in shapePool)
+                {
+                    ClosedShape controller = prefab.GetComponent<ClosedShape>();
+                    if (controller.shape == GeometricalShape.Shape.None)
+                    {
+                        newObject = Instantiate(prefab, closedShapeParent.transform);
+                        break;
+                    }
+                }
+            }
+
         }
 
         PolygonCollider2D newCollider = newObject.GetComponent<PolygonCollider2D>();
         MeshFilter meshFilter = newObject.GetComponent<MeshFilter>(); 
-        MeshRenderer meshRenderer = newObject.GetComponent<MeshRenderer>();
         ClosedShape closedShape = newObject.GetComponent<ClosedShape>();
 
-        
-        newObject.tag = "ClosedShape";
         newCollider.SetPath(0,points);
-        newCollider.isTrigger = true;
         var mesh = newCollider.CreateMesh(false,false);
-        //Debug.Log(Area(points));
         meshFilter.mesh = mesh;
-        meshRenderer.material = shapeMaterial;
-        newObject.transform.position = position;
+        newObject.position = position;
+        if(closedShape.shape != shape)
+        {
+            closedShape.shape = shape;
+        }
 
         float t = 2f;
 
         if(Area(points) > 0.5f){
             myTrail.Clear();
-            GeometricalShape.Shape shape = GeometricalShape.DetectShape(points);
+
             if (DebugShape){
                 Debug.Log(shape);
             }
-            closedShape.shape = shape;
+
             closedShape.points = points;
             closedShape.area = Area(points);
             if (shape == GeometricalShape.Shape.Triangle)
             {
-                StartCoroutine(closedShape.HasField(GameManager.skillVariables.triangleGravity));
+                SC_ClosedShape_Triangle controller = newObject.GetComponent<SC_ClosedShape_Triangle>();
+                StartCoroutine(controller.HasField(GameManager.skillVariables.triangleGravity));
             }
             else if (shape == GeometricalShape.Shape.Square)
             {
@@ -206,19 +238,31 @@ public class TrailManager : MonoBehaviour
             }
             else if((shape == GeometricalShape.Shape.Pentagon))
             {
+                SC_ClosedShape_Pentagon controller = newObject.GetComponent<SC_ClosedShape_Pentagon>();
                 if (GameManager.skillVariables.pentagonBlade)
                 {
-                    closedShape.Blades();
+
+                    controller.Blades();
                 }
                 if(GameManager.skillVariables.pentagonCriticalChance > 0f)
                 {
-                    StartCoroutine(closedShape.Implosion());
+                    StartCoroutine(controller.Implosion());
                     t += 0.5f;
                 }
                 if (GameManager.skillVariables.pentagonBomb)
                 {
-                    closedShape.Bomb();
+                    controller.Bomb();
                 }
+            }
+            else if ((shape == GeometricalShape.Shape.Hexagon))
+            {
+                SC_ClosedShape_Hexagon controller = newObject.GetComponent<SC_ClosedShape_Hexagon>();
+                if(GameManager.skillVariables.hexagonMeteor > 0f)
+                {
+                    t += GameManager.skillVariables.hexagonMeteor;
+                    StartCoroutine(controller.Meteor());
+                }
+                
             }
 
         }
@@ -281,9 +325,9 @@ public class TrailManager : MonoBehaviour
         return Mathf.Abs(result);
     }
 
-    void HideShape(GameObject gObject, float f){
+    void HideShape(Transform gObject, float f){
         Vector3 newPosition = Vector3.one * f;
-        gObject.transform.position = newPosition;
+        gObject.position = newPosition;
 
     }
     private List<Vector2> FindAngles(Vector2[] points){

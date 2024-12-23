@@ -87,6 +87,10 @@ public class EnemyController : MonoBehaviour
         {
             TakeDamage(GameManager.skillVariables.pentagonBombDamage, true);
         }
+        else if (other.gameObject.CompareTag("Meteor"))
+        {
+            TakeDamage(GameManager.skillVariables.meteorDamage, true);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -230,6 +234,8 @@ public class EnemyController : MonoBehaviour
                 {
                     takeExtraDamages = true;
                 }
+
+               
                 break;
             case GeometricalShape.Shape.Square:
                 TakeDamage(GameManager.skillVariables.squareDamage);
@@ -257,6 +263,9 @@ public class EnemyController : MonoBehaviour
             case GeometricalShape.Shape.Pentagon:
                 TakeDamage(GameManager.skillVariables.pentagonDamage);
                 inPentagon = true;
+                break;
+            case GeometricalShape.Shape.Hexagon:
+                TakeDamage(GameManager.skillVariables.hexagonDamage);
                 break;
             default:
                 TakeDamage(1f);

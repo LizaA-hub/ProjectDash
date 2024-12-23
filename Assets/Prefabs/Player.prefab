@@ -618,3 +618,8 @@ MonoBehaviour:
   trailDuration: 1
   step: 1
   DebugShape: 0
+  shapePool:
+  - {fileID: 673139776660328712, guid: abff2045a59f8694e9badc170a1545d2, type: 3}
+  - {fileID: 673139776660328712, guid: c7c5c3a67d5d8194faf4f73c775d0f53, type: 3}
+  - {fileID: 673139776660328712, guid: 3895a1cea2513b644bd61830a02686e3, type: 3}
+  - {fileID: 673139776660328712, guid: 0d39292275cccab4da89dc2c41a8ac92, type: 3}
