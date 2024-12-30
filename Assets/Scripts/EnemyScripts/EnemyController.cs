@@ -6,7 +6,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     Transform orbPrefab;
     [HideInInspector]
-    public float health, strength, speed,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
+    public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
+    public float speed;
     public Vector3 attractionTarget;
     public bool isAttracked = false;
     bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false; 
@@ -266,6 +267,10 @@ public class EnemyController : MonoBehaviour
                 break;
             case GeometricalShape.Shape.Hexagon:
                 TakeDamage(GameManager.skillVariables.hexagonDamage);
+                if(GameManager.skillVariables.hexagonSlow > 0f)
+                {
+                    speed *= 1 - GameManager.skillVariables.hexagonSlow;
+                }
                 break;
             default:
                 TakeDamage(1f);

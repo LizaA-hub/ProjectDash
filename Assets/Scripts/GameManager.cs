@@ -43,7 +43,8 @@ public static class GameManager
         public float pentagonDamage, bladeDamage, pentagonCriticalChance, pentagonHeal, pentagonBombDamage;
         public bool pentagonBlade, pentagonBomb;
         //hexagon skills//
-        public float hexagonDamage, hexagonMeteor, meteorDamage;
+        public float hexagonDamage, hexagonMeteor, meteorDamage, lightningDamage, hexagonArea, hexagonSlow;
+        public bool hexagonLightning;
 
 
     }
@@ -218,7 +219,7 @@ public static class GameManager
         switch (type)
         {
             case skillTypes.General_HP:
-                skillVariables.maxHealth = 10f * (1 + 0.1f * level);
+                skillVariables.maxHealth = 10f * (0.9f + 0.1f * level);
                 break;
             case skillTypes.Dash_Cooldown:
                 skillVariables.dashCooldown = 0.1f * level;
@@ -236,60 +237,29 @@ public static class GameManager
                 skillVariables.xpMultiplier = 0.1f * level;
                 break;
             case skillTypes.Triangle_Damage:
-                skillVariables.triangleDamage = 2f*(level*0.1f+1);
+                skillVariables.triangleDamage = 2f*(level*0.1f+0.9f);
                 break;
             case skillTypes.Triangle_Gravity:
-                if (level == 0)
-                {
-                    skillVariables.triangleGravity = false;
-                }
-                else
-                {
-                    skillVariables.triangleGravity = true;
-                    skillVariables.triangleGravityDuration = 1f + 0.2f * level;
-                }
-
+                skillVariables.triangleGravity = level > 0 ? true :  false;
+                skillVariables.triangleGravityDuration = 0.8f + 0.2f * level;
                 break;
             case skillTypes.Triangle_DOT:
                 skillVariables.DOT = level;
                 break;
             case skillTypes.Triangle_Stun:
-                if(level > 0)
-                {
-                    skillVariables.stunDuration = 1f + 0.5f * (level - 1f);
-                }
-                else
-                {
-                    skillVariables.stunDuration = 0f;
-                }
-                
+                skillVariables.stunDuration = level > 0 ? 1f + 0.5f * (level - 1f) : 0f;
                 break;
             case skillTypes.Triangle_Support:
-                if (level > 0)
-                {
-                    skillVariables.supportStrength = 0.5f + 0.1f * (level - 1f);
-                }
-                else
-                {
-                    skillVariables.supportStrength = 0f;
-                }
+                skillVariables.supportStrength = level > 0? 0.5f + 0.1f * (level - 1f):0f;
                 break;
             case skillTypes.Triangle_6:
                 //To be implemented
                 break;
             case skillTypes.Square_Damage:
-                skillVariables.squareDamage = 2f * (level * 0.1f + 1f);
+                skillVariables.squareDamage = 2f * (level * 0.1f + 0.9f);
                 break;
             case skillTypes.Square_Slow:
-                if(level > 0)
-                {
-                    skillVariables.squareSlow = 0.2f + 0.1f * level;
-                }
-                else
-                {
-                    skillVariables.squareSlow = 0f;
-                }
-                
+                skillVariables.squareSlow = level > 0? 0.1f + 0.1f * level: 0f;
                 break;
             case skillTypes.Square_Flame:
                 skillVariables.squareFlame = level;
@@ -304,19 +274,11 @@ public static class GameManager
                 //to be implemented
                 break;
             case skillTypes.Pentagon_Damage:
-                skillVariables.pentagonDamage = 2f * (level * 0.1f + 1f);
+                skillVariables.pentagonDamage = 2f * (level * 0.1f + 0.9f);
                 break;
             case skillTypes.Pentagon_Blade:
-                if(level == 0)
-                {
-                    skillVariables.pentagonBlade = false;
-                }
-                else
-                {
-                    skillVariables.pentagonBlade = true;
-                    skillVariables.bladeDamage = (1f + 0.1f* level)*4f;
-                }
-                
+                skillVariables.pentagonBlade = level > 0 ? true : false;
+                skillVariables.bladeDamage = (0.9f + 0.1f* level)*4f;
                 break;
             case skillTypes.Pentagon_Implosion:
                 skillVariables.pentagonCriticalChance = level*0.1f;
@@ -332,25 +294,30 @@ public static class GameManager
                 else
                 {
                     skillVariables.pentagonBomb = true;
-                    skillVariables.pentagonDamage = 5f * (1f + 0.1f * level);
+                    skillVariables.pentagonDamage = 5f * (0.9f + 0.1f * level);
                 }
                 break;
             case skillTypes.Pentagon_6:
                 break;
             case skillTypes.Hexagon_Damage:
-                skillVariables.hexagonDamage = 2f * (level * 0.1f + 1f);
+                skillVariables.hexagonDamage = 2f * (level * 0.1f + 0.9f);
                 break;
             case skillTypes.Hexagon_Meteor:
                 skillVariables.hexagonMeteor = level;
-                skillVariables.meteorDamage = 5f * (1f + 0.1f * level);
+                skillVariables.meteorDamage = 5f * (0.9f + 0.1f * level);
                 break;
             case skillTypes.Hexagon_Lightning:
+                skillVariables.hexagonLightning = level > 0 ? true : false;
+                skillVariables.lightningDamage = 6f*(0.9f + 0.1f * level);
                 break;
             case skillTypes.Hexagon_Area:
+                skillVariables.hexagonArea = 0.05f * level;
                 break;
             case skillTypes.Hexagon_Slow:
+                skillVariables.hexagonSlow = 0.02f * level;
                 break;
             case skillTypes.Hexagon_6:
+                //to be implemented
                 break;
             case skillTypes.Pentagram_Duration:
                 break;

@@ -13,10 +13,23 @@ public class SC_ClosedShape_Hexagon: ClosedShape
     PolygonCollider2D m_collider;
     float timer, meteorDuration;
     private List<Transform> meteors = new List<Transform>();
+    private List<EnemyController> enemiesTouched = new List<EnemyController>();
     private Transform newMeteor;
     private Vector2 maxCoord, minCoord;
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            var controller = collision.gameObject.GetComponent<EnemyController>();
+            if(controller != null)
+            {
+                enemiesTouched.Add(controller);
+            }
+        }
+    }
 
+    #region Meteor Functions
     public IEnumerator Meteor()
     {
         meteorDuration = GameManager.skillVariables.hexagonMeteor;
@@ -112,5 +125,20 @@ public class SC_ClosedShape_Hexagon: ClosedShape
         {
             return true;
         }
+    }
+    #endregion
+
+    public IEnumerator FireLightning()
+    {
+        yield return new WaitForSeconds(2f);
+        float damage = GameManager.skillVariables.lightningDamage*(1f+enemiesTouched.Count*0.1f);
+        foreach (var enemy in enemiesTouched)
+        {
+            if (enemy.gameObject.activeSelf) {
+                enemy.TakeDamage(damage, true);
+            }
+        }
+
+        enemiesTouched.Clear();
     }
 }

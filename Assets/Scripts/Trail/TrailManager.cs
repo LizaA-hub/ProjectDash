@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.GameCenter;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(TrailRenderer))]
 public class TrailManager : MonoBehaviour
@@ -147,6 +149,11 @@ public class TrailManager : MonoBehaviour
         //GameObject newObject;
         int availableGO = -1;
         GeometricalShape.Shape shape = GeometricalShape.DetectShape(points);
+
+        if (shape == GeometricalShape.Shape.Hexagon && GameManager.skillVariables.hexagonArea > 0f) {
+            points = ExtendShape(points, position);
+        }
+
         //check if there's an instantiated shape available//
         if (closedShapes.Count > 0){
             for (int i = 0; i < closedShapes.Count; i++)
@@ -261,6 +268,10 @@ public class TrailManager : MonoBehaviour
                 {
                     t += GameManager.skillVariables.hexagonMeteor;
                     StartCoroutine(controller.Meteor());
+                }
+                if (GameManager.skillVariables.hexagonLightning)
+                {
+                    StartCoroutine(controller.FireLightning());
                 }
                 
             }
@@ -387,7 +398,18 @@ public class TrailManager : MonoBehaviour
         }*/
 
         return anglePoints;
+
     }
+
+    private Vector2[] ExtendShape(Vector2[] points, Vector2 center) {
+        Vector2[] newPoints = new Vector2[points.Length];
+        float factor = GameManager.skillVariables.hexagonArea;
+        for (int i = 0; i < points.Length; i++)
+        {
+            float r = points[i].magnitude;
+            newPoints[i] = points[i].normalized * r * (1 - factor + factor * r);
+        }
+        return newPoints; }
     #endregion
 
     void IncreaseTrailDuration(int level){
