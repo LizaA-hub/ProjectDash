@@ -147,9 +147,24 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Acid"))
+        {
+            //Debug.Log("player in contact with acid");
+            var amount = collision.gameObject.GetComponent<AcidPool>().strength;
+            if (!invincible)
+            {
+                //Debug.Log("player take " + amount + " damages");
+                TakeDamage(amount);
+                invincible = true;
+            }                
+        }
+    }
     #endregion
     #region Public Functions
-        public void DisableTransform(Transform _transform){
+    public void DisableTransform(Transform _transform){
             _transform.gameObject.SetActive(false);
         }
 

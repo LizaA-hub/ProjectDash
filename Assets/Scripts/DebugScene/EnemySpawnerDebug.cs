@@ -126,15 +126,15 @@ public class EnemySpawnerDebug : MonoBehaviour
                     controller.stun -= t;
                     continue;
                 }
+                else if (controller.isAttracked) //triangle gravity
+                {
+                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                    continue;
+                }
                 switch (controller.type)
                 {
                     //Dashing enemy movement//
                     case EnemyType.Charging:
-                        if (controller.isAttracked)//triangle gravity
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
-                            break;
-                        }
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
                         {
@@ -166,25 +166,18 @@ public class EnemySpawnerDebug : MonoBehaviour
                     case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
                         projectileController.UpdateBullet(t);
-                        if (controller.isAttracked)//triangle gravity
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
-                        }
-                        else
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
-                            LookAtPlayer(instantiatedEnemies[i]);
-                        }
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
+                        LookAtPlayer(instantiatedEnemies[i]);
                         break;
-                    default://basic and tank enemies
-                        if (controller.isAttracked)//triangle gravity
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
-                        }
-                        else
+                    case EnemyType.Acid:
+                        var acidController = instantiatedEnemies[i].GetComponent<AcidEnemyController>();
+                        if (acidController.alive)
                         {
                             instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         }
+                        break;
+                    default://basic and tank enemies
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
                 }
             }

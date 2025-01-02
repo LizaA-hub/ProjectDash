@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class GeometricalShape
 {
-    public enum Shape{Triangle, Square, Pentagon, Hexagon, None};
+    public enum Shape{Triangle, Square, Pentagon, Hexagon,Star, None};
     public static Shape DetectShape(Vector2[] points){
         //3 sides//
         if(points.Length == 3){
@@ -17,11 +17,6 @@ public static class GeometricalShape
             if(Mathf.Abs(sideA - sideC) < 1f){
                 return Shape.Square;
             }
-            else{
-                return Shape.None;
-            }
-            
-
         }
         //5 sides//
         if(points.Length == 5){
@@ -40,13 +35,13 @@ public static class GeometricalShape
                 }
                 sum += angle;
             }
-            if(sum != 540f)
+            if(sum == 540f)
             {
-                return Shape.None;
+                return Shape.Pentagon;
             }
-            return Shape.Pentagon;
+            
         }
-
+        //6 sides//
         if(points.Length == 6)
         {
             Vector2[] sides = new Vector2[6];
@@ -75,14 +70,28 @@ public static class GeometricalShape
                 }
                 sum += angle;
             }
-            if(sum != 360f)
+            if(sum == 360f)
             {
-                return Shape.None;
+                return Shape.Hexagon;
             }
-            return Shape.Hexagon;
+            
         }
-
-
+        //10 sides//
+        if(points.Length == 10)
+        {
+            Vector2[] halfPoints = new Vector2[5];
+            for (int i = 0; i < 10; i++)
+            {
+                if (i%2 == 0)
+                {
+                    halfPoints[i/2] = points[i];
+                }
+            }
+            if(DetectShape(halfPoints) == Shape.Pentagon)
+            {
+                return Shape.Star;
+            }
+        }
         return Shape.None;
     }
 }

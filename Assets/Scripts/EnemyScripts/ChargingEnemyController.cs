@@ -10,7 +10,7 @@ public class ChargingEnemyControllerTEST : EnemyController
     [HideInInspector]
     public Vector3 dashTarget;
 
-    public override void Die(){
+    public override void Die(bool disable = true){
         chargeTimer = 1f;
         isDashing = false;
         isCharging = false;

@@ -99,6 +99,13 @@ public class DebugSceneManager : MonoBehaviour
         if (debug)
             Debug.Log("Projectile enemy spawned");
     }
+
+    public void SpawnAcidEnemy()
+    {
+        SpawnEnemy(EnemyType.Acid);
+        if (debug)
+            Debug.Log("Acid enemy spawned");
+    }
     #endregion
     #region Private Functions
     private void LevelUp(){

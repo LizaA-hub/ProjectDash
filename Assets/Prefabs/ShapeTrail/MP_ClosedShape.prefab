@@ -147,6 +147,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6738abed6db586a41957b0069ca531cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shape: 4
+  shape: 5
   points: []
   area: 0

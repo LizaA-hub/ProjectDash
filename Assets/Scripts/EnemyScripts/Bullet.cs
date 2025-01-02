@@ -11,7 +11,7 @@ public class Bullet : EnemyController
             Die();
         }
     }
-    public override void Die()
+    public override void Die(bool disable = true)
     {
         parent.StopBullet();
     }

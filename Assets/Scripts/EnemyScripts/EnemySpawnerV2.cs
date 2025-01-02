@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -167,15 +167,15 @@ public class EnemySpawnerV2 : MonoBehaviour
                     controller.stun -= t;
                     continue;
                 }
+                else if (controller.isAttracked) //triangle gravity
+                {
+                    instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                    continue;
+                }
                 switch (controller.type)
                 {
                     //Dashing enemy movement//
                     case EnemyType.Charging:
-                        if (controller.isAttracked) //triangle gravity
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
-                            break;
-                        }
                         var chargingController = instantiatedEnemies[i].GetComponent<ChargingEnemyControllerTEST>();
                         if (chargingController.isCharging)
                             {
@@ -207,21 +207,18 @@ public class EnemySpawnerV2 : MonoBehaviour
                     case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
                         projectileController.UpdateBullet(t);
-                        if (controller.isAttracked)//triangle gravity
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
+                        LookAtPlayer(instantiatedEnemies[i]);
+                        break;
+                    case EnemyType.Acid:
+                        var acidController = instantiatedEnemies[i].GetComponent<AcidEnemyController>();
+                        if (acidController.alive)
                         {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
+                           instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         }
-                        else { 
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
-                            LookAtPlayer(instantiatedEnemies[i]);}
                         break;
                     default://basic and tank enemies
-                        if (controller.isAttracked)//triangle gravity
-                        {
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, controller.attractionTarget, 2f * t);
-                        }
-                        else { 
-                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);}
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
             }
             }

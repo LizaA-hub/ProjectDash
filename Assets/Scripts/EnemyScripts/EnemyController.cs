@@ -15,9 +15,10 @@ public class EnemyController : MonoBehaviour
     private float initialSpeed;
 
     //added for damage animation
-    private SpriteRenderer spriteRenderer;
+    protected SpriteRenderer spriteRenderer;
     private Color originalColor;
 
+    #region Unity Functions
     private void Awake()
     {
         // Get the SpriteRenderer component and store the original color
@@ -125,6 +126,7 @@ public class EnemyController : MonoBehaviour
             
         }
     }
+    #endregion
     #region Public Functions
     public void TakeDamage(float amount, bool exception = false)
     {
@@ -156,7 +158,7 @@ public class EnemyController : MonoBehaviour
     }
     #endregion
     #region Virtual Function
-    public virtual void Die(){
+    public virtual void Die(bool disable = true){
         StopAllCoroutines();
         //drop orb//
 
@@ -197,7 +199,9 @@ public class EnemyController : MonoBehaviour
             }
             inPentagon = false;
         }
-        gameObject.SetActive(false);
+
+        if(disable)
+            gameObject.SetActive(false);
     }
 
     #endregion
