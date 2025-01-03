@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -206,7 +206,12 @@ public class EnemySpawnerV2 : MonoBehaviour
                         break;
                     case EnemyType.Projectile:
                         var projectileController = instantiatedEnemies[i].GetComponent<ProjectileEnemyController>();
-                        projectileController.UpdateBullet(t);
+                        projectileController.timer -= t;
+                        if(projectileController.timer <= 0f)
+                        {
+                            projectileController.FireBullet();
+                            projectileController.timer = 5f;
+                        }
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, projectileController.GetTarget(player.position), step);
                         LookAtPlayer(instantiatedEnemies[i]);
                         break;
@@ -215,6 +220,15 @@ public class EnemySpawnerV2 : MonoBehaviour
                         if (acidController.alive)
                         {
                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        }
+                        break;
+                    case EnemyType.Teleporting:
+                        var teleportingController = instantiatedEnemies[i].GetComponent<TeleportingEnemyController>();
+                        teleportingController.timer -= t;
+                        if(teleportingController.timer <= 0f)
+                        {
+                            StartCoroutine(teleportingController.Teleport(player.position));
+                            teleportingController.timer = 3f;
                         }
                         break;
                     default://basic and tank enemies

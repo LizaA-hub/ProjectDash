@@ -20,6 +20,7 @@ TagManager:
   - PentagonBomb
   - Meteor
   - Acid
+  - Bullet
   layers:
   - Default
   - TransparentFX

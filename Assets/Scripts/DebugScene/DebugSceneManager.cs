@@ -106,6 +106,13 @@ public class DebugSceneManager : MonoBehaviour
         if (debug)
             Debug.Log("Acid enemy spawned");
     }
+
+    public void SpawnTeleportingEnemy()
+    {
+        SpawnEnemy(EnemyType.Teleporting);
+        if (debug)
+            Debug.Log("Teleporting enemy spawned");
+    }
     #endregion
     #region Private Functions
     private void LevelUp(){

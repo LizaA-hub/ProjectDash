@@ -1,18 +1,15 @@
 using UnityEngine;
 
-public class Bullet : EnemyController
+public class Bullet : MonoBehaviour
 {
-    public ProjectileEnemyController parent;
+    public Vector3 direction;
+    public float speed = 5f, strength;
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!other.transform.CompareTag("Enemy") && !other.transform.CompareTag("PlayerField"))
+        if (collision.transform.CompareTag("Player") || collision.transform.CompareTag("PlayerTrail"))
         {
-            Die();
+            gameObject.SetActive(false);
         }
-    }
-    public override void Die(bool disable = true)
-    {
-        parent.StopBullet();
     }
 }

@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class ProjectileEnemyController : EnemyController
 {
+    public float timer = 5f;
     [SerializeField]
     Transform bulletPrefab;
-    float distToPlayer = 4f, Timer = 5f, bulletSpeed = 5f;
-    bool inCoolDown = true, bulletMoving = false;
-    Vector3 bulletDir;
+    float distToPlayer = 4f;
+    protected bool bulletMoving = false;
     Transform bulletContainer, bullet;
 
     private void Start()
@@ -29,42 +29,7 @@ public class ProjectileEnemyController : EnemyController
             return playerPos - diff;
         }
     }
-
-    public void UpdateBullet(float t)
-    {
-        if(!isAttracked)
-            Timer -= t;
-
-        if (Timer <= 0f)
-        {
-            if (!inCoolDown)
-            {
-                inCoolDown = true;
-                StopBullet();
-                Timer = 3f;
-            }
-            else
-            {
-                inCoolDown = false;
-                FireBullet();
-                Timer = 2f;
-            }
-        }
-
-        if (bulletMoving)
-        {
-            float step = t * bulletSpeed;
-            bullet.position = Vector3.MoveTowards(bullet.position, bullet.position + bulletDir, step);
-        }
-    }
-
-    public void StopBullet()
-    {
-        bulletMoving = false;
-        bullet.gameObject.SetActive(false);
-    }
-
-    private void FireBullet()
+    public virtual void FireBullet()
     {
         bool createBullet = true;
         //check for available bullet//
@@ -89,11 +54,8 @@ public class ProjectileEnemyController : EnemyController
         }
         
         Bullet bulletControler = bullet.GetComponent<Bullet>();
-        bulletControler.parent = this;
-        bulletControler.health = 1f;
         bulletControler.strength = strength;
         bullet.position = transform.position;
-        bulletDir = transform.right;
-        bulletMoving = true;
+        bulletControler.direction = transform.right;
     }
 }

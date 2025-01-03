@@ -131,20 +131,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.CompareTag("Enemy")){
-            if(!invincible){
-                if (dashShield > 0)
-                {
-                    dashShield -= 1;
-                    shieldSprite.enabled = (dashShield > 0) ? true : false;
-                    return;
-                }
-                //Debug.Log("player take damages");
-                var strength = other.gameObject.GetComponent<EnemyController>().strength;
-                TakeDamage(strength);
-                invincible = true;
-            }
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            var strength = other.gameObject.GetComponent<EnemyController>().strength;
+            TakeDamage(strength);
+        }
+        else if (other.gameObject.CompareTag("Bullet"))
+        {
+            var strength = other.gameObject.GetComponent<Bullet>().strength;
+            TakeDamage(strength);
         }
     }
 
@@ -154,12 +151,7 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log("player in contact with acid");
             var amount = collision.gameObject.GetComponent<AcidPool>().strength;
-            if (!invincible)
-            {
-                //Debug.Log("player take " + amount + " damages");
-                TakeDamage(amount);
-                invincible = true;
-            }                
+            TakeDamage(amount);               
         }
     }
     #endregion
@@ -234,7 +226,16 @@ public class PlayerController : MonoBehaviour
         }
 
         private void TakeDamage(float amount){
+            if (invincible)
+                return;
+            if (dashShield > 0)
+            {
+                dashShield -= 1;
+                shieldSprite.enabled = (dashShield > 0) ? true : false;
+                return;
+            }
             GameManager.ModifyHealth(-amount);
+            invincible = true;
         }
 
         private void Heal(float amount){

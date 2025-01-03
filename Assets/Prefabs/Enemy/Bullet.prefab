@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4804515348897335760}
   m_Layer: 3
   m_Name: Bullet
-  m_TagString: Enemy
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,14 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6af1c6062b4a9343bb027929e657e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  orbPrefab: {fileID: 0}
-  health: 0
-  strength: 0
-  speed: 0
-  experience: 0
-  cooldown: 1
-  parent: {fileID: 0}
+  direction: {x: 0, y: 0, z: 0}
+  speed: 5
+  strength: 1
 --- !u!58 &2093353167879574839
 CircleCollider2D:
   m_ObjectHideFlags: 0
