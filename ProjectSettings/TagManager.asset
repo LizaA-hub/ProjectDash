@@ -21,6 +21,7 @@ TagManager:
   - Meteor
   - Acid
   - Bullet
+  - EnemyShield
   layers:
   - Default
   - TransparentFX

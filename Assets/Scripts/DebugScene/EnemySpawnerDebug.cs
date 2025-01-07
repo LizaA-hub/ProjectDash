@@ -190,6 +190,10 @@ public class EnemySpawnerDebug : MonoBehaviour
                             teleportingController.timer = 3f;
                         }
                         break;
+                    case EnemyType.Shield:
+                        LookAtPlayer(instantiatedEnemies[i], step);
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
@@ -198,12 +202,19 @@ public class EnemySpawnerDebug : MonoBehaviour
         }
     }
 
-    private void LookAtPlayer(Transform enemy){
+    private void LookAtPlayer(Transform enemy, float step = 0f){
         Vector3 direction = player.position - enemy.position;
         direction = direction.normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        enemy.rotation = Quaternion.Euler(0, 0, angle);
+        if (step == 0)
+        {
+            enemy.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        else
+        {
+            enemy.rotation = Quaternion.Slerp(enemy.rotation, Quaternion.Euler(0, 0, angle), step);
+        }
 
     }
     #endregion

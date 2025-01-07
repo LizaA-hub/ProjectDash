@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -231,6 +232,10 @@ public class EnemySpawnerV2 : MonoBehaviour
                             teleportingController.timer = 3f;
                         }
                         break;
+                    case EnemyType.Shield:
+                        LookAtPlayer(instantiatedEnemies[i], step);
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
@@ -282,13 +287,19 @@ public class EnemySpawnerV2 : MonoBehaviour
         }
     }
 
-    private void LookAtPlayer(Transform enemy){
+    private void LookAtPlayer(Transform enemy, float step = 0f){
         Vector3 direction = player.position - enemy.position;
         direction = direction.normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        enemy.rotation = Quaternion.Euler(0, 0, angle);
-
+        if (step == 0){
+            enemy.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        else
+        {
+            enemy.rotation = Quaternion.Slerp(enemy.rotation, Quaternion.Euler(0, 0, angle), step);
+        }
+        
     }
     #endregion
 

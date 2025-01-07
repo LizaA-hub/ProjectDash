@@ -75,44 +75,12 @@ public class DebugSceneManager : MonoBehaviour
         bombLevel = powerUpManager.DebbugPowerup(PowerUpType.Bomb);
         bombText.text = "Lvl " + bombLevel;
     }
-    public void SpawnBasicEnemy(){
-        SpawnEnemy(EnemyType.Basic);
-        if(debug)
-            Debug.Log("Basic enemy spawned");
-    }
-
-    public void SpawnChargingEnemy(){
-        SpawnEnemy(EnemyType.Charging);
+    public void SpawnEnemy(int type){
+        spawner.TriggerSpawn((EnemyType)type);
         if (debug)
-            Debug.Log("Charging enemy spawned");
+            Debug.Log((EnemyType)type + " enemy spawned");
     }
-
-    public void SpawnTankyEnemy()
-    {
-        SpawnEnemy(EnemyType.Tanky);
-        if (debug)
-            Debug.Log("Tanky enemy spawned");
-    }
-    public void SpawnProjectileEnemy()
-    {
-        SpawnEnemy(EnemyType.Projectile);
-        if (debug)
-            Debug.Log("Projectile enemy spawned");
-    }
-
-    public void SpawnAcidEnemy()
-    {
-        SpawnEnemy(EnemyType.Acid);
-        if (debug)
-            Debug.Log("Acid enemy spawned");
-    }
-
-    public void SpawnTeleportingEnemy()
-    {
-        SpawnEnemy(EnemyType.Teleporting);
-        if (debug)
-            Debug.Log("Teleporting enemy spawned");
-    }
+   
     #endregion
     #region Private Functions
     private void LevelUp(){
@@ -122,8 +90,5 @@ public class DebugSceneManager : MonoBehaviour
         GameManager.ModifyExperience(diff);
     }
 
-    private void SpawnEnemy(EnemyType type){
-        spawner.TriggerSpawn(type);
-    }
     #endregion
 }

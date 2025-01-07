@@ -38,7 +38,7 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-    private void OnTriggerEnter2D(Collider2D other) {
+    public virtual void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("PlayerTrail")){
             TakeDamage(PowerUpManager.upgradableDatas.trailDamage);
             //Debug.Log("enemy touched trail");
@@ -95,7 +95,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("ShapeField"))
         {

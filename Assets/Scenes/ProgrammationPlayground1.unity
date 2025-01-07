@@ -1445,7 +1445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4826292184903621429, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
       propertyPath: DebugShape
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6085409527051210732, guid: 876e926e1409fa84a8caee534bd76215, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1554,12 +1554,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: waves.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: waves.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: ebcb724ac827759499225f4ea67f92bb, type: 2}
+    - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
+      propertyPath: waves.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 4b82962100781d14dbfa2c3064ed60f2, type: 2}
     - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: waves.Array.data[2]
       value: 
