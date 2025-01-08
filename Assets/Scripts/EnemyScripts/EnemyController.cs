@@ -9,8 +9,8 @@ public class EnemyController : MonoBehaviour
     public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
     public float speed;
     public Vector3 attractionTarget;
-    public bool isAttracked = false;
-    bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false; 
+    public bool isAttracked = false, debug = false;
+    protected bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false; 
     Transform orb;
     private float initialSpeed;
 
@@ -39,38 +39,40 @@ public class EnemyController : MonoBehaviour
         }
     }
     public virtual void OnTriggerEnter2D(Collider2D other) {
+        string attack = "";
         if(other.gameObject.CompareTag("PlayerTrail")){
             TakeDamage(PowerUpManager.upgradableDatas.trailDamage);
-            //Debug.Log("enemy touched trail");
+            attack = "player trail";
         }
         else if(other.gameObject.CompareTag("ClosedShape")){
             ClosedShape closedShape = other.gameObject.GetComponent<ClosedShape>();
             ShapeAttack(closedShape.shape);
             closedShape.AddEnemy(); //for triangle gravity
-            //Debug.Log("enemy in shape");
+            attack = "closed shape";
         }
         else if(other.gameObject.CompareTag("Projectile")){
-            //Debug.Log("enemy touche by projectile");
+            attack = "projectile";
             TakeDamage(PowerUpManager.upgradableDatas.projectileDamage);
         }
         else if(other.gameObject.CompareTag("ShockWave")){
-            //Debug.Log("enemy colliding with wave");
+            attack = "shock wave";
             TakeDamage(PowerUpManager.upgradableDatas.waveDamage);
         }
         else if (other.gameObject.CompareTag("Bomb"))
         {
             TakeDamage(PowerUpManager.upgradableDatas.bombDamage);
-            //Debug.Log("enemy touch bomb");
+            attack = "bomb";
         }
         else if (other.gameObject.CompareTag("ShapeField"))
         {
-            //Debug.Log("enemy is in the triangle flied");
+            attack = "triangle field";
             isAttracked = true;
             attractionTarget = other.transform.position;
         }
         else if (other.gameObject.CompareTag("PentagonBlade"))
         {
             TakeDamage(GameManager.skillVariables.bladeDamage, true);
+            attack = "pentagon blade";
         }
         else if (other.gameObject.CompareTag("PentagonWave"))
         {
@@ -83,15 +85,23 @@ public class EnemyController : MonoBehaviour
             {
                 TakeDamage(10f, true);
             }
+            attack = "pentagon shock wave";
             
         }
         else if (other.gameObject.CompareTag("PentagonBomb"))
         {
             TakeDamage(GameManager.skillVariables.pentagonBombDamage, true);
+            attack = "pentagon bomb";
         }
         else if (other.gameObject.CompareTag("Meteor"))
         {
             TakeDamage(GameManager.skillVariables.meteorDamage, true);
+            attack = "meteor";
+        }
+
+        if(debug && attack != "")
+        {
+            Debug.Log(transform.name + "collide with " + attack);
         }
     }
 
@@ -128,7 +138,7 @@ public class EnemyController : MonoBehaviour
     }
     #endregion
     #region Public Functions
-    public void TakeDamage(float amount, bool exception = false)
+    public virtual void TakeDamage(float amount, bool exception = false)
     {
         if (invincible && !exception) return;
 
@@ -137,7 +147,10 @@ public class EnemyController : MonoBehaviour
         {
             finalAmount *= (1 + GameManager.skillVariables.supportStrength);
         }
-        //Debug.Log("enemy takes " + finalAmount + " damages");
+
+        if(debug)
+            Debug.Log(transform.name + " takes " + finalAmount + " damages");
+        
         health -= finalAmount;
 
         GameManager.totalDamages += finalAmount;
@@ -209,7 +222,7 @@ public class EnemyController : MonoBehaviour
     #region Private Functions
 
     //Flash animation when the enemy takes damage
-    private IEnumerator DamageFlash()
+    protected IEnumerator DamageFlash()
     {
         // Flash white
         spriteRenderer.color = Color.white;

@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     CircleCollider2D orbMagnet;
     [SerializeField]
     LayerMask enemyLayer;
+    [SerializeField]
+    bool debug = false;
 
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
@@ -21,20 +23,21 @@ public class PlayerController : MonoBehaviour
     private Camera cam;
     private Vector3 mousePos;
     private Vector2 swordPos;
-    private bool mouseDown = false, invincible = false, isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
-    private float cooldownTimer, angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f;
+    private bool mouseDown = false, /*invincible = false,*/ isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
+    private float /*cooldownTimer,*/ angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f;
     public static float projectileTimer, shockWaveTimer, swordTimer, bombTimer;
     public static int dashShield = 0;
-    private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>();
+    private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>(), damageTransforms = new List<Transform>();
     private Transform newProjectile, newWave, map, newBomb;
     private TrailRenderer swordTrail;
+    private List<float> damageTimers = new List<float>();
 
     #region Unity Functions
     // Start is called before the first frame update
     void Start()//setting all variables 
     {
         cam = Camera.main;
-        cooldownTimer = cooldown;
+        //cooldownTimer = cooldown;
         projectileTimer = shockWaveTimer = swordTimer = bombTimer = PowerUpManager.upgradableDatas.dashCooldown;
         //Debug.Log(projectileTimer);
         PowerUpManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
@@ -137,22 +140,22 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             var strength = other.gameObject.GetComponent<EnemyController>().strength;
-            TakeDamage(strength);
+            TakeDamage(strength, other.transform);
         }
         else if (other.gameObject.CompareTag("Bullet"))
         {
             var strength = other.gameObject.GetComponent<Bullet>().strength;
-            TakeDamage(strength);
+            TakeDamage(strength, other.transform);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Acid"))
+        if (collision.gameObject.CompareTag("DamageArea"))
         {
             //Debug.Log("player in contact with acid");
-            var amount = collision.gameObject.GetComponent<AcidPool>().strength;
-            TakeDamage(amount);               
+            var amount = collision.gameObject.GetComponent<DamageArea>().strength;
+            TakeDamage(amount, collision.transform);               
         }
     }
     #endregion
@@ -164,16 +167,28 @@ public class PlayerController : MonoBehaviour
     #endregion
     #region Private Functions
         private void UpdateTimers(float t){
-            //timer befor next damage//
-            if(invincible){
-                cooldownTimer -= t;
-                if(cooldownTimer <= 0){
-                    cooldownTimer = cooldown;
-                    invincible = false;
+        //timers before next damage//
+            List<int> toRemove = new List<int>();
+            for (int i = 0; i < damageTimers.Count; i++)
+            {
+                damageTimers[i] -= t;
+                if (damageTimers[i] <= 0)
+                {
+                    toRemove.Add(i);
                 }
             }
-            //dash projectile timer//
-            if((projectileTimer > 0 ) && PowerUpManager.upgradableDatas.haveProjectile){
+
+            if(toRemove.Count > 0)
+            {
+                for (int i = toRemove.Count-1; i >= 0; i--)
+                {
+                    damageTimers.RemoveAt(i);
+                    damageTransforms.RemoveAt(i);
+                }
+            }
+        
+        //dash projectile timer//
+        if ((projectileTimer > 0 ) && PowerUpManager.upgradableDatas.haveProjectile){
                 projectileTimer -= t;
             }
             //shock wave timer//
@@ -226,9 +241,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        private void TakeDamage(float amount){
-            if (invincible)
+        private void TakeDamage(float amount, Transform source){
+            if (IsInList(source))
                 return;
+
             if (dashShield > 0)
             {
                 dashShield -= 1;
@@ -236,7 +252,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             GameManager.ModifyHealth(-amount);
-            invincible = true;
+            AddToList(source);
         }
 
         private void Heal(float amount){
@@ -284,7 +300,21 @@ public class PlayerController : MonoBehaviour
             to.y = localFrom.x * Mathf.Sin(angle) + localFrom.y * Mathf.Cos(angle) + transform.position.y;
             return to;
         }
+        
+        private bool IsInList(Transform transform)
+        {
+            foreach (var item in damageTransforms)
+            {
+                if (item == transform) return true;
+            }
+            return false;
+        }
 
+    private void AddToList(Transform transform)
+    {
+        damageTransforms.Add(transform);
+        damageTimers.Add(cooldown);
+    }
         #endregion
 
     #region Projectile Functions
@@ -441,7 +471,8 @@ public class PlayerController : MonoBehaviour
           
                     foreach (var enemy in hitEnemies)
                     {
-                        //Debug.Log(enemy.name + "touch with sword");
+                        if(debug)
+                            Debug.Log(enemy.name + "touched with sword");
                         var controller = enemy.GetComponent<EnemyController>();
                         controller.TakeDamage(PowerUpManager.upgradableDatas.swordDamage);
                     }

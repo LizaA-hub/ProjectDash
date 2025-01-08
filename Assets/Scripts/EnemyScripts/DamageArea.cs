@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-public class AcidPool : MonoBehaviour
+public class DamageArea: MonoBehaviour
 {
     public float strength;
 }

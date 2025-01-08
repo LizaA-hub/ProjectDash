@@ -47,6 +47,7 @@ public class EnemySpawnerDebug : MonoBehaviour
     private void SpawnEnemy(EnemyType type){
         
         bool instantiateNewEnemy = true;
+        bool spawnNearPlayer = false;
 
         //find the data corresponding to the type//
         foreach (var enemy in enemyPool)
@@ -79,8 +80,14 @@ public class EnemySpawnerDebug : MonoBehaviour
             controller = newEnemy.GetComponent<EnemyController>() ; 
         }
 
+        //check is it's a targetr dummy//
+        if(type == EnemyType.Target)
+        {
+            spawnNearPlayer = true;
+        }
+
         //set variables//
-        newEnemy.position = GetSpawningPosition();
+        newEnemy.position = GetSpawningPosition(spawnNearPlayer);
         controller.health = data.maxHealth;
         controller.strength = data.strength;
         controller.speed = data.speed;
@@ -89,27 +96,37 @@ public class EnemySpawnerDebug : MonoBehaviour
         
     }
 
-    private Vector3 GetSpawningPosition()
+    private Vector3 GetSpawningPosition(bool nearPlayer)
     {
-        int[] randomInt = { -1, 1 };
-        float X = 0f, Y = 0f;
         Vector3 position = Vector3.zero;
-        switch (Random.Range(0, 2))
+
+        if (nearPlayer)
         {
-            case 0://position up or down the camera
-                X = Random.Range(-1, 1);
-                Y = randomInt[Random.Range(0, 2)];
-                position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
-                break;
-
-            default://position left or rigth the camera
-                Y = Random.Range(-1, 1);
-                X = randomInt[Random.Range(0, 2)];
-                position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
-                break;
+            float angle = Random.Range(0, 2 * Mathf.PI);
+            Vector3 relativPos = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+            position = player.position + 5f * relativPos;
         }
+        else
+        {
+            int[] randomInt = { -1, 1 };
+            float X = 0f, Y = 0f;
+            switch (Random.Range(0, 2))
+            {
+                case 0://position up or down the camera
+                    X = Random.Range(-1, 1);
+                    Y = randomInt[Random.Range(0, 2)];
+                    position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+                    break;
 
-        position = new Vector3(X * cameraBound.x + cam.transform.position.x, Y * cameraBound.y + cam.transform.position.y, 0f);
+                default://position left or rigth the camera
+                    Y = Random.Range(-1, 1);
+                    X = randomInt[Random.Range(0, 2)];
+                    position = new Vector3(X * cameraBound.x, Y * cameraBound.y, 0f);
+                    break;
+            }
+
+            position = new Vector3(X * cameraBound.x + cam.transform.position.x, Y * cameraBound.y + cam.transform.position.y, 0f);
+        }
         return position;
     }
 
@@ -193,6 +210,15 @@ public class EnemySpawnerDebug : MonoBehaviour
                     case EnemyType.Shield:
                         LookAtPlayer(instantiatedEnemies[i], step);
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
+                    case EnemyType.Target:
+                        break;
+                    case EnemyType.Fast:
+                        var fastController = instantiatedEnemies[i].GetComponent<AcidEnemyController>();
+                        if (fastController.alive)
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        }
                         break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);

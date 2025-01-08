@@ -19,9 +19,9 @@ TagManager:
   - PentagonWave
   - PentagonBomb
   - Meteor
-  - Acid
   - Bullet
   - EnemyShield
+  - DamageArea
   layers:
   - Default
   - TransparentFX

@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, Target, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -235,6 +235,13 @@ public class EnemySpawnerV2 : MonoBehaviour
                     case EnemyType.Shield:
                         LookAtPlayer(instantiatedEnemies[i], step);
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        break;
+                    case EnemyType.Fast:
+                        var fastController = instantiatedEnemies[i].GetComponent<AcidEnemyController>();
+                        if (fastController.alive)
+                        {
+                            instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
+                        }
                         break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);

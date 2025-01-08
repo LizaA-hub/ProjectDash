@@ -6,6 +6,8 @@ public class AcidEnemyController : EnemyController
     public bool alive;
     [SerializeField]
     GameObject acidPool;
+    [SerializeField]
+    float strengthFactor = 1f, areaDuration = 3f;
     private CircleCollider2D circleCollider;
 
     private void OnEnable()
@@ -24,6 +26,13 @@ public class AcidEnemyController : EnemyController
     {
         StopAllCoroutines();
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && type == EnemyType.Fast) {
+            Die();
+        }
+    }
     public override void Die(bool disable = false)
     {
         if (!alive)
@@ -41,8 +50,8 @@ public class AcidEnemyController : EnemyController
     private IEnumerator Acid()
     {
         acidPool.SetActive(true);
-        acidPool.GetComponent<AcidPool>().strength = strength;
-        yield return new WaitForSeconds(3f);
+        acidPool.GetComponent<DamageArea>().strength = strength* strengthFactor;
+        yield return new WaitForSeconds(areaDuration);
         acidPool.SetActive(false);
         gameObject.SetActive(false);
     }
