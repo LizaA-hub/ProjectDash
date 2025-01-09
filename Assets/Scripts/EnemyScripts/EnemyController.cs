@@ -4,13 +4,13 @@ public class EnemyController : MonoBehaviour
 {
     public EnemyType type;
     [SerializeField]
-    Transform orbPrefab;
+    Transform orbPrefab, shieldTransform;
     [HideInInspector]
     public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
     public float speed;
     public Vector3 attractionTarget;
     public bool isAttracked = false, debug = false;
-    protected bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false; 
+    protected bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false, shielded = false; 
     Transform orb;
     private float initialSpeed;
 
@@ -141,6 +141,11 @@ public class EnemyController : MonoBehaviour
     public virtual void TakeDamage(float amount, bool exception = false)
     {
         if (invincible && !exception) return;
+        if (shielded)
+        {
+            CommanderLink(false);
+            return;
+        }
 
         var finalAmount = amount * (1 + PowerUpManager.upgradableDatas.strengthBonus);
         if (takeExtraDamages)
@@ -217,6 +222,25 @@ public class EnemyController : MonoBehaviour
             gameObject.SetActive(false);
     }
 
+    public void CommanderLink(bool value)
+    {
+        if (shielded == value)
+        {
+            return;
+        }
+        if (value)
+        {
+            shielded = true;
+            shieldTransform.gameObject.SetActive(true);
+            speed += speed * 0.5f;
+        }
+        else
+        {
+            shielded = false;
+            shieldTransform.gameObject.SetActive(false);
+            speed -= speed * 0.5f;
+        }
+    }
     #endregion
 
     #region Private Functions

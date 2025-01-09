@@ -19,10 +19,12 @@ public static class GameManager
 
     public struct savedDatas{//datas that need to be saved 
         public int[] skillLevels;
+        public bool[] disabledSkills;
         public float skillPoint;
 
         public savedDatas(int length) {
             skillLevels = new int[length];
+            disabledSkills = new bool[length];
             skillPoint = 0;
         }
 
@@ -63,7 +65,10 @@ public static class GameManager
             int count = Enum.GetNames(typeof(skillTypes)).Length;
             currentDatas = new savedDatas(count);
         }
-
+        if(currentDatas.disabledSkills == null)
+        {
+            currentDatas.disabledSkills = new bool[Enum.GetNames(typeof(skillTypes)).Length];
+        }
         //set skills datas based on the saved skill levels//
         skillVariables = new SkillVariables();
         UpdateAllSkills();
@@ -72,7 +77,7 @@ public static class GameManager
         InitializeVariables();
     }
 
-    #region Public Functions
+    #region Player Functions
 
     public static void ModifyExperience(float amount){
         float m = amount*skillVariables.xpMultiplier;
@@ -112,6 +117,9 @@ public static class GameManager
 
     public static float GetHealth() => health;
 
+    #endregion
+
+    #region Level Functions
     public static void StartGame(){
         //Reset stats//
         InitializeVariables();
@@ -127,14 +135,32 @@ public static class GameManager
     public static void LoadMenu(){
         SceneManager.LoadScene("MainMenu");
     }
+    #endregion
+
+    #region Skill Functions
+
+    public static float GetSkillPoint(){
+        return currentDatas.skillPoint;
+    }
 
     public static void ModifySkillPoint(float amount){
         currentDatas.skillPoint += amount;
         Save();
     }
 
-    public static float GetSkillPoint(){
-        return currentDatas.skillPoint;
+    public static int[] GetSkillLevels()
+    {
+        return currentDatas.skillLevels;
+    }
+
+    public static int GetSkillLevelAt(int position)
+    {
+        return currentDatas.skillLevels[position];
+    }
+
+    public static bool GetSkillState(skillTypes type)
+    {
+        return currentDatas.disabledSkills[(int)type];
     }
 
     public static void ResetSkillPoints(){
@@ -147,7 +173,8 @@ public static class GameManager
         int level = currentDatas.skillLevels[pos];
         level++;
         SetSkillLevel(pos, level);
-        SetSkillVariable(type, level);
+        if (!currentDatas.disabledSkills[pos])
+            SetSkillVariable(type, level);
         return level;
     }
 
@@ -158,28 +185,43 @@ public static class GameManager
         System.IO.File.WriteAllText(filePath, playerData);
         //Debug.Log("datas saved at " + filePath);
     }
-    
-    public static int[] GetSkillLevels()
-    {
-        return currentDatas.skillLevels;
-    }
-
-    public static int GetSkillLevelAt(int position)
-    {
-        return currentDatas.skillLevels[position];
-    }
 
     public static void UpdateAllSkills()
     {
         for (int i = 0; i < currentDatas.skillLevels.Length; i++)
         {
-            skillTypes type = (skillTypes)i;
-            SetSkillVariable(type, currentDatas.skillLevels[i]);
+            if (!currentDatas.disabledSkills[i])
+            {
+                skillTypes type = (skillTypes)i;
+                SetSkillVariable(type, currentDatas.skillLevels[i]);
+            }
         }
     }
+
     public static void SetSkillLevel(int position, int value)
     {
         currentDatas.skillLevels[position] = value;
+        Save();
+    }
+
+    public static void disableSkill(skillTypes type, bool value)//debug only
+    {
+        if (value)
+        {
+            SetSkillVariable(type, 0);
+        }
+        else
+        {
+            SetSkillVariable(type, currentDatas.skillLevels[(int)type]);
+        }
+
+        SetSkilState((int)type, value);
+        
+    }
+
+    public static void SetSkilState(int position, bool value)
+    {
+        currentDatas.disabledSkills[position] = value;
         Save();
     }
     #endregion

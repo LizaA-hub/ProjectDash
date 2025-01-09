@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, Target, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, Target, Commander, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -243,6 +243,17 @@ public class EnemySpawnerV2 : MonoBehaviour
                             instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         }
                         break;
+                    case EnemyType.Commander:
+                        var commanderController = instantiatedEnemies[i].GetComponent<CommanderEnemycontroller>();
+                        commanderController.timer -= t;
+                        if(commanderController.timer <= 0f)
+                        {
+                            commanderController.timer = 10f;
+                            LinkCommander(instantiatedEnemies[i]);
+                        }
+                        instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, commanderController.GetTarget(player.position), step);
+                        LookAtPlayer(instantiatedEnemies[i]);
+                        break;
                     default://basic and tank enemies
                         instantiatedEnemies[i].position = Vector3.MoveTowards(instantiatedEnemies[i].position, player.position, step);
                         break;
@@ -307,6 +318,34 @@ public class EnemySpawnerV2 : MonoBehaviour
             enemy.rotation = Quaternion.Slerp(enemy.rotation, Quaternion.Euler(0, 0, angle), step);
         }
         
+    }
+
+    private void LinkCommander(Transform enemy)
+    {
+        //finding the 5 closer enemies
+        List<Transform> activEnemies = new List<Transform>();
+        for (int i = 0; i < instantiatedEnemies.Count; i++)
+        {
+            if (instantiatedEnemies[i].gameObject.activeSelf && instantiatedEnemies[i] != enemy)
+            {
+                activEnemies.Add(instantiatedEnemies[i]);
+            }
+        }
+        if(activEnemies.Count > 5)
+        {
+            //arranging the list by distances in ascending order
+            activEnemies.Sort((x, y) => Vector3.Distance(enemy.position, x.position).CompareTo( Vector3.Distance(enemy.position, y.position)));
+            for (int i = 0; i < 5; i++)
+            {
+                activEnemies[i].GetComponent<EnemyController>().CommanderLink(true);
+            }
+        }
+        else if (activEnemies.Count > 0) {
+            foreach (var activEnemy in activEnemies)
+            {
+                activEnemy.GetComponent<EnemyController>().CommanderLink(true);
+            }
+        }
     }
     #endregion
 

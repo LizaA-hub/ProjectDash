@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cd02698740c3b74bb168a9da04063c1, type: 3}
-  m_Name: Target
+  m_Name: Commander
   m_EditorClassIdentifier: 
   data:
-    type: 8
-    prefab: {fileID: 7307865548004113015, guid: 74ab6fd95476c924182cb444ecb07300, type: 3}
-    maxHealth: 1
-    strength: 0
-    speed: 1
-    experience: 1
+    type: 9
+    prefab: {fileID: 7307865548004113015, guid: 826a6c6b39de05b4090c46b01b3d8259, type: 3}
+    maxHealth: 3
+    strength: 5
+    speed: 2
+    experience: 4

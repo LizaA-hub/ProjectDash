@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using System;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UI;
 
 public enum skillTypes { //WARNING: THIS ELEMENTS NEED TO STAY IN THE RIGHT ORDER FOR THE SYSTEM TO WORK//
     //general skills//
@@ -32,6 +33,8 @@ public class SkillTreeManager : MonoBehaviour
     TextMeshProUGUI skillPointsText, skillName, skillDescription, skillStat, skillCost, skillLevel, lockPanelText;
     [SerializeField]
     GameObject infoPanel, costPanel,lockPanel;
+    [SerializeField]
+    Toggle disableToggle;
     SkillScriptableObject selectedSkill;
 
     private int availablePoints;
@@ -123,6 +126,7 @@ public class SkillTreeManager : MonoBehaviour
         for (int i = 0; i < GameManager.GetSkillLevels().Length; i++)
         {
             GameManager.SetSkillLevel(i, 0);
+            GameManager.SetSkilState(i, false);
         }
         unlockedSkills.Clear();
         UpdateSkillSlots();
@@ -144,6 +148,10 @@ public class SkillTreeManager : MonoBehaviour
         }
     }
 
+    public void disableSkill(bool value)
+    {
+        GameManager.disableSkill(selectedSkill.type, value);
+    }
     #endregion
     #region Private Functions
     private void UpdateSkillSlots()
@@ -211,6 +219,7 @@ public class SkillTreeManager : MonoBehaviour
             lockPanelText.color = Color.red;
         }
 
+        disableToggle.isOn = GameManager.GetSkillState(selectedSkill.type);
         skillDescription.text = selectedSkill.description;
         skillStat.text = selectedSkill.statInfo;
 
