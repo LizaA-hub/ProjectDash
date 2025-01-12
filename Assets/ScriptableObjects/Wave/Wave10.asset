@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8d6de98b126d14a8a77d7fee548fe5, type: 3}
+  m_Name: Wave10
+  m_EditorClassIdentifier: 
+  enemyGroups:
+  - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
+    maxNumber: 10
+    spawnDelay: 2
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: ef839821de15883419a61c99ff5eb722, type: 2}
+    maxNumber: 5
+    spawnDelay: 3
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: 81415833875fbe84a858db113d0c4821, type: 2}
+    maxNumber: 5
+    spawnDelay: 3
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: 3ca69a668ae135e4eb48657bfb912860, type: 2}
+    maxNumber: 5
+    spawnDelay: 3
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: 0582e840693d99148b369e68a0b47e3a, type: 2}
+    maxNumber: 5
+    spawnDelay: 3
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
