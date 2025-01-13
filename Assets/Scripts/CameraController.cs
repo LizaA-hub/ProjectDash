@@ -37,6 +37,12 @@ public class CameraController : MonoBehaviour
         
         smoothPosition = Vector3.SmoothDamp(transform.position,ClampTarget(target),ref velocity,smoothTime);
         transform.position = smoothPosition;
+
+        //for debugging shake
+        /*if (Input.GetKeyUp(KeyCode.S))
+        {
+            StartCoroutine(Shake(0.1f,0.1f));
+        }*/
     }
 
     private Vector3 ClampTarget(Vector3 target){ // the camera don't show the outside of the map//
@@ -51,5 +57,16 @@ public class CameraController : MonoBehaviour
         clampedTarget.x = Mathf.Clamp(clampedTarget.x,minX,maxX);
         clampedTarget.y = Mathf.Clamp(clampedTarget.y,minY,maxY);
         return clampedTarget;
+    }
+
+    public IEnumerator Shake(float duration, float amplitude)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration) {
+            Vector3 translation = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f) * amplitude;
+            transform.position += translation;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
     }
 }

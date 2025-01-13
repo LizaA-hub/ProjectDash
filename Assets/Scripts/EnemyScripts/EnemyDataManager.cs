@@ -22,6 +22,9 @@ public static class EnemyDataManager
     public struct EnemyGroup
     {
         public EnemyScriptableObject enemy;
+        [Header("The number of enemies spawned at the start of the wave")]
+        public int initialNumber;
+        [Header("one enemy spawned every spawnDelay until maxNumber is reached")]
         public int maxNumber;
         public float spawnDelay;
         public SpecialProperty[] specialProperties;

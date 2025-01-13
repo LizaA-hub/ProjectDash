@@ -9,8 +9,7 @@ public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleport
 public class EnemySpawnerV2 : MonoBehaviour
 {
     //inspector variabless//
-    [SerializeField]
-    float waveDelay = 30f;
+    
     [Header("Variables to increase enemy difficulty over time.")]
     [SerializeField,Range(0,1)]
     float speedMultiplier = 0.05f, healthMultiplier = 0.1f, strengthMultiplier = 0.1f;
@@ -21,7 +20,7 @@ public class EnemySpawnerV2 : MonoBehaviour
     Transform player;
     List<Transform> instantiatedEnemies = new List<Transform>();
     float[] intraWaveTimers;
-    float interWaveTimer = 0f;
+    float interWaveTimer = 0f,waveDelay = 30f;
     Vector3 velocity = Vector3.zero, cameraBound;
     int waveNumber = 0;
     Camera cam;
@@ -302,6 +301,22 @@ public class EnemySpawnerV2 : MonoBehaviour
             //reset timers
             intraWaveTimers = new float[currentWave.enemyGroups.Length];
             enemySpawned = new int[currentWave.enemyGroups.Length];
+            
+            float duration = 0f;
+            for (int i = 0; i < currentWave.enemyGroups.Length; i++) {
+                float length = currentWave.enemyGroups[i].maxNumber * currentWave.enemyGroups[i].spawnDelay;
+                if (length > duration) {
+                    duration = length; //find wave duration
+                }
+                if(currentWave.enemyGroups[i].initialNumber > 0) //initial spawn
+                {
+                    for(int j = 0;j< currentWave.enemyGroups[i].initialNumber; j++)
+                    {
+                        SpawnEnemy(currentWave.enemyGroups[i].enemy, i);
+                    }
+                }
+            }
+            waveDelay = duration;
         }
     }
 
