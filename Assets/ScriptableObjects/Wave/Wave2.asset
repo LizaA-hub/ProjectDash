@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyGroups:
   - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
+    initialNumber: 5
     maxNumber: 10
     spawnDelay: 1
-    property: 4
-    propertyMultiplier: 0
+    specialProperties: []
   - enemy: {fileID: 11400000, guid: ba25514ab87b59644b741a3b7d0b9d3d, type: 2}
+    initialNumber: 2
     maxNumber: 5
     spawnDelay: 5
-    property: 4
-    propertyMultiplier: 0
+    specialProperties: []
