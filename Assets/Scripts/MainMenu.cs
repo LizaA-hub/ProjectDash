@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField]
+    GameObject options;
     // Function to load the Main Gameplay scene
     public void StartGame()
     {
@@ -26,6 +28,12 @@ public class MainMenu : MonoBehaviour
         // For Standalone build
         Application.Quit();
 #endif
+    }
+
+
+    public void OpenOptions()
+    {
+        options.SetActive(true);
     }
 
 }

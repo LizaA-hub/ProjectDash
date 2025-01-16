@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AcidEnemyController : EnemyController
 {
+    [HideInInspector]
     public bool alive;
     [SerializeField]
     GameObject acidPool;

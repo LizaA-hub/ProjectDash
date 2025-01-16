@@ -6,10 +6,12 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     Transform orbPrefab, shieldTransform;
     [HideInInspector]
-    public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f;
-    public float speed;
+    public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f, speed;
+    [HideInInspector]
     public Vector3 attractionTarget;
-    public bool isAttracked = false, debug = false;
+    [HideInInspector]
+    public bool isAttracked = false;
+    public bool debug = false;
     protected bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false, shielded = false; 
     Transform orb;
     private float initialSpeed;

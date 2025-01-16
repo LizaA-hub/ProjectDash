@@ -3,7 +3,7 @@ using UnityEngine;
 public class PauseScreen : MonoBehaviour
 {
     [SerializeField]
-    Transform panel;
+    Transform panel, optionPanel;
     bool isOpen = false;
 
     // Update is called once per frame
@@ -26,6 +26,11 @@ public class PauseScreen : MonoBehaviour
     {
         Time.timeScale = 1f;
         GameManager.LoadMenu();
+    }
+
+    public void Options()
+    {
+        optionPanel.gameObject.SetActive(true);
     }
 
 }

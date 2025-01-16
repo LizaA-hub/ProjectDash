@@ -21,11 +21,14 @@ public static class GameManager
         public int[] skillLevels;
         public bool[] disabledSkills;
         public float skillPoint;
+        public float music, sfx;
 
         public savedDatas(int length) {
             skillLevels = new int[length];
             disabledSkills = new bool[length];
-            skillPoint = 0;
+            skillPoint = 0f;
+            music = 10f; 
+            sfx = 10f;
         }
 
     }
@@ -134,6 +137,26 @@ public static class GameManager
 
     public static void LoadMenu(){
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public static void SetMusicVolume(float value)
+    {
+        currentDatas.music = value;
+    }
+    public static void SetSfxVolume(float value)
+    {
+        currentDatas.sfx = value;
+    }
+    public static float GetMusicVolume() => currentDatas.music;
+    public static float GetSfxVolume() => currentDatas.sfx;
+
+    public static void DeleteSave()
+    {
+        string filePath = Application.persistentDataPath + "/playerData.json";
+        System.IO.File.Delete(filePath);
+
+        int count = Enum.GetNames(typeof(skillTypes)).Length;
+        currentDatas = new savedDatas(count);
     }
     #endregion
 

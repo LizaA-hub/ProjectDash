@@ -5,7 +5,9 @@ using UnityEngine.Rendering;
 
 public class ShieldEnemyController : EnemyController
 {
+    [HideInInspector]
     public bool shield;
+    [HideInInspector]
     public string attackTag = "";
     bool isTrigger;
 
