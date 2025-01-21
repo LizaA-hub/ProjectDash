@@ -36,4 +36,8 @@ public static class EnemyDataManager
         public propertyType property;
         public float propertyMultiplier;
     }
+
+    //variables for the event scriptable object//
+    public enum EventType { Circle, Cluster, Maze, None}
+    
 }
