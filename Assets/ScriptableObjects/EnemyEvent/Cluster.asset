@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81f6d436d670e6048b3cd23921580408, type: 3}
-  m_Name: Test
+  m_Name: Cluster
   m_EditorClassIdentifier: 
-  type: 0
-  possibleEnemies: []
+  type: 1
+  Enemy: {fileID: 11400000, guid: 3ea0d454fc53bf7499c35b36b15fc2f6, type: 2}
   activeAfter: 0
-  initialDelay: 0
-  probability: 0
-  duration: 0
-  spawnDelay: 0
-  spawnRange: {x: 0, y: 0}
-  spawnDistance: 1
-  scale: {x: 0, y: 0}
+  initialDelay: 5
+  probability: 1
+  duration: 20
+  spawnDelay: 30
+  spawnRange: {x: 15, y: 17}
+  spawnDistance: 20
+  scale: {x: 1, y: 1}

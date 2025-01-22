@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6697240751484691743}
   - component: {fileID: 9002019340237074687}
+  - component: {fileID: 2682412821225908445}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -44,10 +45,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 823322674ca5aeb42b1464952d5b13ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveDelay: 30
   speedMultiplier: 0.05
   healthMultiplier: 0.1
   strengthMultiplier: 0.1
   waves:
   - {fileID: 11400000, guid: c041cdf69130943448ec4b957f25dd21, type: 2}
   - {fileID: 11400000, guid: ebeea9206f0bb294e96d391eabd3954c, type: 2}
+--- !u!114 &2682412821225908445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 167797711710262475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da75b6fc8974e9f4680d5b2f29e8e305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventPool:
+  - {fileID: 11400000, guid: 923de90a8ef8ab04790822d83dc7cebd, type: 2}
+  speedMultiplier: 0.05
+  healthMultiplier: 0.1
+  strengthMultiplier: 0.1

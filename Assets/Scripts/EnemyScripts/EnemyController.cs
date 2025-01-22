@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
     [HideInInspector]
     public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f, speed;
     [HideInInspector]
-    public Vector3 attractionTarget;
+    public Vector3 attractionTarget, direction;
     [HideInInspector]
     public bool isAttracked = false;
     public bool debug = false;

@@ -2017,6 +2017,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 2682412821225908445, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
+      propertyPath: eventPool.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682412821225908445, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
+      propertyPath: eventPool.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: bbb7f66fd69ca1b44bf30a45faa11fba, type: 2}
     - target: {fileID: 6697240751484691743, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2059,7 +2067,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9002019340237074687, guid: 967f0bf2f9fedc848ab7b7dddf734866, type: 3}
       propertyPath: waves.Array.size

@@ -20,7 +20,7 @@ public class EventScriptableObject : ScriptableObject
     [Min(1f)]
     public float duration;
 
-    [Header("Spawn cooldown: need to be inferior"), Header("to the duration.")]
+    [Header("if spawn delay > duration :"), Header("will spawn just once")] 
     [Min(0f)]
     public float spawnDelay;
 
