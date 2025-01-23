@@ -19,7 +19,7 @@ public class BulletController : MonoBehaviour
                     float step = Time.deltaTime * controller.speed;
                     child.position = Vector3.MoveTowards(child.position, child.position + controller.direction, step);
 
-                    if ((Mathf.Abs(child.position.x) > map.lossyScale.x / 2) || (Mathf.Abs(child.position.y) > map.lossyScale.y / 2))
+                    if ((Mathf.Abs(child.position.x) - child.lossyScale.x > map.lossyScale.x / 2) || (Mathf.Abs(child.position.y) - child.lossyScale.y > map.lossyScale.y / 2))
                     {
                         child.gameObject.SetActive(false);
                     }

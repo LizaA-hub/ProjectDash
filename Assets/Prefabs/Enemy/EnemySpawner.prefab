@@ -65,6 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventPool:
   - {fileID: 11400000, guid: 923de90a8ef8ab04790822d83dc7cebd, type: 2}
+  - {fileID: 11400000, guid: bbb7f66fd69ca1b44bf30a45faa11fba, type: 2}
   speedMultiplier: 0.05
   healthMultiplier: 0.1
   strengthMultiplier: 0.1

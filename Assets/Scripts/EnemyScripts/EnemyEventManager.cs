@@ -14,7 +14,7 @@ public class EnemyEventManager : MonoBehaviour
     float speedMultiplier = 0.05f, healthMultiplier = 0.1f, strengthMultiplier = 0.1f;
 
     private float timer;
-    private Transform player;
+    private Transform player, map;
     private struct activeEvent
     {
         public EventScriptableObject scriptableObject;
@@ -51,6 +51,11 @@ public class EnemyEventManager : MonoBehaviour
         if (player == null)
         {
             Debug.Log("player object not found");
+        }
+        map = GameObject.Find("Ground").GetComponent<Transform>();
+        if (map == null)
+        {
+            Debug.Log("ground object not found");
         }
     }
     private void Update()
@@ -101,8 +106,8 @@ public class EnemyEventManager : MonoBehaviour
         }
     }
 
-    //cluster not implemented//
-    private bool IsEventValid(EventScriptableObject _event) => (_event.activeAfter > GameManager.gameDuration || _event.type == EnemyDataManager.EventType.None || _event.type == EnemyDataManager.EventType.Cluster) ? false : true;
+    //maze not implemented//
+    private bool IsEventValid(EventScriptableObject _event) => (_event.activeAfter > GameManager.gameDuration || _event.type == EnemyDataManager.EventType.None || _event.type == EnemyDataManager.EventType.Maze) ? false : true;
 
     private void StartEvent(EventScriptableObject _event)
     {
@@ -177,6 +182,10 @@ public class EnemyEventManager : MonoBehaviour
                                 }
                                 var step = controller.speed * t;
                                 enemy.position = Vector3.MoveTowards(enemy.position, enemy.position + controller.direction, step);
+                                if (!IsInsideMap(enemy))
+                                {
+                                    enemy.gameObject.SetActive(false);
+                                }
                                 break;
                         }
                     }
@@ -221,8 +230,8 @@ public class EnemyEventManager : MonoBehaviour
         //Debug.Log("initializing enemies");
         float eventNumber = GameManager.gameDuration % 30f;
         float angle = 0;
-        float X = 0;
-        float Y = 0;
+        float X = _event.scriptableObject.scale.x>0f? _event.scriptableObject.scale.x:1f;
+        float Y = _event.scriptableObject.scale.y > 0f ? _event.scriptableObject.scale.y : 1f;
         Vector3 relativPos = Vector3.zero;
         Vector3 direction = Vector3.zero;
         Vector3 position = Vector3.zero;
@@ -233,25 +242,28 @@ public class EnemyEventManager : MonoBehaviour
         float amount = Random.Range(minAmount, maxAmount);
         amount = Mathf.Round(amount);
 
+        switch (_event.scriptableObject.type)
+        {
+            case EnemyDataManager.EventType.Cluster: //set the general direction for all cluster enemies
+
+                angle = Random.Range(0, 2 * Mathf.PI);
+                relativPos = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                position = player.position + relativPos * _event.scriptableObject.spawnDistance;
+                direction = Vector3.Normalize(player.position - position);
+                break;
+        }
+
         for (int i = 0; i <= amount; i++)
         {
-            switch (_event.scriptableObject.type) //setting variables based on the type of event
+            switch (_event.scriptableObject.type) //setting variables per enemy based on the type of event
             {
                 case EnemyDataManager.EventType.Cluster:
-                    direction = Vector3.Normalize(player.position - position);
-
-                    angle = Random.Range(0, 2 * Mathf.PI);
-                    relativPos = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
-                    position = player.position + relativPos * _event.scriptableObject.spawnDistance;
-                    X = Mathf.Max(_event.scriptableObject.scale.x, 1f);
-                    Y = Mathf.Max(_event.scriptableObject.scale.y, 1f);
+                    
                     position += new Vector3(Random.Range(-X, X), Random.Range(-Y, Y), 0f);
 
                     break;
                 case EnemyDataManager.EventType.Circle:
                     angle = (2 * Mathf.PI / (amount+1)) * i;
-                    X = _event.scriptableObject.scale.x;
-                    Y = _event.scriptableObject.scale.y;
                     relativPos = new Vector3(Mathf.Cos(angle) * X, Mathf.Sin(angle) * Y, 0f);
                     position = player.position + relativPos * _event.scriptableObject.spawnDistance;
                     
@@ -299,5 +311,10 @@ public class EnemyEventManager : MonoBehaviour
         return null;
         
     }
+
+    private bool IsInsideMap(Transform transform) => 
+        (((Mathf.Abs(transform.position.x) - transform.lossyScale.x) > map.lossyScale.x / 2) || 
+        ((Mathf.Abs(transform.position.y) - transform.lossyScale.y) > map.lossyScale.y / 2)) ? false : true;
+    
 }
         

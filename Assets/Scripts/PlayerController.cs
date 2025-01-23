@@ -369,7 +369,7 @@ public class PlayerController : MonoBehaviour
                         projectile.position = Vector3.MoveTowards(projectile.position, projectile.position+target, step);
 
                         //check if projectile is outside the map//
-                        if((Mathf.Abs(projectile.position.x) > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) > map.lossyScale.y/2) ){
+                        if((Mathf.Abs(projectile.position.x) - projectile.lossyScale.x > map.lossyScale.x/2) || (Mathf.Abs(projectile.position.y) - projectile.lossyScale.y > map.lossyScale.y/2) ){
                             DisableTransform(projectile);
                         }
                     }
