@@ -31,6 +31,14 @@ public class SkillButton : MonoBehaviour
     {
         if (manager != null)
         {
+            manager.LevelUPSkill();
+        }
+    }
+
+    public void OnButtonHovered()
+    {
+        if (manager != null)
+        {
             manager.ShowPanel(skill);
         }
     }
@@ -53,4 +61,5 @@ public class SkillButton : MonoBehaviour
     {
         image.color = lockedColor;
     }
+
 }

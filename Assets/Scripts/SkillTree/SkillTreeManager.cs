@@ -2,10 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 using System.Collections.Generic;
-using Unity.Collections;
-using System;
-using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public enum skillTypes { //WARNING: THIS ELEMENTS NEED TO STAY IN THE RIGHT ORDER FOR THE SYSTEM TO WORK//
     //general skills//
@@ -28,17 +26,27 @@ public class SkillTreeManager : MonoBehaviour
 {
     [HideInInspector]
     public UnityEvent<skillTypes> skillUnlocked = new UnityEvent<skillTypes>(), unlockAdjacent = new UnityEvent<skillTypes>();
+    [HideInInspector]
     public UnityEvent resetSkills = new UnityEvent();
     [SerializeField]
     TextMeshProUGUI skillPointsText, skillName, skillDescription, skillStat, skillCost, skillLevel, lockPanelText;
     [SerializeField]
-    GameObject infoPanel, costPanel,lockPanel;
+    GameObject infoPanel, costPanel,lockPanel, skillParent;
     [SerializeField]
     Toggle disableToggle;
     SkillScriptableObject selectedSkill;
 
     private int availablePoints;
     List<skillTypes> unlockedSkills = new List<skillTypes>();
+
+    //camera movement variables//
+    [SerializeField]
+    float zoomFactor = 0.1f, smoothFactor = 1f, moveSpeed = 1f;
+    Vector3  minPos = Vector3.zero, maxPos = Vector3.zero, targetZoom = Vector3.one;
+    Camera cam;
+    RectTransform rectTransform, skillTransform;
+    Vector2 limits, result, targetPos, mousePos;
+    float debug;
 
     #region Unity Functions
 
@@ -48,8 +56,47 @@ public class SkillTreeManager : MonoBehaviour
         
         UpdateSkillPointsUI();  // Initial display of skill points
         UpdateSkillSlots();
+
+        cam = gameObject.GetComponent<Canvas>().worldCamera;
+        rectTransform = GetComponent<RectTransform>();
+        limits = new Vector2(rectTransform.sizeDelta.x * 5 / 12, rectTransform.sizeDelta.y * 5 / 12);
+        skillTransform = skillParent.GetComponent<RectTransform>();
+        targetPos = skillTransform.anchoredPosition;
     }
 
+    private void OnGUI()
+    {
+        debug += Time.deltaTime;
+        if(Input.mouseScrollDelta.y != 0f)
+        {
+            Zoom(Input.mouseScrollDelta.y);
+        }
+
+      
+    }
+
+    private void Update()
+    {
+        Vector3 currentScale = skillParent.transform.localScale;
+        if(Vector3.Distance(currentScale, targetZoom) > 0.01f)
+        {
+            skillParent.transform.localScale = Vector3.Slerp(currentScale, targetZoom, Time.deltaTime * smoothFactor);
+        }
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, Input.mousePosition, cam, out result);
+        mousePos = result;
+        if ((Mathf.Abs(mousePos.x) > limits.x) || (Mathf.Abs(mousePos.y) > limits.y)) { GetPositionTarget(); }
+        /* (debug > 1f)
+        {
+            Debug.Log(mousePos);
+            debug = 0;
+        }*/
+
+        if (Vector2.Distance(skillTransform.anchoredPosition,targetPos) > 0.01f)
+        {
+            skillTransform.anchoredPosition = Vector3.Lerp(skillTransform.anchoredPosition, targetPos, Time.deltaTime * smoothFactor);
+        }
+    }
     #endregion
     #region Public Functions
     public void ShowPanel(SkillScriptableObject skill)
@@ -79,6 +126,8 @@ public class SkillTreeManager : MonoBehaviour
 
     public void LevelUPSkill()
     {
+        if (!unlockedSkills.Contains(selectedSkill.type)) return;
+
         if(selectedSkill.cost > availablePoints)
         {
             Debug.Log("not enough point!");
@@ -152,6 +201,7 @@ public class SkillTreeManager : MonoBehaviour
     {
         GameManager.disableSkill(selectedSkill.type, value);
     }
+
     #endregion
     #region Private Functions
     private void UpdateSkillSlots()
@@ -235,5 +285,26 @@ public class SkillTreeManager : MonoBehaviour
         }
 
     }*/
+
+    private void Zoom(float amount)
+    {
+        float currentScale = skillParent.transform.localScale.x;
+        currentScale += amount * zoomFactor;
+        currentScale = Mathf.Clamp(currentScale, 1f, 4.7f);
+        targetZoom = Vector3.one*currentScale;
+        GetPositionTarget();
+    }
+
+    private void GetPositionTarget()
+    {
+        targetPos = skillTransform.anchoredPosition - mousePos.normalized * moveSpeed;
+        maxPos.x = Mathf.Lerp(95f, 980f, (targetZoom.x - 1f) / 3.7f);
+        maxPos.y = Mathf.Lerp(0f, 634f, (targetZoom.y - 1f) / 3.7f);
+        minPos.x = Mathf.Lerp(95f, -975f, (targetZoom.x - 1f) / 3.7f);
+        minPos.y = Mathf.Lerp(0f, -640f, (targetZoom.y - 1f) / 3.7f);
+        targetPos.x = Mathf.Clamp(targetPos.x, minPos.x, maxPos.x);
+        targetPos.y = Mathf.Clamp(targetPos.y, minPos.y, maxPos.y);
+        //Debug.Log("target position = " + targetPos);
+    }
     #endregion
 }
