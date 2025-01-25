@@ -16,7 +16,7 @@ MonoBehaviour:
   - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
     initialNumber: 5
     maxNumber: 10
-    spawnDelay: 1
+    spawnDelay: 2
     specialProperties:
-    - property: 0
-      propertyMultiplier: 0
+    - property: 1
+      propertyMultiplier: 0.1
