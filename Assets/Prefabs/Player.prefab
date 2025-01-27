@@ -390,6 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe442182eb9bca4c8ea1ecda5075a0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialStats: {fileID: 11400000, guid: de8847e7c150c134390075fca574c886, type: 2}
   moveSpeed: 10
   cooldown: 2
   projectileSpeed: 15
@@ -403,6 +404,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
+  debug: 0
 --- !u!50 &4558033168131563743
 Rigidbody2D:
   serializedVersion: 4

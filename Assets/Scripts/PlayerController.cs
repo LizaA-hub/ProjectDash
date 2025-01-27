@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour
 {
+    public PlayerStatsScriptableObject initialStats;
     [SerializeField]
     float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
     [SerializeField]
@@ -190,19 +191,19 @@ public class PlayerController : MonoBehaviour
         //dash projectile timer//
         if ((projectileTimer > 0 ) && PowerUpManager.upgradableDatas.haveProjectile){
                 projectileTimer -= t;
-            }
-            //shock wave timer//
-            if((shockWaveTimer > 0 ) && PowerUpManager.upgradableDatas.haveWave){
-                shockWaveTimer -= t;
-            }
-            //sword timer//
-            if (swordTimer > 0 && PowerUpManager.upgradableDatas.haveSword) { 
-                swordTimer -= t;
-            }
-            //bomb timer//
-            if (bombTimer > 0f && PowerUpManager.upgradableDatas.haveBomb) {
-                bombTimer -= t;
-            }
+        }
+        //shock wave timer//
+        if((shockWaveTimer > 0 ) && PowerUpManager.upgradableDatas.haveWave){
+            shockWaveTimer -= t;
+        }
+        //sword timer//
+        if (swordTimer > 0 && PowerUpManager.upgradableDatas.haveSword) { 
+            swordTimer -= t;
+        }
+        //bomb timer//
+        if (bombTimer > 0f && PowerUpManager.upgradableDatas.haveBomb) {
+            bombTimer -= t;
+        }
         }
 
         private void MovePlayer(float t)

@@ -284,7 +284,7 @@ public static class GameManager
         switch (type)
         {
             case skillTypes.General_HP:
-                skillVariables.maxHealth = 10f * (0.9f + 0.1f * level);
+                skillVariables.maxHealth = 10f  + 0.1f * level;
                 break;
             case skillTypes.Dash_Cooldown:
                 skillVariables.dashCooldown = 0.1f * level;
@@ -302,11 +302,11 @@ public static class GameManager
                 skillVariables.xpMultiplier = 0.1f * level;
                 break;
             case skillTypes.Triangle_Damage:
-                skillVariables.triangleDamage = 2f*(level*0.1f+0.9f);
+                skillVariables.triangleDamage = 2f*(level*0.1f+1f);
                 break;
             case skillTypes.Triangle_Gravity:
                 skillVariables.triangleGravity = level > 0 ? true :  false;
-                skillVariables.triangleGravityDuration = 0.8f + 0.2f * level;
+                skillVariables.triangleGravityDuration = 1f + 0.2f * level;
                 break;
             case skillTypes.Triangle_DOT:
                 skillVariables.DOT = level;
@@ -365,15 +365,15 @@ public static class GameManager
             case skillTypes.Pentagon_6:
                 break;
             case skillTypes.Hexagon_Damage:
-                skillVariables.hexagonDamage = 2f * (level * 0.1f + 0.9f);
+                skillVariables.hexagonDamage = 3f + (level * 0.1f);
                 break;
             case skillTypes.Hexagon_Meteor:
                 skillVariables.hexagonMeteor = level;
-                skillVariables.meteorDamage = 5f * (0.9f + 0.1f * level);
+                skillVariables.meteorDamage = 6f * (0.1f * (level-1));
                 break;
             case skillTypes.Hexagon_Lightning:
                 skillVariables.hexagonLightning = level > 0 ? true : false;
-                skillVariables.lightningDamage = 6f*(0.9f + 0.1f * level);
+                skillVariables.lightningDamage = 7f*(0.1f * (level-1));
                 break;
             case skillTypes.Hexagon_Area:
                 skillVariables.hexagonArea = 0.05f * level;
