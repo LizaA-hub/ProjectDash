@@ -107,7 +107,7 @@ public class EnemyEventManager : MonoBehaviour
     }
 
     //maze not implemented//
-    private bool IsEventValid(EventScriptableObject _event) => (_event.activeAfter > GameManager.gameDuration || _event.type == EnemyDataManager.EventType.None || _event.type == EnemyDataManager.EventType.Maze) ? false : true;
+    private bool IsEventValid(EventScriptableObject _event) => (_event.activeAfter > GameManagerV2.instance.gameDuration || _event.type == EnemyDataManager.EventType.None || _event.type == EnemyDataManager.EventType.Maze) ? false : true;
 
     private void StartEvent(EventScriptableObject _event)
     {
@@ -228,7 +228,7 @@ public class EnemyEventManager : MonoBehaviour
     private void SpawnEnemies(activeEvent _event)
     {
         //Debug.Log("initializing enemies");
-        float eventNumber = GameManager.gameDuration % 30f;
+        float eventNumber = GameManagerV2.instance.gameDuration % 30f;
         float angle = 0;
         float X = _event.scriptableObject.scale.x>0f? _event.scriptableObject.scale.x:1f;
         float Y = _event.scriptableObject.scale.y > 0f ? _event.scriptableObject.scale.y : 1f;

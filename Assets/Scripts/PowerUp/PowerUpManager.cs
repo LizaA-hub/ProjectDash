@@ -22,7 +22,7 @@ public class PowerUpManager : MonoBehaviour
     [HideInInspector]
     public UnityEvent<PowerUpType> powerupUnlocked = new UnityEvent<PowerUpType>();
     [HideInInspector]
-    public static UnityEvent<int> trailIncrease = new UnityEvent<int>();
+    public static UnityEvent<float> trailIncrease = new UnityEvent<float>();
     [HideInInspector]
     public static UnityEvent magnetIncrease = new UnityEvent();
     [HideInInspector]
@@ -38,7 +38,7 @@ public class PowerUpManager : MonoBehaviour
     }
     private void Start() {
         
-        GameManager.levelChange.AddListener(NewLevel);
+        GameManagerV2.instance.levelChange.AddListener(NewLevel);
         datas = new PowerUpDataManager.PowerUpData[upgradePool.Length];
         for(int i = 0; i < upgradePool.Length ; i++)
         {
@@ -278,7 +278,8 @@ public class PowerUpManager : MonoBehaviour
         switch (type)
         {
             case PowerUpType.Trail:
-                trailIncrease.Invoke(level);
+                upgradableDatas.trailDuration += GameManagerV2.instance.initialStats.trailDuration * 0.5f;
+                trailIncrease.Invoke(upgradableDatas.trailDuration);
                 break;
             case PowerUpType.Strength:
                 upgradableDatas.strengthBonus += 0.1f;

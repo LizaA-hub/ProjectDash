@@ -36,8 +36,8 @@ public class DebugSceneManager : MonoBehaviour
 
     public void SetHealth(string value){
         if(float.TryParse(value, out float result)){
-            float amount = result - GameManager.GetHealth();
-            GameManager.ModifyHealth(amount);
+            float amount = result - GameManagerV2.instance.GetHealth();
+            GameManagerV2.instance.ModifyHealth(amount);
         }
         else{
             Debug.Log("invalid format");
@@ -84,10 +84,10 @@ public class DebugSceneManager : MonoBehaviour
     #endregion
     #region Private Functions
     private void LevelUp(){
-        float goal = GameManager.xpToNextLevel;
-        float currentXp = GameManager.GetExperience();
+        float goal = GameManagerV2.instance.xpToNextLevel;
+        float currentXp = GameManagerV2.instance.GetExperience();
         float diff = goal - currentXp;
-        GameManager.ModifyExperience(diff);
+        GameManagerV2.instance.ModifyExperience(diff);
     }
 
     #endregion

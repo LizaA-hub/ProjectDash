@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public PlayerStatsScriptableObject initialStats;
     [SerializeField]
-    float moveSpeed = 10.0f, cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
+    float  cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
     [SerializeField]
     Transform projectilePrefab, shockWavePrefab, swordTransform, bombPrefab;
     [SerializeField]
@@ -24,8 +24,8 @@ public class PlayerController : MonoBehaviour
     private Camera cam;
     private Vector3 mousePos;
     private Vector2 swordPos;
-    private bool mouseDown = false, /*invincible = false,*/ isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
-    private float /*cooldownTimer,*/ angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f;
+    private bool mouseDown = false,  isMoving = false, canFireWave = false, canMoveSword = false, movingSword = false;
+    private float angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f, moveSpeed;
     public static float projectileTimer, shockWaveTimer, swordTimer, bombTimer;
     public static int dashShield = 0;
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>(), damageTransforms = new List<Transform>();
@@ -38,9 +38,7 @@ public class PlayerController : MonoBehaviour
     void Start()//setting all variables 
     {
         cam = Camera.main;
-        //cooldownTimer = cooldown;
         projectileTimer = shockWaveTimer = swordTimer = bombTimer = PowerUpManager.upgradableDatas.dashCooldown;
-        //Debug.Log(projectileTimer);
         PowerUpManager.magnetIncrease.AddListener(IncreaseOrbMagnet);
 
         map = GameObject.Find("Ground").GetComponent<Transform>();
@@ -63,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
         swordTrail = swordTransform.gameObject.GetComponent<TrailRenderer>();
 
-        moveSpeed *= (1 + GameManager.skillVariables.dashSpeed);
+        moveSpeed = GameManagerV2.instance.skills.dashSpeed;
     }
 
 
@@ -252,12 +250,12 @@ public class PlayerController : MonoBehaviour
                 shieldSprite.enabled = (dashShield > 0) ? true : false;
                 return;
             }
-            GameManager.ModifyHealth(-amount);
+            GameManagerV2.instance.ModifyHealth(-amount);
             AddToList(source);
         }
 
         private void Heal(float amount){
-            GameManager.ModifyHealth(amount);
+            GameManagerV2.instance.ModifyHealth(amount);
         }
 
         private bool MouseOverUI(){

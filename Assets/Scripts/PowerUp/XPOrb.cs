@@ -34,7 +34,7 @@ public class XPOrb : MonoBehaviour
             move = true;
         }
         if(other.gameObject.CompareTag("Player")){
-            GameManager.ModifyExperience(XPAmount);
+            GameManagerV2.instance.ModifyExperience(XPAmount);
             //Destroy(gameObject);
             move = false;
             gameObject.SetActive(false);

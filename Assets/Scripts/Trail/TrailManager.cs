@@ -1,16 +1,11 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.GameCenter;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(TrailRenderer))]
 public class TrailManager : MonoBehaviour
 {
     [SerializeField]
     Material shapeMaterial;
-    [SerializeField]
-    float trailDuration = 1f, step = 1f;
     [SerializeField]
     bool DebugShape = true;
     [SerializeField]
@@ -28,9 +23,8 @@ public class TrailManager : MonoBehaviour
     #region Unity Functions
     void Awake()
     {
-        trailDuration += GameManager.skillVariables.trailDuration;
         myTrail = this.GetComponent<TrailRenderer>();   
-        myTrail.time = trailDuration;
+        myTrail.time = GameManagerV2.instance.skills.trailDuration;
         myCollider = GetValidCollider();
         PowerUpManager.trailIncrease.AddListener(IncreaseTrailDuration);
     }   
@@ -150,7 +144,7 @@ public class TrailManager : MonoBehaviour
         int availableGO = -1;
         GeometricalShape.Shape shape = GeometricalShape.DetectShape(points);
 
-        if (shape == GeometricalShape.Shape.Hexagon && GameManager.skillVariables.hexagonArea > 0f) {
+        if (shape == GeometricalShape.Shape.Hexagon && GameManagerV2.instance.skills.hexagonArea > 0f) {
             points = ExtendShape(points, position);
         }
 
@@ -235,28 +229,28 @@ public class TrailManager : MonoBehaviour
             if (shape == GeometricalShape.Shape.Triangle)
             {
                 SC_ClosedShape_Triangle controller = newObject.GetComponent<SC_ClosedShape_Triangle>();
-                StartCoroutine(controller.HasField(GameManager.skillVariables.triangleGravity));
+                StartCoroutine(controller.HasField(GameManagerV2.instance.skills.triangleGravity));
             }
             else if (shape == GeometricalShape.Shape.Square)
             {
-                GameManager.ModifyHealth(GameManager.skillVariables.squareHeal);
-                if(GameManager.skillVariables.squareSlow > 0f) { 
+                GameManagerV2.instance.ModifyHealth(GameManagerV2.instance.skills.squareHeal);
+                if(GameManagerV2.instance.skills.squareSlow > 0f) { 
                 t += 5f;}
             }
             else if((shape == GeometricalShape.Shape.Pentagon))
             {
                 SC_ClosedShape_Pentagon controller = newObject.GetComponent<SC_ClosedShape_Pentagon>();
-                if (GameManager.skillVariables.pentagonBlade)
+                if (GameManagerV2.instance.skills.pentagonBlade)
                 {
 
                     controller.Blades();
                 }
-                if(GameManager.skillVariables.pentagonCriticalChance > 0f)
+                if(GameManagerV2.instance.skills.pentagonCriticalChance > 0f)
                 {
                     StartCoroutine(controller.Implosion());
                     t += 0.5f;
                 }
-                if (GameManager.skillVariables.pentagonBomb)
+                if (GameManagerV2.instance.skills.pentagonBomb)
                 {
                     controller.Bomb();
                 }
@@ -264,12 +258,12 @@ public class TrailManager : MonoBehaviour
             else if ((shape == GeometricalShape.Shape.Hexagon))
             {
                 SC_ClosedShape_Hexagon controller = newObject.GetComponent<SC_ClosedShape_Hexagon>();
-                if(GameManager.skillVariables.hexagonMeteor > 0f)
+                if(GameManagerV2.instance.skills.hexagonMeteor > 0f)
                 {
-                    t += GameManager.skillVariables.hexagonMeteor;
+                    t += GameManagerV2.instance.skills.hexagonMeteor;
                     StartCoroutine(controller.Meteor());
                 }
-                if (GameManager.skillVariables.hexagonLightning)
+                if (GameManagerV2.instance.skills.hexagonLightning)
                 {
                     StartCoroutine(controller.FireLightning());
                 }
@@ -403,7 +397,7 @@ public class TrailManager : MonoBehaviour
 
     private Vector2[] ExtendShape(Vector2[] points, Vector2 center) {
         Vector2[] newPoints = new Vector2[points.Length];
-        float factor = GameManager.skillVariables.hexagonArea;
+        float factor = GameManagerV2.instance.skills.hexagonArea;
         for (int i = 0; i < points.Length; i++)
         {
             float r = points[i].magnitude;
@@ -412,9 +406,8 @@ public class TrailManager : MonoBehaviour
         return newPoints; }
     #endregion
 
-    void IncreaseTrailDuration(int level){
-        trailDuration += step*level; 
-        myTrail.time = trailDuration;
+    void IncreaseTrailDuration(float value){
+        myTrail.time = value;
         
     }
 

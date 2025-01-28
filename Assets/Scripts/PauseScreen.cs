@@ -25,7 +25,7 @@ public class PauseScreen : MonoBehaviour
     public void Menu()
     {
         Time.timeScale = 1f;
-        GameManager.LoadMenu();
+        GameManagerV2.instance.LoadMenu();
     }
 
     public void Options()

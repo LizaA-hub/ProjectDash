@@ -16,8 +16,8 @@ public class OptionsManager : MonoBehaviour
 
     private void OnEnable()
     {
-        musicVolume = GameManager.GetMusicVolume();
-        sfxVolume = GameManager.GetSfxVolume(); 
+        musicVolume = GameManagerV2.instance.GetMusicVolume();
+        sfxVolume = GameManagerV2.instance.GetSfxVolume(); 
         musicSlider.value = musicVolume;
         sfxSlider.value = sfxVolume;
     }
@@ -25,14 +25,14 @@ public class OptionsManager : MonoBehaviour
     {
         musicVolume = value;
         musicValue.text = musicVolume.ToString();
-        GameManager.SetMusicVolume(musicVolume);
+        GameManagerV2.instance.SetMusicVolume(musicVolume);
     }
 
     public void ModifySfx(float value)
     {
         sfxVolume = value;
         sfxValue.text = sfxVolume.ToString();
-        GameManager.SetSfxVolume(sfxVolume);
+        GameManagerV2.instance.SetSfxVolume(sfxVolume);
     }
 
     public void DeleteDatas()
@@ -50,13 +50,13 @@ public class OptionsManager : MonoBehaviour
 
     public void ClosePanel()
     {
-        GameManager.Save();
+        GameManagerV2.instance.Save();
         gameObject.SetActive(false);
     }
 
     public void ConfirmDeletion()
     {
-        GameManager.DeleteSave();
+        GameManagerV2.instance.DeleteSave();
         ResetDatas();
         yesButton.SetActive(false);
         noButton.SetActive(false);

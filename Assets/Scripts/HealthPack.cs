@@ -16,7 +16,7 @@ public class HealthPack : MonoBehaviour
             ClosedShape closedShape = collision.gameObject.GetComponent<ClosedShape>();
             if (acceptedShapes.Contains(closedShape.shape))
             {
-                GameManager.ModifyHealth(healingAmount);
+                GameManagerV2.instance.ModifyHealth(healingAmount);
                 transform.parent.gameObject.GetComponent<HealthPackManager>().RemoveHealthPack(transform);
             }
         }

@@ -13,13 +13,13 @@ public class HUDManager : MonoBehaviour
     float timer = 0f;
 
     private void Start() {
-        GameManager.XPChange.AddListener(ModifyXPSlider);
-        ModifyXPSlider(GameManager.GetExperience());
-        GameManager.levelChange.AddListener(ModifyLevel);
+        GameManagerV2.instance.XPChange.AddListener(ModifyXPSlider);
+        ModifyXPSlider(GameManagerV2.instance.GetExperience());
+        GameManagerV2.instance.levelChange.AddListener(ModifyLevel);
         ModifyLevel(1);
 
-        GameManager.healthChange.AddListener(ModifyHealth);
-        ModifyHealth(GameManager.skillVariables.maxHealth);
+        GameManagerV2.instance.healthChange.AddListener(ModifyHealth);
+        ModifyHealth(GameManagerV2.instance.skills.maxHealth);
     }
 
     private void Update() {
@@ -28,7 +28,7 @@ public class HUDManager : MonoBehaviour
     }
 
     private void ModifyXPSlider(float value){
-        var maxXP = GameManager.xpToNextLevel;
+        var maxXP = GameManagerV2.instance.xpToNextLevel;
 
         XPSlider.value = value/maxXP;
     }
@@ -39,7 +39,7 @@ public class HUDManager : MonoBehaviour
     }
 
     private void ModifyHealth(float value){
-        var maxHP = GameManager.skillVariables.maxHealth;
+        var maxHP = GameManagerV2.instance.skills.maxHealth;
         var newValue = value/maxHP;
         healthSlider.value = newValue;
         
@@ -47,7 +47,7 @@ public class HUDManager : MonoBehaviour
     }
 
     private void UpdateTime(float t){
-        GameManager.gameDuration = t;
+        GameManagerV2.instance.gameDuration = t;
         int min = (int)(t/60f);
         int sec = (int)(t % 60f);
         string text =min.ToString("00") + ":" + sec.ToString("00");

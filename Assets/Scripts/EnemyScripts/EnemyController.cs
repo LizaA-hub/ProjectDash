@@ -73,31 +73,31 @@ public class EnemyController : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("PentagonBlade"))
         {
-            TakeDamage(GameManager.skillVariables.bladeDamage, true);
+            TakeDamage(GameManagerV2.instance.skills.bladeDamage, true);
             attack = "pentagon blade";
         }
         else if (other.gameObject.CompareTag("PentagonWave"))
         {
             float chance = Random.Range(0f, 1f);
-            if(chance > GameManager.skillVariables.pentagonCriticalChance)
+            if(chance > GameManagerV2.instance.skills.pentagonCriticalChance)
             {
-                TakeDamage(5f, true);
+                TakeDamage(GameManagerV2.instance.initialStats.pentagonImplosionBaseDamage, true);
             }
             else
             {
-                TakeDamage(10f, true);
+                TakeDamage(GameManagerV2.instance.initialStats.pentagonImplosionCriticalDamage, true);
             }
             attack = "pentagon shock wave";
             
         }
         else if (other.gameObject.CompareTag("PentagonBomb"))
         {
-            TakeDamage(GameManager.skillVariables.pentagonBombDamage, true);
+            TakeDamage(GameManagerV2.instance.skills.pentagonBombDamage, true);
             attack = "pentagon bomb";
         }
         else if (other.gameObject.CompareTag("Meteor"))
         {
-            TakeDamage(GameManager.skillVariables.meteorDamage, true);
+            TakeDamage(GameManagerV2.instance.skills.meteorDamage, true);
             attack = "meteor";
         }
 
@@ -152,7 +152,7 @@ public class EnemyController : MonoBehaviour
         var finalAmount = amount * (1 + PowerUpManager.upgradableDatas.strengthBonus);
         if (takeExtraDamages)
         {
-            finalAmount *= (1 + GameManager.skillVariables.supportStrength);
+            finalAmount *= (1 + GameManagerV2.instance.skills.supportStrength);
         }
 
         if(debug)
@@ -160,7 +160,7 @@ public class EnemyController : MonoBehaviour
         
         health -= finalAmount;
 
-        GameManager.totalDamages += finalAmount;
+        GameManagerV2.instance.totalDamage += finalAmount;
         
         if (health <= 0f)
         {
@@ -204,7 +204,7 @@ public class EnemyController : MonoBehaviour
         orb.gameObject.GetComponent<XPOrb>().XPAmount = experience;
         orb.position = transform.position;
 
-        GameManager.enemyKilled += 1;
+        GameManagerV2.instance.enemyKilled += 1;
         spriteRenderer.color = originalColor;
         isAttracked = false;
         takeExtraDamages = false;
@@ -214,8 +214,8 @@ public class EnemyController : MonoBehaviour
         if (inPentagon)
         {
             float chance = Random.Range(0f, 1f);
-            if(chance <= 0.3f){ //arbitrary value can be changed
-                GameManager.ModifyHealth(GameManager.skillVariables.pentagonHeal);
+            if(chance <= GameManagerV2.instance.initialStats.pentagonDrainChance){ 
+                GameManagerV2.instance.ModifyHealth(GameManagerV2.instance.skills.pentagonHeal);
             }
             inPentagon = false;
         }
@@ -262,9 +262,9 @@ public class EnemyController : MonoBehaviour
     {
         switch (shape) {
             case GeometricalShape.Shape.Triangle:
-                TakeDamage(GameManager.skillVariables.triangleDamage);
+                TakeDamage(GameManagerV2.instance.skills.triangleDamage);
 
-                if(GameManager.skillVariables.DOT > 0f)
+                if(GameManagerV2.instance.skills.DOT > 0f)
                 {
                     //Debug.Log("enemy taking DOT");
                     DOT_Timer += 5f;
@@ -272,9 +272,9 @@ public class EnemyController : MonoBehaviour
                         StartCoroutine(DamageOverTime());
                 }
 
-                stun = GameManager.skillVariables.stunDuration;
+                stun = GameManagerV2.instance.skills.stunDuration;
 
-                if ((GameManager.skillVariables.supportStrength > 0f) && !takeExtraDamages)
+                if ((GameManagerV2.instance.skills.supportStrength > 0f) && !takeExtraDamages)
                 {
                     takeExtraDamages = true;
                 }
@@ -282,22 +282,22 @@ public class EnemyController : MonoBehaviour
                
                 break;
             case GeometricalShape.Shape.Square:
-                TakeDamage(GameManager.skillVariables.squareDamage);
+                TakeDamage(GameManagerV2.instance.skills.squareDamage);
 
-                if((GameManager.skillVariables.squareTrap > 0f) && !trapped)
+                if((GameManagerV2.instance.skills.squareTrap > 0f) && !trapped)
                 {
                     trapped = true;
-                    speed *= 1-GameManager.skillVariables.squareTrap;
+                    speed *= 1-GameManagerV2.instance.skills.squareTrap;
                 }
 
-                if((GameManager.skillVariables.squareSlow > 0f)&&!slowed)
+                if((GameManagerV2.instance.skills.squareSlow > 0f)&&!slowed)
                 {
                     initialSpeed = speed;
-                    speed *= 1 - GameManager.skillVariables.squareSlow;
+                    speed *= 1 - GameManagerV2.instance.skills.squareSlow;
                     slowed = true;
                 }
 
-                if((GameManager.skillVariables.squareFlame > 0f) && gameObject.activeSelf)
+                if((GameManagerV2.instance.skills.squareFlame > 0f) && gameObject.activeSelf)
                 {
                     burning = true;
                     StartCoroutine(FlameDamage());
@@ -305,14 +305,14 @@ public class EnemyController : MonoBehaviour
 
                 break;
             case GeometricalShape.Shape.Pentagon:
-                TakeDamage(GameManager.skillVariables.pentagonDamage);
+                TakeDamage(GameManagerV2.instance.skills.pentagonDamage);
                 inPentagon = true;
                 break;
             case GeometricalShape.Shape.Hexagon:
-                TakeDamage(GameManager.skillVariables.hexagonDamage);
-                if(GameManager.skillVariables.hexagonSlow > 0f)
+                TakeDamage(GameManagerV2.instance.skills.hexagonDamage);
+                if(GameManagerV2.instance.skills.hexagonSlow > 0f)
                 {
-                    speed *= 1 - GameManager.skillVariables.hexagonSlow;
+                    speed *= 1 - GameManagerV2.instance.skills.hexagonSlow;
                 }
                 break;
             default:
@@ -325,9 +325,9 @@ public class EnemyController : MonoBehaviour
     {
         while(DOT_Timer > 0f)
         {
-            TakeDamage(GameManager.skillVariables.DOT, true);
+            TakeDamage(GameManagerV2.instance.skills.DOT, true);
             DOT_Timer -= 1f;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(GameManagerV2.instance.initialStats.triangleDOTInterval);
         }
         
     }
@@ -336,8 +336,8 @@ public class EnemyController : MonoBehaviour
     {
         while (burning)
         {
-            TakeDamage(GameManager.skillVariables.squareFlame, true);
-            yield return new WaitForSeconds(1f);
+            TakeDamage(GameManagerV2.instance.skills.squareFlame, true);
+            yield return new WaitForSeconds(GameManagerV2.instance.initialStats.squareFlameDamageInterval);
         }
 
     }

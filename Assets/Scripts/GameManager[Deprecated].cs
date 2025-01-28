@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+[System.Obsolete("Replace by the enemySpawnerV2")]
 public static class GameManager
-{
+{/*
     public static UnityEvent<float> XPChange = new UnityEvent<float>(), healthChange = new UnityEvent<float>();
     public static UnityEvent<int> levelChange = new UnityEvent<int>();
     public static UnityEvent gameOver = new UnityEvent();
@@ -35,7 +36,7 @@ public static class GameManager
 
     static savedDatas currentDatas;
 
-    public struct SkillVariables //WIP//
+   public struct SkillVariables //WIP//
     {
         //general skills//
         public float trailDamage, xpMultiplier, dashCooldown, maxHealth, trailDuration, dashSpeed;
@@ -414,4 +415,4 @@ public static class GameManager
     }
 
     #endregion
-}
+*/}

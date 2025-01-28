@@ -11,7 +11,7 @@ public class TargetEnemyController : EnemyController
         var finalAmount = amount * (1 + PowerUpManager.upgradableDatas.strengthBonus);
         if (takeExtraDamages)
         {
-            finalAmount *= (1 + GameManager.skillVariables.supportStrength);
+            finalAmount *= (1 + GameManagerV2.instance.skills.supportStrength);
         }
 
         if (debug)

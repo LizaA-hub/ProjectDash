@@ -19,15 +19,26 @@ public class PlayerStatsEditor : Editor
 
         EditorGUILayout.LabelField("All these variables are initial stats that can be improved with upgrades or skills");
         
+        //GENERAL//
         general = EditorGUILayout.Foldout(general, "General Stats");
         if (general) {
             EditorGUILayout.FloatField("Max Health",script.maxHealth, GUILayout.ExpandWidth(false));
             EditorGUILayout.Space(5);
             EditorGUILayout.FloatField("Dash Speed", script.dashSpeed, GUILayout.ExpandWidth(false));
+
+            EditorGUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("XP To Next Level");
+            EditorGUILayout.FloatField(script.xpGoal);
+            GUILayout.Label("Grow Factor");
+            EditorGUILayout.FloatField(script.xpGoalGrowFactor);
+            GUILayout.EndHorizontal();
         }
 
         EditorGUILayout.Space(10);
-        dash = EditorGUILayout.Foldout(dash, "Dash Attacks");
+        //DASH//
+        dash = EditorGUILayout.Foldout(dash, "Dash Stats");
         if (dash)
         {
             GUILayout.BeginHorizontal();
@@ -72,6 +83,7 @@ public class PlayerStatsEditor : Editor
         }
 
         EditorGUILayout.Space(10);
+        //TRIANGLE//
         triangle = EditorGUILayout.Foldout(triangle, "Triangle Stats");
         if (triangle)
         {
@@ -83,18 +95,41 @@ public class PlayerStatsEditor : Editor
             GUILayout.Label("Gravity Triangle Duration");
             EditorGUILayout.FloatField(script.triangleGravityduration);
             GUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Triangle DOT");
+            EditorGUILayout.FloatField(script.triangleDOT);
+            GUILayout.Label("Triangle DOT interval");
+            EditorGUILayout.FloatField(script.triangleDOTInterval);
+            GUILayout.EndHorizontal();
         }
 
         EditorGUILayout.Space(10);
+        //SQUARE//
         square = EditorGUILayout.Foldout(square, "Square Stats");
         if (square)
         {
             EditorGUILayout.FloatField("Square Damage", script.squareDamage, GUILayout.ExpandWidth(false));
 
+            EditorGUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Square Flame Damage");
+            EditorGUILayout.FloatField(script.squareFlameDamage);
+            GUILayout.Label("Flame Damage Interval");
+            EditorGUILayout.FloatField(script.squareFlameDamageInterval);
+            GUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+
+            EditorGUILayout.FloatField("Square Heal",script.squareHeal, GUILayout.ExpandWidth(false));
         }
 
         EditorGUILayout.Space(10);
-        pentagon = EditorGUILayout.Foldout(pentagon, "Pentagon Attacks");
+        //PENTAGON//
+        pentagon = EditorGUILayout.Foldout(pentagon, "Pentagon Stats");
         if (pentagon)
         {
             EditorGUILayout.FloatField("Pentagon Damage", script.pentagonDamage, GUILayout.ExpandWidth(false));
@@ -123,13 +158,23 @@ public class PlayerStatsEditor : Editor
             EditorGUILayout.Space(5);
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("Pentagon Life Drain");
+            EditorGUILayout.FloatField(script.pentagonDrain);
+            GUILayout.Label("Pentagon Drain Chance");
+            EditorGUILayout.FloatField(script.pentagonDrainChance);
+            GUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
             GUILayout.Label("Pentagon Bomb Damage");
             EditorGUILayout.FloatField(script.pentagonBombDamage);
             GUILayout.EndHorizontal();
         }
 
         EditorGUILayout.Space(10);
-        hexagon = EditorGUILayout.Foldout(hexagon, "Hexagon Attacks");
+        //HEXAGON//
+        hexagon = EditorGUILayout.Foldout(hexagon, "Hexagon Stats");
         if (hexagon)
         {
             EditorGUILayout.FloatField("Hexagon Damage", script.hexagonDamage, GUILayout.ExpandWidth(false));

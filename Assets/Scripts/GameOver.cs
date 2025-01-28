@@ -14,7 +14,7 @@ public class GameOver : MonoBehaviour
     bool countdown = false;
 
     private void Start() {
-        GameManager.gameOver.AddListener(OnGameOver);
+        GameManagerV2.instance.gameOver.AddListener(OnGameOver);
     }
 
     private void Update() {
@@ -29,12 +29,12 @@ public class GameOver : MonoBehaviour
 
     public void Restart(){
         if(!countdown){
-            GameManager.StartGame();
+            GameManagerV2.instance.StartGame();
         }
     }
     public void Menu(){
         if(!countdown){
-            GameManager.LoadMenu();
+            GameManagerV2.instance.LoadMenu();
         }
     }
     private void OnGameOver(){
@@ -46,18 +46,18 @@ public class GameOver : MonoBehaviour
         panel.SetActive(true);
 
         //Set Duration text//
-        float t = GameManager.gameDuration;
+        float t = GameManagerV2.instance.gameDuration;
         int min = (int)(t/60f);
         int sec = (int)(t % 60f);
         string text =min.ToString("00") + ":" + sec.ToString("00");
         time.text = text;
 
         //set damage text//
-        t = GameManager.totalDamages;
+        t = GameManagerV2.instance.totalDamage;
         damage.text = t.ToString();
 
         //set kill text//
-        min = GameManager.enemyKilled;
+        min = GameManagerV2.instance.enemyKilled;
         kill.text = min.ToString();
     }
 

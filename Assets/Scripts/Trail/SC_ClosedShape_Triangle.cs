@@ -48,7 +48,7 @@ public class SC_ClosedShape_Triangle: ClosedShape
     
     private IEnumerator FieldCountdown()
     {
-        yield return new WaitForSeconds(GameManager.skillVariables.triangleGravityDuration);
+        yield return new WaitForSeconds(GameManagerV2.instance.skills.triangleGravityDuration);
         //Debug.Log("field deactivated");
         enemyOverlap = false;
         fieldCollider.enabled = false;

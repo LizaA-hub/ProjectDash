@@ -52,7 +52,7 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
-        availablePoints = Mathf.RoundToInt(GameManager.GetSkillPoint());
+        availablePoints = Mathf.RoundToInt(GameManagerV2.instance.GetSkillPoint());
         
         UpdateSkillPointsUI();  // Initial display of skill points
         UpdateSkillSlots();
@@ -135,10 +135,10 @@ public class SkillTreeManager : MonoBehaviour
         }
         //update points//
         availablePoints -= selectedSkill.cost;
-        GameManager.ModifySkillPoint(-selectedSkill.cost);
+        GameManagerV2.instance.ModifySkillPoint(-selectedSkill.cost);
         UpdateSkillPointsUI();
         //update skill level//
-        var level = GameManager.SkillEnhance(selectedSkill.type);
+        var level = GameManagerV2.instance.SkillEnhance(selectedSkill.type);
         if(level == 0)
         {
             Debug.Log("skill manager : can't enhance skill");
@@ -161,7 +161,7 @@ public class SkillTreeManager : MonoBehaviour
 
     public void MainMenu()
     {
-        GameManager.LoadMenu();
+        GameManagerV2.instance.LoadMenu();
     }
 
     public void ResetSkillTree()
@@ -169,17 +169,17 @@ public class SkillTreeManager : MonoBehaviour
         infoPanel.SetActive(false);
         selectedSkill = null;
         resetSkills.Invoke();
-        GameManager.ResetSkillPoints();
+        GameManagerV2.instance.ResetSkillPoints();
         availablePoints = 0;
         UpdateSkillPointsUI();
-        for (int i = 0; i < GameManager.GetSkillLevels().Length; i++)
+        for (int i = 0; i < GameManagerV2.instance.GetSkillLevels().Length; i++)
         {
-            GameManager.SetSkillLevel(i, 0);
-            GameManager.SetSkilState(i, false);
+            GameManagerV2.instance.SetSkillLevel(i, 0);
+            GameManagerV2.instance.SetSkilState(i, false);
         }
         unlockedSkills.Clear();
         UpdateSkillSlots();
-        GameManager.UpdateAllSkills();
+        GameManagerV2.instance.UpdateAllSkills();
     }
 
     public void SetPoints(string value)
@@ -187,8 +187,8 @@ public class SkillTreeManager : MonoBehaviour
         if (float.TryParse(value, out float result))
         {
             availablePoints = Mathf.RoundToInt(result);
-            GameManager.ResetSkillPoints();
-            GameManager.ModifySkillPoint(availablePoints);
+            GameManagerV2.instance.ResetSkillPoints();
+            GameManagerV2.instance.ModifySkillPoint(availablePoints);
             UpdateSkillPointsUI();
         }
         else
@@ -199,20 +199,20 @@ public class SkillTreeManager : MonoBehaviour
 
     public void disableSkill(bool value)
     {
-        GameManager.disableSkill(selectedSkill.type, value);
+        GameManagerV2.instance.disableSkill(selectedSkill.type, value);
     }
 
     #endregion
     #region Private Functions
     private void UpdateSkillSlots()
     {
-        for (int i = 0; i < GameManager.GetSkillLevels().Length; i++)
+        for (int i = 0; i < GameManagerV2.instance.GetSkillLevels().Length; i++)
         {
-            if (GameManager.GetSkillLevelAt(i) > 0)
+            if (GameManagerV2.instance.GetSkillLevelAt(i) > 0)
             {
                 skillUnlocked.Invoke((skillTypes)i);
                 unlockedSkills.Add((skillTypes)i);
-                if(GameManager.GetSkillLevelAt(i) >= 3)
+                if(GameManagerV2.instance.GetSkillLevelAt(i) >= 3)
                 {
                     unlockAdjacent.Invoke((skillTypes)i);
                 }
@@ -240,7 +240,7 @@ public class SkillTreeManager : MonoBehaviour
         skillName.text = selectedSkill.skillName;
 
         if (unlockedSkills.Contains(selectedSkill.type)) { //if the skill is unlocked
-            var level = GameManager.GetSkillLevelAt((int)selectedSkill.type); //show the current level
+            var level = GameManagerV2.instance.GetSkillLevelAt((int)selectedSkill.type); //show the current level
             skillLevel.text = $"Level {level}";
             skillLevel.color = Color.white;
 
@@ -269,7 +269,7 @@ public class SkillTreeManager : MonoBehaviour
             lockPanelText.color = Color.red;
         }
 
-        disableToggle.isOn = GameManager.GetSkillState(selectedSkill.type);
+        disableToggle.isOn = GameManagerV2.instance.GetSkillState(selectedSkill.type);
         skillDescription.text = selectedSkill.description;
         skillStat.text = selectedSkill.statInfo;
 

@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
     public void StartGame()
     {
         //SceneManager.LoadScene("MainLevel");
-        GameManager.StartGame(); //use the game manager so statics variables get initialized
+        GameManagerV2.instance.StartGame(); //use the game manager so statics variables get initialized
     }
 
     // Function to load the Skill Tree scene

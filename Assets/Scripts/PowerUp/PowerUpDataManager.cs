@@ -27,19 +27,19 @@ public static class PowerUpDataManager
     public struct UpgradableDatas
     {
         
-        public float trailDamage, projectileDamage, waveDamage, swordDamage, bombDamage, xpMultiplier, waveRadius, dashCooldown, bombRadius, strengthBonus;
+        public float trailDamage,trailDuration, projectileDamage, waveDamage, swordDamage, bombDamage, xpMultiplier, waveRadius, dashCooldown, bombRadius, strengthBonus;
         public bool haveProjectile, haveWave, haveSword, haveBomb;
         public int projectileNb, shieldLevel;
 
         public UpgradableDatas(int p)
         {
             //per run variables//
-            projectileDamage = 2f;
-            waveDamage = 2f;
-            swordDamage = 4f;
-            bombDamage = 5f;
-            waveRadius = 5f;
-            bombRadius = 10f;
+            projectileDamage = GameManagerV2.instance.initialStats.projectileDamage;
+            waveDamage = GameManagerV2.instance.initialStats.waveDamage;
+            swordDamage = GameManagerV2.instance.initialStats.swordDamage;
+            bombDamage = GameManagerV2.instance.initialStats.bombDamage;
+            waveRadius = GameManagerV2.instance.initialStats.waveRadius;
+            bombRadius = GameManagerV2.instance.initialStats.bombRadius;
             strengthBonus = 0f;
 
             haveProjectile = haveWave = haveSword = haveBomb = false;
@@ -47,9 +47,10 @@ public static class PowerUpDataManager
             projectileNb = shieldLevel = 0;
 
             //skill dependent variables//
-            trailDamage = 1f + GameManager.skillVariables.trailDamage;
-            xpMultiplier = GameManager.skillVariables.xpMultiplier;
-            dashCooldown = 2f*(1-GameManager.skillVariables.dashCooldown);
+            trailDamage = GameManagerV2.instance.skills.trailDamage;
+            trailDuration = GameManagerV2.instance.skills.trailDuration;
+            xpMultiplier = GameManagerV2.instance.skills.xpMultiplier;
+            dashCooldown = GameManagerV2.instance.skills.dashCooldown;
 
 
         }

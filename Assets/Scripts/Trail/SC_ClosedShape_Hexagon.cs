@@ -32,7 +32,7 @@ public class SC_ClosedShape_Hexagon: ClosedShape
     #region Meteor Functions
     public IEnumerator Meteor()
     {
-        meteorDuration = GameManager.skillVariables.hexagonMeteor;
+        meteorDuration = GameManagerV2.instance.skills.hexagonMeteor;
         SetShapeBounds();
         yield return new WaitForSeconds(2f);
         m_renderer.enabled = false;
@@ -131,7 +131,7 @@ public class SC_ClosedShape_Hexagon: ClosedShape
     public IEnumerator FireLightning()
     {
         yield return new WaitForSeconds(2f);
-        float damage = GameManager.skillVariables.lightningDamage*(1f+enemiesTouched.Count*0.1f);
+        float damage = GameManagerV2.instance.skills.lightningDamage*(1f+enemiesTouched.Count*0.1f);
         foreach (var enemy in enemiesTouched)
         {
             if (enemy.gameObject.activeSelf) {
