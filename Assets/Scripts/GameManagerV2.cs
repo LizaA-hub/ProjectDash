@@ -75,6 +75,7 @@ public class GameManagerV2 : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         DontDestroyOnLoad(gameObject);
