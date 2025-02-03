@@ -37,7 +37,7 @@ public class GameManagerV2 : MonoBehaviour
             skillLevels = new int[length];
             disabledSkills = new bool[length];
             skillPoint = 0f;
-            music = 10f;
+            music = 5f;
             sfx = 10f;
         }
 
@@ -240,6 +240,7 @@ public class GameManagerV2 : MonoBehaviour
     public void SetMusicVolume(float value)
     {
         currentDatas.music = value;
+        SoundManager.instance.ModifyMusicVolume(value/10f);
     }
     public void SetSfxVolume(float value)
     {

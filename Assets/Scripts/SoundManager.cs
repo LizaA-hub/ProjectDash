@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
@@ -10,7 +11,10 @@ public class SoundManager : MonoBehaviour
     public SoundDataManager.soundType startMusic; //can be set for each scene
     [SerializeField]
     private SoundDataManager.Sound[] soundPool;
-    private AudioSource source;
+    [SerializeField]
+    private AudioSource musicSource, SfxSource;
+
+    #region Unity Functions
     private void Awake()
     {
         if(instance == null)
@@ -23,38 +27,48 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        source = GetComponent<AudioSource>();
+        DontDestroyOnLoad(gameObject);
     }
     // Start is called before the first frame update
     void Start()
     {
-        //play the start music
+        if(startMusic != SoundDataManager.soundType.None)
+        {
+            PlayMusic(startMusic,0.5f);
+        }
     }
-
-    public void PlayMusic(SoundDataManager.soundType type, float fade = 0f, float volume = 1f)
+    #endregion
+    #region Public Functions
+    public void PlayMusic(SoundDataManager.soundType type, float fade = 0f)
     {
         AudioClip clip = GetClip(type);
         if (clip == null) return;
 
-        source.volume = volume;
+
+        float volume = GameManagerV2.instance.currentDatas.music / 10f;
+        
 
         if(fade > 0f)
         {
-            if (source.isPlaying) {
-                StartCoroutine(FadeOut(fade));
+            if ((musicSource.clip != null) && musicSource.isPlaying) {
+                StartCoroutine(FadeOut(fade, volume, clip));
             }
-            source.clip = clip;
-            source.volume = 0f;
-            source.Play();
-            StartCoroutine(FadeIn(fade, volume));
+            else
+            {
+                musicSource.clip = clip;
+                musicSource.volume = 0f;
+                musicSource.Play();
+                StartCoroutine(FadeIn(fade, volume));
+            }
+            
         }
         else
         {
-            source.clip = clip;
-            source.volume = volume;
-            source.Play();
+            musicSource.clip = clip;
+            musicSource.volume = volume;
+            musicSource.Play();
         }
-        
+
 
     }
 
@@ -63,7 +77,8 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = GetClip(type);
         if (clip == null) return;
 
-        source.PlayOneShot(clip,volume);
+        volume *= GameManagerV2.instance.currentDatas.sfx / 10f;
+        SfxSource.PlayOneShot(clip,volume);
     }
 
     public void PlaySound(SoundDataManager.soundType type,Vector3 position, float volume = 1f)
@@ -71,7 +86,16 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = GetClip(type);
         if (clip == null) return;
 
+        volume *= GameManagerV2.instance.currentDatas.sfx / 10f;
         AudioSource.PlayClipAtPoint(clip, position, volume);
+    }
+
+    #endregion
+    #region Private Functions
+
+    public void ModifyMusicVolume(float volume)
+    {
+        musicSource.volume = volume;
     }
 
     private AudioClip GetClip(SoundDataManager.soundType type) {
@@ -86,25 +110,29 @@ public class SoundManager : MonoBehaviour
         return null;
     }
 
-    private IEnumerator FadeOut(float delay)
+    private IEnumerator FadeOut(float delay,float volume, AudioClip clip)
     {
-        float countDown = delay;
-        float initialVolume = source.volume;
-        while (countDown > 0f) {
-            source.volume = Mathf.Lerp(initialVolume, 0f, (delay - countDown) / delay);
-            countDown -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
+        float initialVolume = musicSource.volume;
+        for (float timer = 0f; timer < delay; timer += Time.deltaTime)
+        {
+            musicSource.volume = Mathf.Lerp(initialVolume, 0f, timer / delay);
+            yield return null;
         }
-        source.Stop();
+
+        musicSource.volume = 0f;
+        musicSource.clip = clip;
+        musicSource.Play();
+        StartCoroutine(FadeIn(delay, volume));
     }
 
     private IEnumerator FadeIn(float delay, float finalVolume) {
-        float countDown = delay;
-        float initialVolume = source.volume;
-        while (countDown > 0f)
+        for (float timer = 0f; timer < delay; timer += Time.deltaTime)
         {
-            source.volume = Mathf.Lerp(0f, finalVolume, (delay - countDown) / delay);
-            countDown -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }}
+            musicSource.volume = Mathf.Lerp(0f, finalVolume, timer / delay);
+            yield return null;
+        }
+
+        musicSource.volume = finalVolume;
+    }
+    #endregion
 }

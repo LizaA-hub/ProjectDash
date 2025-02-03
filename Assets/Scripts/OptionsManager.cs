@@ -1,6 +1,8 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using static SoundDataManager;
+using static UnityEngine.Rendering.DebugUI;
 
 public class OptionsManager : MonoBehaviour
 {
@@ -18,11 +20,16 @@ public class OptionsManager : MonoBehaviour
     {
         musicVolume = GameManagerV2.instance.GetMusicVolume();
         sfxVolume = GameManagerV2.instance.GetSfxVolume(); 
-        musicSlider.value = musicVolume;
-        sfxSlider.value = sfxVolume;
+
+        musicSlider.SetValueWithoutNotify(musicVolume);
+        musicValue.text = musicVolume.ToString();
+
+        sfxSlider.SetValueWithoutNotify(sfxVolume);
+        sfxValue.text = sfxVolume.ToString();
     }
     public void ModifyMusic(float value)
     {
+        SoundManager.instance.PlaySound(SoundDataManager.soundType.UI_Slider);
         musicVolume = value;
         musicValue.text = musicVolume.ToString();
         GameManagerV2.instance.SetMusicVolume(musicVolume);
@@ -30,6 +37,7 @@ public class OptionsManager : MonoBehaviour
 
     public void ModifySfx(float value)
     {
+        SoundManager.instance.PlaySound(SoundDataManager.soundType.UI_Slider);
         sfxVolume = value;
         sfxValue.text = sfxVolume.ToString();
         GameManagerV2.instance.SetSfxVolume(sfxVolume);
@@ -42,6 +50,7 @@ public class OptionsManager : MonoBehaviour
 
     public void ResetDatas()
     {
+        SoundManager.instance.PlaySound(SoundDataManager.soundType.UI_Click);
         musicVolume = 10f;
         sfxVolume = 10f;
         musicSlider.value = musicVolume;
@@ -50,6 +59,7 @@ public class OptionsManager : MonoBehaviour
 
     public void ClosePanel()
     {
+        SoundManager.instance.PlaySound(SoundDataManager.soundType.UI_Click);
         GameManagerV2.instance.Save();
         gameObject.SetActive(false);
     }
