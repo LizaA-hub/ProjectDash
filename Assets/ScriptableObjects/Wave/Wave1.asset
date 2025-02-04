@@ -17,6 +17,4 @@ MonoBehaviour:
     initialNumber: 5
     maxNumber: 10
     spawnDelay: 2
-    specialProperties:
-    - property: 1
-      propertyMultiplier: 0.1
+    specialProperties: []

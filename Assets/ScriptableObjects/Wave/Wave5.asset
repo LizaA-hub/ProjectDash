@@ -14,20 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyGroups:
   - enemy: {fileID: 11400000, guid: a888060aebff7094493a5806283abf83, type: 2}
-    maxNumber: 10
+    initialNumber: 3
+    maxNumber: 12
     spawnDelay: 2
     specialProperties:
     - property: 0
       propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: 3ea0d454fc53bf7499c35b36b15fc2f6, type: 2}
+    initialNumber: 3
+    maxNumber: 8
+    spawnDelay: 4
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
   - enemy: {fileID: 11400000, guid: e475681d3b0546640ac72b1d9ac418e2, type: 2}
-    maxNumber: 10
-    spawnDelay: 3
+    initialNumber: 2
+    maxNumber: 6
+    spawnDelay: 6
     specialProperties:
     - property: 0
       propertyMultiplier: 20
   - enemy: {fileID: 11400000, guid: 2ef6d84d2269cbb4eb50365e730ac884, type: 2}
-    maxNumber: 5
-    spawnDelay: 3
+    initialNumber: 2
+    maxNumber: 6
+    spawnDelay: 6
+    specialProperties:
+    - property: 0
+      propertyMultiplier: 20
+  - enemy: {fileID: 11400000, guid: ba25514ab87b59644b741a3b7d0b9d3d, type: 2}
+    initialNumber: 2
+    maxNumber: 4
+    spawnDelay: 6
     specialProperties:
     - property: 0
       propertyMultiplier: 20

@@ -15,7 +15,7 @@ MonoBehaviour:
   data:
     type: 9
     prefab: {fileID: 7307865548004113015, guid: 826a6c6b39de05b4090c46b01b3d8259, type: 3}
-    maxHealth: 3
-    strength: 5
-    speed: 2
-    experience: 4
+    maxHealth: 50
+    strength: 10
+    speed: 1
+    experience: 5
