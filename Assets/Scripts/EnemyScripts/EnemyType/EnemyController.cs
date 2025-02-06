@@ -316,7 +316,7 @@ public class EnemyController : MonoBehaviour
                 }
                 break;
             default:
-                TakeDamage(1f);
+                TakeDamage(PowerUpManager.upgradableDatas.trailDamage);
                 break;
         }
     }

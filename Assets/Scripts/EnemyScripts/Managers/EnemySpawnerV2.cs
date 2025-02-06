@@ -8,8 +8,9 @@ public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleport
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
+    #region Variables Definition
     //inspector variabless//
-    
+
     [Header("Variables to increase enemy difficulty over time.")]
     [SerializeField,Range(0,1)]
     float speedMultiplier = 0.05f, healthMultiplier = 0.1f, strengthMultiplier = 0.1f;
@@ -22,17 +23,19 @@ public class EnemySpawnerV2 : MonoBehaviour
     float[] intraWaveTimers;
     float interWaveTimer = 0f,waveDelay = 30f;
     Vector3 velocity = Vector3.zero, cameraBound;
-    int waveNumber = 0;
+    int waveNumber = 0, generalWaveNb = 0;
     Camera cam;
     WaveScriptableObject currentWave;
     int[] enemySpawned;
-    bool timersOn = true;
+    bool timersOn = true, bossFight = false;
 
     //spawning function variables//
     EnemyController controller;
     Transform newEnemy;
     EnemyDataManager.EnemyData[] datas;
     EnemyDataManager.EnemyData data;
+
+    #endregion
 
     #region Unity Functions
     private void Start() {
@@ -63,6 +66,16 @@ public class EnemySpawnerV2 : MonoBehaviour
             UpdateTimers(Time.deltaTime);
     }
 
+    #endregion
+    #region Public Function
+
+    public void EndBossFight()
+    {
+        if (bossFight) { 
+            bossFight = false;
+            NextWave();
+        }
+    }
     #endregion
     #region Private Functions
 
@@ -96,9 +109,9 @@ public class EnemySpawnerV2 : MonoBehaviour
 
         //set variables//
         newEnemy.position = GetSpawningPosition(); //to do function get random position based on the camera
-        controller.health = data.maxHealth * ( 1+healthMultiplier * waveNumber);
-        controller.strength = data.strength * (1 + strengthMultiplier * waveNumber);
-        controller.speed = data.speed * (1 + speedMultiplier * waveNumber);
+        controller.health = data.maxHealth * ( 1+healthMultiplier * generalWaveNb);
+        controller.strength = data.strength * (1 + strengthMultiplier * generalWaveNb);
+        controller.speed = data.speed * (1 + speedMultiplier * generalWaveNb);
         controller.experience = data.experience;
 
         //check for special property in the wave
@@ -279,45 +292,50 @@ public class EnemySpawnerV2 : MonoBehaviour
             }
         }
         //Global timer
-        interWaveTimer += t;
-        if (interWaveTimer >= waveDelay) {
-            interWaveTimer = 0;
-            NextWave();
+        if(!bossFight)
+        {
+            interWaveTimer += t;
+            if (interWaveTimer >= waveDelay)
+            {
+                interWaveTimer = 0;
+                NextWave();
+            }
         }
         
     }
 
     private void NextWave()
     {
-        waveNumber++;
-        if (waveNumber > waves.Length)
+        
+        if (waveNumber >= waves.Length)
         {
-            Debug.Log("no more waves!");
-            timersOn = false;
+            waveNumber = 0;
         }
-        else
-        {
-            currentWave = waves[waveNumber-1];
-            //reset timers
-            intraWaveTimers = new float[currentWave.enemyGroups.Length];
-            enemySpawned = new int[currentWave.enemyGroups.Length];
+
+        currentWave = waves[waveNumber];
+        bossFight = currentWave.boss;
+        //reset timers
+        intraWaveTimers = new float[currentWave.enemyGroups.Length];
+        enemySpawned = new int[currentWave.enemyGroups.Length];
             
-            float duration = 0f;
-            for (int i = 0; i < currentWave.enemyGroups.Length; i++) {
-                float length = currentWave.enemyGroups[i].maxNumber * currentWave.enemyGroups[i].spawnDelay;
-                if (length > duration) {
-                    duration = length; //find wave duration
-                }
-                if(currentWave.enemyGroups[i].initialNumber > 0) //initial spawn
+        float duration = 0f;
+        for (int i = 0; i < currentWave.enemyGroups.Length; i++) {
+            float length = currentWave.enemyGroups[i].maxNumber * currentWave.enemyGroups[i].spawnDelay;
+            if (length > duration) {
+                duration = length; //find wave duration
+            }
+            if(currentWave.enemyGroups[i].initialNumber > 0) //initial spawn
+            {
+                for(int j = 0;j< currentWave.enemyGroups[i].initialNumber; j++)
                 {
-                    for(int j = 0;j< currentWave.enemyGroups[i].initialNumber; j++)
-                    {
-                        SpawnEnemy(currentWave.enemyGroups[i].enemy, i);
-                    }
+                    SpawnEnemy(currentWave.enemyGroups[i].enemy, i);
                 }
             }
-            waveDelay = duration;
         }
+        waveDelay = duration;
+        
+        waveNumber++;
+        generalWaveNb++;
     }
 
     private void LookAtPlayer(Transform enemy, float step = 0f){
