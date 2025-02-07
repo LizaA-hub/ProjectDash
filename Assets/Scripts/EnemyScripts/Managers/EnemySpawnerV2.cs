@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
-public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, Target, Commander, None }
+public enum EnemyType { Basic, Tanky, Fast, Charging, Projectile, Acid, Teleporting, Shield, Target, Commander,Boss_Test, None }
 
 public class EnemySpawnerV2 : MonoBehaviour
 {
@@ -103,8 +103,8 @@ public class EnemySpawnerV2 : MonoBehaviour
         if(instantiateNewEnemy){
             newEnemy = Instantiate(data.prefab);
             instantiatedEnemies.Add(newEnemy);
-            newEnemy.SetParent(transform,false); 
-            controller = newEnemy.GetComponent<EnemyController>() ; 
+            newEnemy.SetParent(transform,false);
+            controller = newEnemy.GetComponent<EnemyController>();
         }
 
         //set variables//
@@ -171,7 +171,7 @@ public class EnemySpawnerV2 : MonoBehaviour
     private void UpdateEnemies(float t){
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
-            if (instantiatedEnemies[i].gameObject.activeSelf)
+            if (instantiatedEnemies[i].gameObject.activeSelf && IsNotBoss(instantiatedEnemies[i]))
             {
                 var controller = instantiatedEnemies[i].GetComponent<EnemyController>();
                 var step = controller.speed * t;
@@ -359,7 +359,7 @@ public class EnemySpawnerV2 : MonoBehaviour
         List<Transform> activEnemies = new List<Transform>();
         for (int i = 0; i < instantiatedEnemies.Count; i++)
         {
-            if (instantiatedEnemies[i].gameObject.activeSelf && instantiatedEnemies[i] != enemy)
+            if (instantiatedEnemies[i].gameObject.activeSelf && instantiatedEnemies[i] != enemy && IsNotBoss(instantiatedEnemies[i]))
             {
                 activEnemies.Add(instantiatedEnemies[i]);
             }
@@ -379,6 +379,15 @@ public class EnemySpawnerV2 : MonoBehaviour
                 activEnemy.GetComponent<EnemyController>().CommanderLink(true);
             }
         }
+    }
+
+    private bool IsNotBoss(Transform enemy) {
+        var controller = enemy.GetComponent<EnemyController>();
+        if(controller.type == EnemyType.Boss_Test)
+        {
+            return false;
+        }
+        return true;
     }
     #endregion
 

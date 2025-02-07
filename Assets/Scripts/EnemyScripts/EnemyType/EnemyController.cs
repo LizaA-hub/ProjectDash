@@ -5,13 +5,14 @@ public class EnemyController : MonoBehaviour
     public EnemyType type;
     [SerializeField]
     Transform orbPrefab, shieldTransform;
+    public bool debug = false;
+
     [HideInInspector]
     public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f, speed;
     [HideInInspector]
     public Vector3 attractionTarget, direction;
     [HideInInspector]
     public bool isAttracked = false;
-    public bool debug = false;
     protected bool invincible = false, takeExtraDamages = false, slowed = false, burning = false, trapped = false, inPentagon = false, shielded = false; 
     Transform orb;
     private float initialSpeed;
@@ -39,6 +40,9 @@ public class EnemyController : MonoBehaviour
                 cooldown = 1f;
             }
         }
+
+        //for boss type
+        UpdateMovement(Time.deltaTime);
     }
     public virtual void OnTriggerEnter2D(Collider2D other) {
         string attack = "";
@@ -139,7 +143,8 @@ public class EnemyController : MonoBehaviour
         }
     }
     #endregion
-    #region Public Functions
+    
+    #region Virtual Function
     public virtual void TakeDamage(float amount, bool exception = false)
     {
         if (invincible && !exception) return;
@@ -176,8 +181,7 @@ public class EnemyController : MonoBehaviour
             invincible = true;
         }
     }
-    #endregion
-    #region Virtual Function
+    
     public virtual void Die(bool disable = true){
         StopAllCoroutines();
         //drop orb//
@@ -243,21 +247,13 @@ public class EnemyController : MonoBehaviour
             speed -= speed * 0.5f;
         }
     }
+
+    protected virtual void UpdateMovement(float t)
+    {
+    }
     #endregion
 
     #region Private Functions
-
-    //Flash animation when the enemy takes damage
-    protected IEnumerator DamageFlash()
-    {
-        // Flash white
-        spriteRenderer.color = Color.white;
-        yield return new WaitForSeconds(0.1f); // Adjust the flash duration as needed
-
-        // Return to the original color
-        spriteRenderer.color = originalColor;
-    }
-
     private void ShapeAttack(GeometricalShape.Shape shape)
     {
         switch (shape) {
@@ -319,6 +315,17 @@ public class EnemyController : MonoBehaviour
                 TakeDamage(PowerUpManager.upgradableDatas.trailDamage);
                 break;
         }
+    }
+
+    //Flash animation when the enemy takes damage
+    protected IEnumerator DamageFlash()
+    {
+        // Flash white
+        spriteRenderer.color = Color.white;
+        yield return new WaitForSeconds(0.1f); // Adjust the flash duration as needed
+
+        // Return to the original color
+        spriteRenderer.color = originalColor;
     }
 
     private IEnumerator DamageOverTime()

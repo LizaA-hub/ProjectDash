@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8816651073539223656}
   m_Layer: 3
   m_Name: Boss_Test
-  m_TagString: Boss
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -163,11 +163,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926a72af28ec44447b5276c01ed1ac5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawner: {fileID: 0}
-  player: {fileID: 0}
+  type: 10
+  orbPrefab: {fileID: 4358556899166370311, guid: e6bd7e6ff999f704998db2f65e8fd99b, type: 3}
+  shieldTransform: {fileID: 0}
+  debug: 0
+  health: 0
+  strength: 0
+  experience: 0
+  cooldown: 1
+  DOT_Timer: 0
+  stun: 0
   speed: 8
-  rotationSpeed: 100
-  chargeCooldown: 2
+  attractionTarget: {x: 0, y: 0, z: 0}
+  direction: {x: 0, y: 0, z: 0}
+  isAttracked: 0
 --- !u!1 &5694755924142332250
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,25 +2,46 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System;
 public class PlayerController : MonoBehaviour
 {
+    #region Variables Definitions
+    //inspector variables//
+    [Header("Need to be assigned")]
+
     public PlayerStatsScriptableObject initialStats;
-    [SerializeField]
-    float  cooldown = 2f, projectileSpeed = 15f, waveSpeed = 10f;
     [SerializeField]
     Transform projectilePrefab, shockWavePrefab, swordTransform, bombPrefab;
     [SerializeField]
     SpriteRenderer shieldSprite;
     [SerializeField]
     CircleCollider2D orbMagnet;
+
+    [Space(10f)]
+    [Header("Behavior variables")]
+
+    [SerializeField]
+    float  cooldown = 2f;
+    [SerializeField]
+    float projectileSpeed = 15f;
+    [SerializeField]
+    float waveSpeed = 10f;
+    [SerializeField]
+    float knockBackForce = 1f;
+
+    [Space(10f)]
+    [Header("Other")]
+
     [SerializeField]
     LayerMask enemyLayer;
     [SerializeField]
     bool debug = false;
 
+    //hiden variables//
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
+
     private Camera cam;
     private Vector3 mousePos;
     private Vector2 swordPos;
@@ -28,10 +49,14 @@ public class PlayerController : MonoBehaviour
     private float angle = 0f, swordRadius = 0.4f, swordSpeed = 30f, angleLimit = 0f, moveSpeed;
     public static float projectileTimer, shockWaveTimer, swordTimer, bombTimer;
     public static int dashShield = 0;
+
     private List<Transform> projectiles = new List<Transform>(), shockWaves = new List<Transform>(), bombs = new List<Transform>(), damageTransforms = new List<Transform>();
+    private List<float> damageTimers = new List<float>();
+
     private Transform newProjectile, newWave, map, newBomb;
     private TrailRenderer swordTrail;
-    private List<float> damageTimers = new List<float>();
+
+    #endregion
 
     #region Unity Functions
     // Start is called before the first frame update
@@ -132,14 +157,17 @@ public class PlayerController : MonoBehaviour
         MoveSword(Time.deltaTime);
     }
 
-
-
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            var strength = other.gameObject.GetComponent<EnemyController>().strength;
+            var controller = other.gameObject.GetComponent<EnemyController>();
+            var strength = controller.strength;
             TakeDamage(strength, other.transform);
+            if(controller.type == EnemyType.Boss_Test)
+            {
+                KnockBack(other.transform.position);
+            }
         }
         else if (other.gameObject.CompareTag("Bullet"))
         {
@@ -314,11 +342,16 @@ public class PlayerController : MonoBehaviour
         damageTransforms.Add(transform);
         damageTimers.Add(cooldown);
     }
-        #endregion
+    private void KnockBack(Vector3 enemyPos)
+    {
+        Vector3 direction = transform.position - (enemyPos - transform.position).normalized;
+        mousePos = direction* knockBackForce;
+    }
+    #endregion
 
     #region Projectile Functions
 
-            private void FireProjectile(Vector3 target){
+    private void FireProjectile(Vector3 target){
 
                 if(projectiles.Count > 0){// check if there's a projectile object available
                     bool reuseProjectile = false;

@@ -22,7 +22,6 @@ TagManager:
   - Bullet
   - EnemyShield
   - DamageArea
-  - Boss
   layers:
   - Default
   - TransparentFX
