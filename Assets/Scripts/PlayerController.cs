@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     #region Variables Definitions
@@ -28,6 +29,8 @@ public class PlayerController : MonoBehaviour
     float waveSpeed = 10f;
     [SerializeField]
     float knockBackForce = 1f;
+    [SerializeField]
+    private Color damageColor;
 
     [Space(10f)]
     [Header("Other")]
@@ -55,6 +58,8 @@ public class PlayerController : MonoBehaviour
 
     private Transform newProjectile, newWave, map, newBomb;
     private TrailRenderer swordTrail;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
     #endregion
 
@@ -87,6 +92,9 @@ public class PlayerController : MonoBehaviour
         swordTrail = swordTransform.gameObject.GetComponent<TrailRenderer>();
 
         moveSpeed = GameManagerV2.instance.skills.dashSpeed;
+
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
     }
 
 
@@ -280,7 +288,12 @@ public class PlayerController : MonoBehaviour
             }
             GameManagerV2.instance.ModifyHealth(-amount);
             AddToList(source);
+
+            if (spriteRenderer != null)
+        {
+            StartCoroutine(DamageFlash()); 
         }
+    }
 
         private void Heal(float amount){
             GameManagerV2.instance.ModifyHealth(amount);
@@ -346,6 +359,16 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 direction = transform.position - (enemyPos - transform.position).normalized;
         mousePos = direction* knockBackForce;
+    }
+
+    private IEnumerator DamageFlash()
+    {
+        // Flash white
+        spriteRenderer.color = damageColor;
+        yield return new WaitForSeconds(0.1f); // Adjust the flash duration as needed
+
+        // Return to the original color
+        spriteRenderer.color = originalColor;
     }
     #endregion
 

@@ -133,12 +133,16 @@ public class SkillTreeManager : MonoBehaviour
             Debug.Log("not enough point!");
             return;
         }
+
+        var level = GameManagerV2.instance.GetSkillLevelAt((int)selectedSkill.type);
+        if (level >= 5) return;
+
         //update points//
         availablePoints -= selectedSkill.cost;
         GameManagerV2.instance.ModifySkillPoint(-selectedSkill.cost);
         UpdateSkillPointsUI();
         //update skill level//
-        var level = GameManagerV2.instance.SkillEnhance(selectedSkill.type);
+        level = GameManagerV2.instance.SkillEnhance(selectedSkill.type);
         if(level == 0)
         {
             Debug.Log("skill manager : can't enhance skill");

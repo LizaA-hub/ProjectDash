@@ -222,6 +222,8 @@ MonoBehaviour:
   type: 0
   orbPrefab: {fileID: 4358556899166370311, guid: e6bd7e6ff999f704998db2f65e8fd99b, type: 3}
   shieldTransform: {fileID: 5219191290768184228}
+  debug: 0
+  damageColor: {r: 0.9339623, g: 0.2951673, b: 0.2951673, a: 0.6039216}
   health: 0
   strength: 0
   experience: 5
@@ -232,7 +234,6 @@ MonoBehaviour:
   attractionTarget: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   isAttracked: 0
-  debug: 0
 --- !u!50 &-1425452382470553541
 Rigidbody2D:
   serializedVersion: 4

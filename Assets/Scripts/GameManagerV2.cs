@@ -255,6 +255,8 @@ public class GameManagerV2 : MonoBehaviour
 
         int count = Enum.GetNames(typeof(skillTypes)).Length;
         currentDatas = new savedDatas(count);
+
+        UpdateAllSkills();
     }
     #endregion
 

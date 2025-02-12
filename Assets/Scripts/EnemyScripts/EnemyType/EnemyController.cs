@@ -6,6 +6,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     Transform orbPrefab, shieldTransform;
     public bool debug = false;
+    [SerializeField]
+    Color damageColor = Color.white;
 
     [HideInInspector]
     public float health, strength,  experience, cooldown = 1f, DOT_Timer = 0f, stun =0f, speed;
@@ -321,7 +323,7 @@ public class EnemyController : MonoBehaviour
     protected IEnumerator DamageFlash()
     {
         // Flash white
-        spriteRenderer.color = Color.white;
+        spriteRenderer.color = damageColor;
         yield return new WaitForSeconds(0.1f); // Adjust the flash duration as needed
 
         // Return to the original color

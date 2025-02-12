@@ -21,7 +21,7 @@ public class TrailManager : MonoBehaviour
     GameObject closedShapeParent;
     
     #region Unity Functions
-    void Awake()
+    void Start()
     {
         myTrail = this.GetComponent<TrailRenderer>();   
         myTrail.time = GameManagerV2.instance.skills.trailDuration;
