@@ -50,9 +50,9 @@ public class PlayerStatsEditor : Editor
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Trail Damage");
-            EditorGUILayout.FloatField(script.trailDamage);
+            script.trailDamage = EditorGUILayout.FloatField(script.trailDamage);
             GUILayout.Label("Trail Duration");
-            EditorGUILayout.FloatField(script.trailDuration);
+            script.trailDuration = EditorGUILayout.FloatField(script.trailDuration);
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Space(5);
